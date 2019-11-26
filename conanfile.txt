@@ -1,0 +1,5 @@
+[requires]
+armadillo/9.800.2@armadillo/stable
+
+[generators]
+cmake
