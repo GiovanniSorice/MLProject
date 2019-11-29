@@ -10,4 +10,4 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(MLProject main.cpp src/layer.cpp src/layer.h)
+add_executable(MLProject main.cpp src/layer/layer.cpp src/layer/layer.h src/network/network.cpp src/network/network.h)
