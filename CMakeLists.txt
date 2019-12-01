@@ -10,4 +10,6 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
+
 add_executable(MLProject main.cpp src/layer/layer.cpp src/layer/layer.h src/network/network.cpp src/network/network.h)
+target_link_libraries(MLProject ${CONAN_LIBS})

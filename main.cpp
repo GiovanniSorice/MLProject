@@ -9,6 +9,8 @@ int main() {
     arma::Mat<double > A = arma::randu(4,4);
     std::cout << "A:\n" << A << "\n";
     std::cout <<"Hello world Conan with Armadillo in src" << std::endl;
+  arma::mat matrix1;
+  matrix1.load("./data/ML-CUP19-TR.csv");
     // arma::mat
     return 0;
 }
