@@ -9,7 +9,7 @@ int main() {
   //matrix1.n_cols - 1);
   //std::cout << "trainData" << trainData << std::endl;
 
-  preprocessing a("/home/gs1010/CLionProjects/MLProject/data/monk/monk_dataset.csv", 60, 20, 20);
+  preprocessing a("../../data/monk/monk_dataset.csv", 60, 20, 20);
 
   std::cout << " TrainingPercent " << a.GetTrainPercent() << " ValidationPercent " << a.GetValidationPercent()
             << " TestPercent " << a.GetTestPercent() << std::endl;
