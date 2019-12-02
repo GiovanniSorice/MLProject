@@ -263,3 +263,5 @@ dmypy.json
 # End of https://www.gitignore.io/api/c++,cmake,linux,clion,python
 
 .idea/MLProject.iml
+
+.idea/codeStyles/codeStyleConfig.xml

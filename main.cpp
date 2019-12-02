@@ -1,7 +1,5 @@
 #include <iostream>
 #include "armadillo"
-
-
 int main() {
     std::cout << "Hello, World!" << std::endl;
     std::cout << "Armadillo version: " << arma::arma_version::as_string() << std::endl;
@@ -10,7 +8,9 @@ int main() {
     std::cout << "A:\n" << A << "\n";
     std::cout <<"Hello world Conan with Armadillo in src" << std::endl;
   arma::mat matrix1;
-  matrix1.load("./data/ML-CUP19-TR.csv");
-    // arma::mat
+  matrix1.load("../../data/ML-CUP19-TR.csv", arma::csv_ascii);
+
+  // arma::mat
     return 0;
 }
+
