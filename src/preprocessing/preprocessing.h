@@ -6,26 +6,29 @@
 #define MLPROJECT_SRC_PREPROCESSING_PREPROCESSING_H_
 
 #include "armadillo"
-class preprocessing {
+class Preprocessing {
  private:
   arma::Mat<double> dataset;
+  arma::Mat<double> testSet;
+  arma::Mat<double> validationSet;
+  arma::Mat<double> trainingSet;
   const std::string datasetPath;
   int trainPercent;
   int validationPercent;
   int testPercent;
 
  public:
-  explicit preprocessing(std::string dataset_path);
-  preprocessing(std::string dataset_path, int train_percent, int validation_percent, int test_percent);
-  [[nodiscard]] const arma::Mat<double> *GetTrainingSet() const;
-  [[nodiscard]] const arma::Mat<double> *GetValidationSet() const;
-  [[nodiscard]] const arma::Mat<double> *GetTestSet() const;
+  explicit Preprocessing(std::string dataset_path);
+  Preprocessing(std::string dataset_path, int train_percent, int validation_percent, int test_percent);
   [[nodiscard]] int GetTrainPercent() const;
   void SetTrainPercent(int train_percent);
   [[nodiscard]] int GetValidationPercent() const;
   void SetValidationPercent(int validation_percent);
   [[nodiscard]] int GetTestPercent() const;
   void SetTestPercent(int test_percent);
+  const arma::Mat<double> &GetTestSet() const;
+  const arma::Mat<double> &GetValidationSet() const;
+  const arma::Mat<double> &GetTrainingSet() const;
 
   //Costruttore:
   // - Percorso file

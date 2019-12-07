@@ -75,7 +75,7 @@ class Layer {
   [[nodiscard]] const arma::mat &GetOutputParameter() const;
   [[nodiscard]] int GetInSize() const;
   [[nodiscard]] int GetOutSize() const;
-  void Init(const double upperBound, const double lowerBound)
+  void Init(const double upperBound, const double lowerBound);
 // Costruttore:
 //  - con funzione di attivazione;
 //  - Unità in input e output;

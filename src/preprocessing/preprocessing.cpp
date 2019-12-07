@@ -5,15 +5,16 @@
 #include "preprocessing.h"
 
 #include <utility>
-preprocessing::preprocessing(std::string dataset_path)
+Preprocessing::Preprocessing(std::string
+                             dataset_path)
     : datasetPath(std::move(dataset_path)), trainPercent(60),
       validationPercent(20),
       testPercent(20) {
   dataset.load(datasetPath, arma::csv_ascii);
-  std::cout << dataset;
+  std::cout << dataset.n_elem << "elementi dataset" << std::endl;
 
 }
-preprocessing::preprocessing(std::string dataset_path,
+Preprocessing::Preprocessing(std::string dataset_path,
                              int train_percent,
                              int validation_percent,
                              int test_percent)
@@ -22,40 +23,50 @@ preprocessing::preprocessing(std::string dataset_path,
       validationPercent(validation_percent),
       testPercent(test_percent) {
   dataset.load(datasetPath, arma::csv_ascii);
+  std::cout << dataset << " dataset" << std::endl;
+
+  std::cout << dataset.n_elem << "elementi dataset" << std::endl;
+  trainingSet =
+      arma::mat(dataset.memptr(), std::floor(dataset.n_rows * trainPercent / 100), dataset.n_cols, false, false);
+  validationSet =
+      arma::mat(dataset.memptr() + trainingSet.n_elem,
+                std::floor(dataset.n_rows * validation_percent / 100),
+                dataset.n_cols,
+                false,
+                false);
+
+  testSet =
+      arma::mat(dataset.memptr() + trainingSet.n_elem + validationSet.n_elem,
+                std::ceil(dataset.n_rows - trainingSet.n_rows - validationSet.n_rows),
+                dataset.n_cols,
+                false,
+                false);
+
 }
-const arma::Mat<double> *preprocessing::GetTrainingSet() const {
-  return new arma::mat(dataset.submat(0, 0, dataset.n_rows * trainPercent / 100,
-                                      dataset.n_cols - 1));
-}
-const arma::Mat<double> *preprocessing::GetValidationSet() const {
-  return new arma::mat(dataset.submat(dataset.n_rows * trainPercent / 100 + 1,
-                                      0,
-                                      dataset.n_rows * trainPercent / 100 + 1
-                                          + dataset.n_rows * validationPercent / 100,
-                                      dataset.n_cols - 1));
-}
-const arma::Mat<double> *preprocessing::GetTestSet() const {
-  return new arma::mat(dataset.submat(
-      dataset.n_rows * trainPercent / 100 + dataset.n_rows * validationPercent / 100 + 1,
-      0,
-      dataset.n_rows - 1,
-      dataset.n_cols - 1));
-}
-int preprocessing::GetTrainPercent() const {
+int Preprocessing::GetTrainPercent() const {
   return trainPercent;
 }
-void preprocessing::SetTrainPercent(int train_percent) {
+void Preprocessing::SetTrainPercent(int train_percent) {
   trainPercent = train_percent;
 }
-int preprocessing::GetValidationPercent() const {
+int Preprocessing::GetValidationPercent() const {
   return validationPercent;
 }
-void preprocessing::SetValidationPercent(int validation_percent) {
+void Preprocessing::SetValidationPercent(int validation_percent) {
   validationPercent = validation_percent;
 }
-int preprocessing::GetTestPercent() const {
+int Preprocessing::GetTestPercent() const {
   return testPercent;
 }
-void preprocessing::SetTestPercent(int test_percent) {
+void Preprocessing::SetTestPercent(int test_percent) {
   testPercent = test_percent;
+}
+const arma::Mat<double> &Preprocessing::GetTestSet() const {
+  return testSet;
+}
+const arma::Mat<double> &Preprocessing::GetValidationSet() const {
+  return validationSet;
+}
+const arma::Mat<double> &Preprocessing::GetTrainingSet() const {
+  return trainingSet;
 }
