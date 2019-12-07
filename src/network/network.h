@@ -4,8 +4,19 @@
 
 #ifndef MLPROJECT_SRC_NETWORK_H_
 #define MLPROJECT_SRC_NETWORK_H_
+#include <iostream>
+#include "armadillo"
+#include "../layer/layer.h"
 
-class network {
+class Network {
+ public:
+  Network();
+ private:
+  std::vector<Layer> net;
+ public:
+  void Add(Layer &layer);
+  void Init(const double upperBound, const double lowerBound);
+
 // Metodo Fit o Train in network a cui passo le epoche da fare
 // Inizializzazione della rete con random weight
 // Salvataggio e load (xml? https://www.boost.org/doc/libs/1_71_0/libs/serialization/doc/index.html);

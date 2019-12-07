@@ -7,10 +7,10 @@
 
 #include "armadillo"
 
-class activationFunction {
+class ActivationFunction {
  public:
-  virtual arma::mat input() = 0;
-  virtual arma::mat output() = 0;
+  virtual double Compute(const double x) = 0;
+  virtual void Derive(const arma::mat &input, arma::mat &output) = 0;
 };
 
 #endif //MLPROJECT_SRC_ACTIVATIONFUNCTION_ACTIVATIONFUNCTION_H_

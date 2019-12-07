@@ -3,3 +3,12 @@
 //
 
 #include "network.h"
+Network::Network() = default;
+void Network::Add(Layer &layer) {
+  net.push_back(layer);
+}
+void Network::Init(const double upperBound = 1, const double lowerBound = -1) {
+  for (auto &i : net) {
+    i.Init(upperBound, lowerBound);
+  }
+}
