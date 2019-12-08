@@ -3,7 +3,10 @@
 //
 
 #include "network.h"
-Network::Network() = default;
+#include "../preprocessing/preprocessing.h"
+
+Network::Network(Preprocessing &dataPreprocessor) : preprocessor(dataPreprocessor) {}
+
 void Network::Add(Layer &layer) {
   net.push_back(layer);
 }
@@ -19,3 +22,8 @@ void Network::Forward() {
     i.Forward()
   }*/
 }
+void Network::Train(int trainPercent, int batchSizePercent) {
+
+}
+
+
