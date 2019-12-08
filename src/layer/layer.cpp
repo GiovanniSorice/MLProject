@@ -45,12 +45,12 @@ int Layer::GetInSize() const {
 }
 int Layer::GetOutSize() const {
   return outSize;
+
 }
 void Layer::Init(const double upperBound, const double lowerBound) {
   weight = lowerBound + arma::randu<arma::mat>(outSize, inSize) * (upperBound - lowerBound);
   bias = lowerBound + arma::randu<arma::mat>(outSize, 1) * (upperBound - lowerBound);
-
-  std::cout << weight;
-  std::cout << bias;
-
+}
+void Layer::Activate(const arma::mat &input, arma::mat &&output) {
+  activationFunction.Compute(input, std::move(output));
 }

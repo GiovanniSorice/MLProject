@@ -3,9 +3,14 @@
 //
 
 #include "tanhFunction.h"
-double tanhFunction::Compute(const double x) {
+double TanhFunction::Compute(const double x) {
   return std::tanh(x);
 }
-void tanhFunction::Derive(const arma::mat &input, arma::mat &output) {
+
+void TanhFunction::Compute(const arma::mat &input, arma::mat &&output) {
   output = arma::tanh(input);
+}
+
+void TanhFunction::Derive(const arma::mat &&input, arma::mat &&output) {
+  output = 1 - arma::pow(input, 2);
 }

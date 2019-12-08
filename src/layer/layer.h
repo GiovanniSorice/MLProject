@@ -12,19 +12,19 @@ class Layer {
  private:
   int inSize;
   int outSize;
-  // weights pesi del layer corrente poer ogni nodo al suo interno
+  //! weights pesi del layer corrente poer ogni nodo al suo interno
   arma::mat weight;
-  // bias del layer corrente
+  //! bias del layer corrente
   arma::mat bias;
-  // locally-instored delta object
+  //! locally-instored delta object
   arma::mat delta;
-  // gradiente del layer
+  //! gradiente del layer
   arma::mat gradient;
-  // parametri di input del layer
+  //! parametri di input del layer
   arma::mat inputParameter;
-  // parametri di output del layer
+  //! parametri di output del layer
   arma::mat outputParameter;
-  // ActivationFunction utilizzata nel layer
+  //! ActivationFunction utilizzata nel layer
   ActivationFunction &activationFunction;
  public:
   /**
@@ -40,12 +40,19 @@ class Layer {
    */
   void Initialize();
   /**
+   *
+   * @param input
+   * @param output
+   */
+  void Activate(const arma::mat &input, arma::mat &&output);
+  /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
+
   void Forward(const arma::mat &&input, arma::mat &&output);
   /**
   * Ordinary feed backward pass of a neural network, calculating the function

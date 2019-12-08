@@ -11,12 +11,12 @@ Preprocessing::Preprocessing(std::string
   dataset.load(datasetPath, arma::csv_ascii);
 }
 
-void Preprocessing::ReturnSplitDataset(int trainPercent,
-                                       int validationPercent,
-                                       int testPercent,
-                                       arma::mat &&trainingSet,
-                                       arma::mat &&validationSet,
-                                       arma::mat &&testSet) {
+void Preprocessing::GetSplit(int trainPercent,
+                             int validationPercent,
+                             int testPercent,
+                             arma::mat &&trainingSet,
+                             arma::mat &&validationSet,
+                             arma::mat &&testSet) {
 
   trainingSet = dataset.submat(0, 0, std::floor(dataset.n_rows * trainPercent / 100),
                                dataset.n_cols - 1);
@@ -29,6 +29,36 @@ void Preprocessing::ReturnSplitDataset(int trainPercent,
 
   testSet = dataset.submat(
       trainingSet.n_rows + validationSet.n_rows,
+      0,
+      dataset.n_rows - 1,
+      dataset.n_cols - 1);
+}
+
+void Preprocessing::GetTrainingSet(int trainPercent,
+                                   int validationPercent,
+                                   int testPercent,
+                                   arma::mat &&trainingSet) {
+  trainingSet = dataset.submat(0, 0, std::floor(dataset.n_rows * trainPercent / 100),
+                               dataset.n_cols - 1);
+
+}
+
+void Preprocessing::GetValidationSet(int trainPercent,
+                                     int validationPercent,
+                                     int testPercent,
+                                     arma::mat &&validationSet) {
+  validationSet = dataset.submat(std::floor(dataset.n_rows * trainPercent / 100) + 1,
+                                 0,
+                                 std::floor(dataset.n_rows * trainPercent / 100)
+                                     + std::floor(dataset.n_rows * validationPercent / 100),
+                                 dataset.n_cols - 1);
+}
+void Preprocessing::GetTestSet(int trainPercent,
+                               int validationPercent,
+                               int testPercent,
+                               arma::mat &&testSet) {
+  testSet = dataset.submat(
+      std::floor(dataset.n_rows * trainPercent / 100) + std::floor(dataset.n_rows * validationPercent / 100) + 1,
       0,
       dataset.n_rows - 1,
       dataset.n_cols - 1);

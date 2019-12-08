@@ -13,13 +13,24 @@ class Preprocessing {
 
  public:
   explicit Preprocessing(std::string dataset_path);
-  void ReturnSplitDataset(int trainPercent,
-                          int validationPercent,
-                          int testPercent,
-                          arma::mat &&trainingSet,
-                          arma::mat &&validationSet,
-                          arma::mat &&testSet);
-
+  void GetSplit(int trainPercent,
+                int validationPercent,
+                int testPercent,
+                arma::mat &&trainingSet,
+                arma::mat &&validationSet,
+                arma::mat &&testSet);
+  void GetTrainingSet(int trainPercent,
+                      int validationPercent,
+                      int testPercent,
+                      arma::mat &&trainingSet);
+  void GetValidationSet(int trainPercent,
+                        int validationPercent,
+                        int testPercent,
+                        arma::mat &&validationSet);
+  void GetTestSet(int trainPercent,
+                  int validationPercent,
+                  int testPercent,
+                  arma::mat &&testSet);
 // TODO: Funzione di shuffle dei dati (chiamata dall'oggetto network a fine epoca per l'epoca successiva)
 };
 

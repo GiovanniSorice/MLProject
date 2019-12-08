@@ -5,9 +5,12 @@
 #ifndef MLPROJECT_SRC_ACTIVATIONFUNCTION_TANHFUNCTION_H_
 #define MLPROJECT_SRC_ACTIVATIONFUNCTION_TANHFUNCTION_H_
 #include "activationFunction.h"
-class tanhFunction : public ActivationFunction {
-  double Compute(const double x) override;
-  void Derive(const arma::mat &input, arma::mat &output) override;
+class TanhFunction : public ActivationFunction {
+  virtual double Compute(const double x) override;
+  virtual void Compute(const arma::mat &input, arma::mat &&output) override;
+  virtual void Derive(const arma::mat &&input, arma::mat &&output) override;
+ public:
+  ~TanhFunction() override = default;
 };
 
 #endif //MLPROJECT_SRC_ACTIVATIONFUNCTION_TANHFUNCTION_H_

@@ -9,8 +9,10 @@
 
 class ActivationFunction {
  public:
+  virtual void Compute(const arma::mat &input, arma::mat &&output) = 0;
   virtual double Compute(const double x) = 0;
-  virtual void Derive(const arma::mat &input, arma::mat &output) = 0;
+  virtual void Derive(const arma::mat &&input, arma::mat &&output) = 0;
+  virtual ~ActivationFunction() {};
 };
 
 #endif //MLPROJECT_SRC_ACTIVATIONFUNCTION_ACTIVATIONFUNCTION_H_
