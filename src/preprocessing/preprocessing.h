@@ -8,10 +8,10 @@
 #include "armadillo"
 class Preprocessing {
  private:
-  arma::Mat<double> dataset;
-  arma::Mat<double> testSet;
-  arma::Mat<double> validationSet;
-  arma::Mat<double> trainingSet;
+  arma::mat dataset;
+  arma::mat testSet;
+  arma::mat validationSet;
+  arma::mat trainingSet;
   const std::string datasetPath;
   int trainPercent;
   int validationPercent;
@@ -26,9 +26,9 @@ class Preprocessing {
   void SetValidationPercent(int validation_percent);
   [[nodiscard]] int GetTestPercent() const;
   void SetTestPercent(int test_percent);
-  const arma::Mat<double> &GetTestSet() const;
-  const arma::Mat<double> &GetValidationSet() const;
-  const arma::Mat<double> &GetTrainingSet() const;
+  const arma::mat &GetTestSet() const;
+  const arma::mat &GetValidationSet() const;
+  const arma::mat &GetTrainingSet() const;
 
   //Costruttore:
   // - Percorso file

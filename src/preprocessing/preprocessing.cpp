@@ -23,24 +23,39 @@ Preprocessing::Preprocessing(std::string dataset_path,
       validationPercent(validation_percent),
       testPercent(test_percent) {
   dataset.load(datasetPath, arma::csv_ascii);
-  std::cout << dataset << " dataset" << std::endl;
 
   std::cout << dataset.n_elem << "elementi dataset" << std::endl;
+
+  trainingSet = dataset.submat(0, 0, std::floor(dataset.n_rows * trainPercent / 100),
+                               dataset.n_cols - 1);
+
+  validationSet = dataset.submat(trainingSet.n_rows,
+                                 0,
+                                 trainingSet.n_rows
+                                     + std::floor(dataset.n_rows * validationPercent / 100),
+                                 dataset.n_cols - 1);
+
+  testSet = dataset.submat(
+      trainingSet.n_rows + validationSet.n_rows,
+      0,
+      dataset.n_rows - 1,
+      dataset.n_cols - 1);
+
+  /*testTrainingSubMat.impl_print("SubMat trainingSet");
   trainingSet =
-      arma::mat(dataset.memptr(), std::floor(dataset.n_rows * trainPercent / 100), dataset.n_cols, false, false);
+      arma::mat(dataset.memptr(), dataset.n_rows * 0.6, dataset.n_cols, false, false);
   validationSet =
       arma::mat(dataset.memptr() + trainingSet.n_elem,
                 std::floor(dataset.n_rows * validation_percent / 100),
                 dataset.n_cols,
                 false,
                 false);
-
   testSet =
       arma::mat(dataset.memptr() + trainingSet.n_elem + validationSet.n_elem,
                 std::ceil(dataset.n_rows - trainingSet.n_rows - validationSet.n_rows),
                 dataset.n_cols,
                 false,
-                false);
+                false); */
 
 }
 int Preprocessing::GetTrainPercent() const {
@@ -61,12 +76,12 @@ int Preprocessing::GetTestPercent() const {
 void Preprocessing::SetTestPercent(int test_percent) {
   testPercent = test_percent;
 }
-const arma::Mat<double> &Preprocessing::GetTestSet() const {
+const arma::mat &Preprocessing::GetTestSet() const {
   return testSet;
 }
-const arma::Mat<double> &Preprocessing::GetValidationSet() const {
+const arma::mat &Preprocessing::GetValidationSet() const {
   return validationSet;
 }
-const arma::Mat<double> &Preprocessing::GetTrainingSet() const {
+const arma::mat &Preprocessing::GetTrainingSet() const {
   return trainingSet;
 }
