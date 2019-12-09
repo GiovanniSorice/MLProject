@@ -5,9 +5,6 @@
 #include "network.h"
 #include "../preprocessing/preprocessing.h"
 
-
-Network::Network(Preprocessing &dataPreprocessor) : preprocessor(dataPreprocessor) {}
-
 void Network::Add(Layer &layer) {
   net.push_back(layer);
 }
@@ -25,12 +22,20 @@ void Network::Init(const double upperBound = 1, const double lowerBound = -1) {
 }
 
 //! std::move is used to do a cheap move and not do a deep copy of arma::mat training set
-void Network::Train(int trainPercent, int batchSizePercent) {
-  arma::mat trainingSet;
-  preprocessor.GetTrainingSet(60, 20, 20, std::move(trainingSet));
+void Network::Train(const arma::mat &&trainingData, const arma::mat &&trainLabels, int batchSizePercent) {
+  //preprocessor.GetTrainingSet(60, 20, 20, std::move(trainingSet));
 
+  int start = 0;
+  int end = std::floor((trainingData.n_rows * batchSizePercent) / 100);
   // TODO: split the training set in batch
-  forward(std::move(trainingSet));
+  for (int i = 1; i <= std::ceil(100 / batchSizePercent); i++) {
+
+    forward(std::move(trainingData.submat(start, 0,
+                                          end, trainingData.n_cols - 1)));
+    start = end + 1;
+    end = i < std::ceil(100 / batchSizePercent) ? std::floor((trainingData.n_rows * batchSizePercent * i) / 100) :
+          trainingData.n_rows - 1;
+  }
 }
 
 /**
