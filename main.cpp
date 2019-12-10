@@ -38,7 +38,7 @@ int main() {
   net.Add(lastLayer);
 
   net.Init(-1, 1);
-  net.Train(std::move(trainingData), std::move(trainLabels));
+  net.Train(std::move(trainingData), std::move(trainLabels), 1);
 
   return 0;
 }

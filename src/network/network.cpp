@@ -24,16 +24,19 @@ void Network::Init(const double upperBound = 1, const double lowerBound = -1) {
 //! std::move is used to do a cheap move and not do a deep copy of arma::mat training set
 void Network::Train(const arma::mat &&trainingData,
                     const arma::mat &&trainLabels,
-                    int batchSizePercent,
+                    int batchSize,
                     double learningRate) {
   //TODO: Da verificare se il learningRate non debba essere adatatto per il numero di batch
   int start = 0;
-  int end = std::floor((trainingData.n_rows * batchSizePercent) / 100);
+  int end = batchSize - 1;
   arma::mat outputWeightBatch;
   arma::mat outputActivateBatch;
   arma::mat errorBatch;
 
-  for (int i = 1; i <= std::ceil(100 / batchSizePercent); i++) {
+  for (int i = 1; i <= std::ceil(trainingData.n_rows / batchSize); i++) {
+
+    arma::mat a = trainingData.submat(start, 0,
+                                      end, trainingData.n_cols - 1);
 
     forward(std::move(trainingData.submat(start, 0,
                                           end, trainingData.n_cols - 1)),
@@ -49,7 +52,7 @@ void Network::Train(const arma::mat &&trainingData,
 
     start = end + 1;
     end =
-        i <= std::ceil(100 / batchSizePercent) ? std::floor((trainingData.n_rows * batchSizePercent * (i + 1)) / 100) :
+        i < std::ceil(trainingData.n_rows / batchSize) ? batchSize * (i + 1) - 1 :
         trainingData.n_rows - 1;
   }
 }

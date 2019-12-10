@@ -27,7 +27,7 @@ class Network {
   void Init(const double upperBound, const double lowerBound);
   void Train(const arma::mat &&trainingData,
              const arma::mat &&trainLabels,
-             int batchSizePercent = 15,
+             int batchSize = 32,
              double learningRate = 0.01);
   // TODO: Metodo Fit o Train in network a cui passo le epoche da fare
   // TODO: Salvataggio e load (xml? https://www.boost.org/doc/libs/1_71_0/libs/serialization/doc/index.html);
