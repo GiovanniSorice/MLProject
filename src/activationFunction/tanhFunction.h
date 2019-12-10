@@ -9,6 +9,8 @@ class TanhFunction : public ActivationFunction {
   virtual double Compute(const double x) override;
   virtual void Compute(const arma::mat &input, arma::mat &&output) override;
   virtual void Derive(const arma::mat &&input, arma::mat &&output) override;
+  virtual double Derive(const double x) override;
+
  public:
   ~TanhFunction() override = default;
 };

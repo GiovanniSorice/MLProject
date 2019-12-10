@@ -3,8 +3,10 @@
 #include "src/preprocessing/preprocessing.h"
 #include "src/network/network.h"
 #include "src/activationFunction/tanhFunction.h"
+#include "src/activationFunction/logisticFunction.h"
 
 int main() {
+
   Preprocessing a("../../data/monk/monk_dataset.csv");
   arma::mat trainingSet;
   arma::mat validationSet;
@@ -23,13 +25,18 @@ int main() {
       trainingData = arma::mat(trainingSet.memptr(), trainingSet.n_rows, trainingSet.n_cols - labelCol, false, false);
 
   Network net;
-  TanhFunction activateFunction;
-  Layer firstLayer(trainingData.n_rows, 15, activateFunction);
-  Layer secondLayer(15, 15, activateFunction);
-  Layer thirdLayer(15, 15, activateFunction);
+  TanhFunction tanhFunction;
+  LogisticFunction logisticFunction;
+
+  Layer firstLayer(trainingData.n_cols, 15, tanhFunction);
+  Layer secondLayer(15, 32, tanhFunction);
+  Layer thirdLayer(32, 15, tanhFunction);
+  Layer lastLayer(15, 1, logisticFunction);
   net.Add(firstLayer);
   net.Add(secondLayer);
   net.Add(thirdLayer);
+  net.Add(lastLayer);
+
   net.Init(-1, 1);
   net.Train(std::move(trainingData), std::move(trainLabels));
 
