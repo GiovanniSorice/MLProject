@@ -28,13 +28,11 @@ int main() {
   TanhFunction tanhFunction;
   LogisticFunction logisticFunction;
 
-  Layer firstLayer(trainingData.n_cols, 15, tanhFunction);
-  Layer secondLayer(15, 32, tanhFunction);
-  Layer thirdLayer(32, 15, tanhFunction);
-  Layer lastLayer(15, 1, logisticFunction);
+  Layer firstLayer(trainingData.n_cols, 3, tanhFunction);
+  Layer secondLayer(3, 3, tanhFunction);
+  Layer lastLayer(3, 1, logisticFunction);
   net.Add(firstLayer);
   net.Add(secondLayer);
-  net.Add(thirdLayer);
   net.Add(lastLayer);
 
   net.Init(-1, 1);

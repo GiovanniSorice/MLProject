@@ -68,26 +68,39 @@ void Network::forward(arma::mat &&batch, arma::mat &&outputActivate, arma::mat &
     currentLayer.SaveOutputParameter(outputWeight);
     currentLayer.Activate(outputWeight, std::move(activateWeight));
   }
-  outputActivate = std::move(activateWeight);
+  activateWeight.print("activateWeight");
+  outputActivate = activateWeight;
+  outputActivate.print("outputActivate");
+
 }
 void Network::meanSquaredError(const arma::mat &&trainLabelsBatch,
                                arma::mat &&outputActivateBatch,
                                arma::mat &&errorBatch) {
+  outputActivateBatch.print("outputActivateBatch");
+  (trainLabelsBatch - outputActivateBatch).print("errore");
   errorBatch = arma::mean(arma::pow(trainLabelsBatch - outputActivateBatch, 2));
 }
 void Network::backward(const arma::mat &&outputActivateBatch,
                        const arma::mat &&outputWeight,
                        const arma::mat &&errorBatch,
                        double learningRate) {
+  int i = net.size();
+  std::cout << "layer " << i << std::endl;
   arma::mat gradient;
   std::vector<Layer>::reverse_iterator currentLayer = net.rbegin();
   currentLayer->OutputLayerGradient(std::move(outputWeight), std::move(errorBatch), std::move(gradient));
-  arma::mat summationGradientWeight = gradient * currentLayer->GetWeight();
+  arma::mat currentGradientWeight = gradient * currentLayer->GetWeight().t();
+  currentGradientWeight.print("summationGradientWeight");
+
+  arma::mat a = currentLayer->GetWeight().t();
+  // TODO: eliminare parametro summationGradientWeight ottimizzando il ritorno di gradient
   currentLayer++;
   // Iterate from the precedent Layer of the tail to the head
   for (; currentLayer != net.rend(); currentLayer++) {
-    currentLayer->Gradient(std::move(summationGradientWeight), std::move(gradient));
-    summationGradientWeight += gradient;
-    summationGradientWeight.print("summationGradientWeight");
+    i--;
+    std::cout << "layer " << i << std::endl;
+    currentLayer->Gradient(std::move(currentGradientWeight), std::move(gradient));
+    currentGradientWeight = gradient;
+    currentGradientWeight.print("summationGradientWeight");
   }
 }

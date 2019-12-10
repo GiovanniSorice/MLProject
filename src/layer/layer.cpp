@@ -38,8 +38,7 @@ void Layer::OutputLayerGradient(const arma::mat &&input, const arma::mat &&error
   activationFunction.Derive(std::move(input), std::move(firstDerivativeActivation));
   firstDerivativeActivation.print("firstDerivativeActivation");
   error.print("error");
-  (arma::as_scalar(error) * firstDerivativeActivation).print("firstDerivativeActivation * error");
-  gradient = arma::mean(arma::as_scalar(error) * firstDerivativeActivation);
+  gradient = arma::mean(error * firstDerivativeActivation);
 }
 void Layer::Initialize() {
   weight = arma::mat(inSize, outSize);
@@ -70,8 +69,7 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight, arma::mat &&curr
   activationFunction.Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
   firstDerivativeActivation.print("firstDerivativeActivation");
   summationGradientWeight.print("summationGradientWeight");
-  (arma::as_scalar(summationGradientWeight) * firstDerivativeActivation).print("gradient senza mean");
-  gradient = arma::mean(arma::as_scalar(summationGradientWeight) * firstDerivativeActivation);
+  gradient = arma::mean(firstDerivativeActivation * summationGradientWeight);
   gradient.print("gradient");
-  currentGradientWeight = gradient * weight;
+  currentGradientWeight = gradient * weight.t();
 }
