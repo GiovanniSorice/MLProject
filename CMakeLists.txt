@@ -11,5 +11,5 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 
 
-add_executable(MLProject main.cpp src/layer/layer.cpp src/layer/layer.h src/network/network.cpp src/network/network.h src/preprocessing/preprocessing.cpp src/preprocessing/preprocessing.h src/preprocessing/preprocessing.cpp src/preprocessing/preprocessing.h src/activationFunction/activationFunction.h src/activationFunction/tanhFunction.cpp src/activationFunction/tanhFunction.h src/activationFunction/logisticFunction.cpp src/activationFunction/logisticFunction.h)
+add_executable(MLProject main.cpp src/layer/layer.cpp src/layer/layer.h src/network/network.cpp src/network/network.h src/preprocessing/preprocessing.cpp src/preprocessing/preprocessing.h src/preprocessing/preprocessing.cpp src/preprocessing/preprocessing.h src/activationFunction/activationFunction.h src/activationFunction/tanhFunction.cpp src/activationFunction/tanhFunction.h src/activationFunction/logisticFunction.cpp src/activationFunction/logisticFunction.h src/load/loadDataset.cpp src/load/loadDataset.h)
 target_link_libraries(MLProject ${CONAN_LIBS})

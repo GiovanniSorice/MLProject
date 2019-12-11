@@ -4,10 +4,10 @@
 #include "src/network/network.h"
 #include "src/activationFunction/tanhFunction.h"
 #include "src/activationFunction/logisticFunction.h"
+#include "src/load/loadDataset.h"
 
 int main() {
-
-  Preprocessing a("../../data/monk/monk_dataset.csv");
+  Preprocessing a("../../data/monk/monks-formatted.csv");
   arma::mat trainingSet;
   arma::mat validationSet;
   arma::mat testSet;
