@@ -35,9 +35,6 @@ void Network::Train(const arma::mat &&trainingData,
 
   for (int i = 1; i <= std::ceil(trainingData.n_rows / batchSize); i++) {
 
-    arma::mat a = trainingData.submat(start, 0,
-                                      end, trainingData.n_cols - 1);
-
     forward(std::move(trainingData.submat(start, 0,
                                           end, trainingData.n_cols - 1)),
             std::move(outputActivateBatch),
@@ -68,16 +65,12 @@ void Network::forward(arma::mat &&batch, arma::mat &&outputActivate, arma::mat &
     currentLayer.SaveOutputParameter(outputWeight);
     currentLayer.Activate(outputWeight, std::move(activateWeight));
   }
-  activateWeight.print("activateWeight");
   outputActivate = activateWeight;
-  outputActivate.print("outputActivate");
 
 }
 void Network::meanSquaredError(const arma::mat &&trainLabelsBatch,
                                arma::mat &&outputActivateBatch,
                                arma::mat &&errorBatch) {
-  outputActivateBatch.print("outputActivateBatch");
-  (trainLabelsBatch - outputActivateBatch).print("errore");
   errorBatch = arma::mean(arma::pow(trainLabelsBatch - outputActivateBatch, 2));
 }
 void Network::backward(const arma::mat &&outputActivateBatch,
@@ -87,20 +80,20 @@ void Network::backward(const arma::mat &&outputActivateBatch,
   int i = net.size();
   std::cout << "layer " << i << std::endl;
   arma::mat gradient;
-  std::vector<Layer>::reverse_iterator currentLayer = net.rbegin();
-  currentLayer->OutputLayerGradient(std::move(outputWeight), std::move(errorBatch), std::move(gradient));
-  arma::mat currentGradientWeight = gradient * currentLayer->GetWeight().t();
-  currentGradientWeight.print("summationGradientWeight");
+  auto currentLayer = net.rbegin();
+  currentLayer->OutputLayerGradient(std::move(errorBatch));
+  // TODO: Fare questa operazione in un metodo all'interno della classe layer così da risparmiare copie profonde
+  arma::mat currentGradientWeight = currentLayer->GetGradient() % arma::sum(currentLayer->GetWeight());
+  currentGradientWeight.print("currentGradientWeight");
 
-  arma::mat a = currentLayer->GetWeight().t();
   // TODO: eliminare parametro summationGradientWeight ottimizzando il ritorno di gradient
   currentLayer++;
   // Iterate from the precedent Layer of the tail to the head
   for (; currentLayer != net.rend(); currentLayer++) {
     i--;
     std::cout << "layer " << i << std::endl;
-    currentLayer->Gradient(std::move(currentGradientWeight), std::move(gradient));
-    currentGradientWeight = gradient;
-    currentGradientWeight.print("summationGradientWeight");
+    currentLayer->Gradient(std::move(currentGradientWeight));
+    currentGradientWeight = currentLayer->GetGradient() % arma::sum(currentLayer->GetWeight());
+    currentGradientWeight.print("currentGradientWeight");
   }
 }

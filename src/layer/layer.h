@@ -73,8 +73,8 @@ class Layer {
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  void OutputLayerGradient(const arma::mat &&input, const arma::mat &&error, arma::mat &&gradient);
-  void Gradient(const arma::mat &&summationGradientWeight, arma::mat &&currentGradientWeight);
+  void OutputLayerGradient(const arma::mat &&error);
+  void Gradient(const arma::mat &&summationGradientWeight);
   void SaveOutputParameter(const arma::mat &input);
   [[nodiscard]] const arma::mat &GetWeight() const;
   [[nodiscard]] const arma::mat &GetBias() const;
