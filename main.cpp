@@ -38,9 +38,5 @@ int main() {
   net.Init(-1, 1);
   net.Train(std::move(trainingData), std::move(trainLabels), 1);
 
-  arma::mat dataSetTest = trainingData.submat(0, 0,
-                                              0, trainingData.n_cols - 1);
-  arma::mat labelSetTest = trainLabels.submat(0, 0,
-                                              0, trainLabels.n_cols - 1);
   return 0;
 }

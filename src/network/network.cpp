@@ -78,32 +78,26 @@ void Network::backward(const arma::mat &&outputActivateBatch,
                        const arma::mat &&outputWeight,
                        const arma::mat &&errorBatch,
                        double learningRate) {
-  int i = net.size();
-  std::cout << "layer " << i << std::endl;
   arma::mat gradient;
   auto currentLayer = net.rbegin();
   currentLayer->OutputLayerGradient(std::move(errorBatch));
   // TODO: Fare questa operazione in un metodo all'interno della classe layer così da risparmiare copie profonde
-  currentLayer->GetWeight().print("currentLayer->GetWeight()");
-
   arma::mat currentGradientWeight;
   currentLayer->GetSummationWeight(std::move(currentGradientWeight));
 
-  currentGradientWeight.print("currentGradientWeight");
 
   // TODO: eliminare parametro summationGradientWeight ottimizzando il ritorno di gradient
   currentLayer++;
   // Iterate from the precedent Layer of the tail to the head
   for (; currentLayer != net.rend(); currentLayer++) {
-    i--;
-    std::cout << "layer " << i << std::endl;
     currentLayer->Gradient(std::move(currentGradientWeight));
     currentLayer->GetSummationWeight(std::move(currentGradientWeight));
-    currentGradientWeight.print("currentGradientWeight");
   }
-/*
+
   for (Layer &currentLayer :net) {
     currentLayer.AdjustWeight(learningRate);
   }
-  */
+
+}
+void Network::Test(const arma::mat &testData, const arma::mat &testLabels) {
 }
