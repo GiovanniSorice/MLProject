@@ -37,7 +37,7 @@ int main() {
   net.Add(lastLayer);
 
   net.Init(-1, 1);
-  net.Train(std::move(trainingData), std::move(trainLabels), 7);
+  net.Train(std::move(trainingData), std::move(trainLabels), 32);
 /*
 
   arma::mat dataSetTest = trainingData.submat(0, 0,

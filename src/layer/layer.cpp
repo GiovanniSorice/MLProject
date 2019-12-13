@@ -62,13 +62,22 @@ void Layer::Activate(const arma::mat &input, arma::mat &&output) {
 void Layer::SaveOutputParameter(const arma::mat &input) {
   outputParameter = input;
 }
+void Layer::SaveInputParameter(const arma::mat &input) {
+  inputParameter = input;
+}
 void Layer::Gradient(const arma::mat &&summationGradientWeight) {
 
   arma::mat firstDerivativeActivation;
   activationFunction.Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
+  firstDerivativeActivation = arma::mean(firstDerivativeActivation);
   firstDerivativeActivation.print("firstDerivativeActivation");
 
   //TODO: Pura magia da testare
-  gradient = arma::mean(firstDerivativeActivation.t() * summationGradientWeight);
+  gradient = (firstDerivativeActivation.t() * summationGradientWeight).t();
   gradient.print("gradient");
+}
+void Layer::AdjustWeight(const double learningRate) {
+
+  weight = weight + learningRate * gradient * inputParameter;
+
 }

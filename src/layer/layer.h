@@ -76,6 +76,8 @@ class Layer {
   void OutputLayerGradient(const arma::mat &&error);
   void Gradient(const arma::mat &&summationGradientWeight);
   void SaveOutputParameter(const arma::mat &input);
+  void SaveInputParameter(const arma::mat &input);
+  void AdjustWeight(const double learningRate);
   [[nodiscard]] const arma::mat &GetWeight() const;
   [[nodiscard]] const arma::mat &GetBias() const;
   [[nodiscard]] const arma::mat &GetDelta() const;

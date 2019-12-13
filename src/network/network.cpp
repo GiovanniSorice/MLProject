@@ -61,6 +61,7 @@ void Network::Train(const arma::mat &&trainingData,
 void Network::forward(arma::mat &&batch, arma::mat &&outputActivate, arma::mat &&outputWeight) {
   arma::mat activateWeight = arma::mat(batch.memptr(), batch.n_rows, batch.n_cols, false, false);
   for (Layer &currentLayer : net) {
+    currentLayer.SaveInputParameter(activateWeight);
     currentLayer.Forward(std::move(activateWeight), std::move(outputWeight));
     currentLayer.SaveOutputParameter(outputWeight);
     currentLayer.Activate(outputWeight, std::move(activateWeight));
@@ -83,7 +84,9 @@ void Network::backward(const arma::mat &&outputActivateBatch,
   auto currentLayer = net.rbegin();
   currentLayer->OutputLayerGradient(std::move(errorBatch));
   // TODO: Fare questa operazione in un metodo all'interno della classe layer così da risparmiare copie profonde
+  currentLayer->GetWeight().print("currentLayer->GetWeight()");
   arma::mat currentGradientWeight = currentLayer->GetGradient() % arma::sum(currentLayer->GetWeight());
+
   currentGradientWeight.print("currentGradientWeight");
 
   // TODO: eliminare parametro summationGradientWeight ottimizzando il ritorno di gradient
@@ -96,4 +99,9 @@ void Network::backward(const arma::mat &&outputActivateBatch,
     currentGradientWeight = currentLayer->GetGradient() % arma::sum(currentLayer->GetWeight());
     currentGradientWeight.print("currentGradientWeight");
   }
+/*
+  for (Layer &currentLayer :net) {
+    currentLayer.AdjustWeight(learningRate);
+  }
+  */
 }
