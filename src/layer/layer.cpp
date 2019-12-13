@@ -72,12 +72,19 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
   firstDerivativeActivation = arma::mean(firstDerivativeActivation);
   firstDerivativeActivation.print("firstDerivativeActivation");
 
-  //TODO: Pura magia da testare
+  //TODO: Pura magia da testare sbagliata
   gradient = (firstDerivativeActivation.t() * summationGradientWeight).t();
-  gradient.print("gradient");
+  std::cout << gradient.n_rows << " " << gradient.n_cols << std::endl;
+  //gradient.print("gradient");
 }
 void Layer::AdjustWeight(const double learningRate) {
 
   weight = weight + learningRate * gradient * inputParameter;
 
+}
+/**
+ * Return a raw vector contains all the summed weight multiplied by the layer gradient
+ */
+void Layer::GetSummationWeight(arma::mat &&gradientWeight) {
+  gradientWeight = gradient % arma::sum(weight);
 }

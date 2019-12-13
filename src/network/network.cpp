@@ -85,7 +85,9 @@ void Network::backward(const arma::mat &&outputActivateBatch,
   currentLayer->OutputLayerGradient(std::move(errorBatch));
   // TODO: Fare questa operazione in un metodo all'interno della classe layer così da risparmiare copie profonde
   currentLayer->GetWeight().print("currentLayer->GetWeight()");
-  arma::mat currentGradientWeight = currentLayer->GetGradient() % arma::sum(currentLayer->GetWeight());
+
+  arma::mat currentGradientWeight;
+  currentLayer->GetSummationWeight(std::move(currentGradientWeight));
 
   currentGradientWeight.print("currentGradientWeight");
 
@@ -96,7 +98,7 @@ void Network::backward(const arma::mat &&outputActivateBatch,
     i--;
     std::cout << "layer " << i << std::endl;
     currentLayer->Gradient(std::move(currentGradientWeight));
-    currentGradientWeight = currentLayer->GetGradient() % arma::sum(currentLayer->GetWeight());
+    currentLayer->GetSummationWeight(std::move(currentGradientWeight));
     currentGradientWeight.print("currentGradientWeight");
   }
 /*
