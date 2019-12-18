@@ -30,6 +30,7 @@ Layer::Layer(const int inSize, const int outSize, ActivationFunction &activation
 void Layer::Forward(const arma::mat &&input, arma::mat &&output) {
   output = input * weight;
   output.each_row() += bias;
+
 }
 void Layer::Backward(const arma::mat &&input, arma::mat &&gy, arma::mat &&g) {
 
@@ -40,7 +41,7 @@ void Layer::OutputLayerGradient(const arma::mat &&error) {
   activationFunction.Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
   firstDerivativeActivation = arma::mean(firstDerivativeActivation);
   gradient = arma::mean(error % firstDerivativeActivation);
-  gradient.print("gradient");
+  (error % firstDerivativeActivation).print("error % firstDerivativeActivation");
 }
 void Layer::Initialize() {
   weight = arma::mat(inSize, outSize);
@@ -78,7 +79,7 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
   firstDerivativeActivation = arma::mean(firstDerivativeActivation);
 
   //TODO: Pura magia da testare sbagliata
-  gradient = firstDerivativeActivation % summationGradientWeight;
+  gradient = firstDerivativeActivation % summationGradientWeight.t();
   gradient.print("gradient");
 }
 
@@ -89,8 +90,11 @@ void Layer::AdjustWeight(const double learningRate) {
               << std::endl;
   }
 
-  weight = weight + learningRate * gradient.t() * inputParameter;
+  //weight.print("weight pre");
+  weight = weight + learningRate * inputParameter.t() * gradient;
+  //weight.print("weight post");
 
+  bias = bias + learningRate * gradient;
 }
 /**
  * Return a raw vector contains all the summed weight multiplied by the layer gradient
@@ -100,5 +104,6 @@ void Layer::GetSummationWeight(arma::mat &&gradientWeight) {
     std::cout << "!!!!!!!!!!!!! GetSummationWeight errore nelle concordanza colonne - righe !!!!!!!!!!!!!!!!"
               << std::endl;
   }
-  gradientWeight = gradient * weight.t();
+  gradientWeight = weight * gradient.t();
+
 }
