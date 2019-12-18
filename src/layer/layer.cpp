@@ -26,6 +26,7 @@ Layer::Layer(const int inSize, const int outSize, ActivationFunction &activation
     : inSize(inSize), outSize(outSize), activationFunction(activationFunction) {
 }
 
+// TODO: Da testare
 void Layer::Forward(const arma::mat &&input, arma::mat &&output) {
   output = input * weight;
   output.each_row() += bias;
@@ -33,6 +34,7 @@ void Layer::Forward(const arma::mat &&input, arma::mat &&output) {
 void Layer::Backward(const arma::mat &&input, arma::mat &&gy, arma::mat &&g) {
 
 }
+// TODO: Da testare
 void Layer::OutputLayerGradient(const arma::mat &&error) {
   arma::mat firstDerivativeActivation;
   activationFunction.Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
@@ -51,6 +53,8 @@ int Layer::GetOutSize() const {
   return outSize;
 
 }
+
+// TODO: Da testare
 //! Ricorda che se vuoi avere run ripetibili, devi usare arma_rng::set_seed(value) al posto di arma::arma_rng::set_seed_random()
 void Layer::Init(const double upperBound, const double lowerBound) {
   arma::arma_rng::set_seed_random();
@@ -66,6 +70,7 @@ void Layer::SaveOutputParameter(const arma::mat &input) {
 void Layer::SaveInputParameter(const arma::mat &input) {
   inputParameter = input;
 }
+// TODO: Da testare
 void Layer::Gradient(const arma::mat &&summationGradientWeight) {
 
   arma::mat firstDerivativeActivation;
@@ -76,8 +81,9 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
   gradient = firstDerivativeActivation % summationGradientWeight;
   gradient.print("gradient");
 }
-void Layer::AdjustWeight(const double learningRate) {
 
+// TODO: Da testare post backprop
+void Layer::AdjustWeight(const double learningRate) {
   if (gradient.n_rows != inputParameter.n_rows) {
     std::cout << "!!!!!!!!!!!!! AdjustWeight errore nelle concordanza colonne - righe !!!!!!!!!!!!!!!!"
               << std::endl;
