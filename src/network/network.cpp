@@ -21,12 +21,24 @@ void Network::Init(const double upperBound = 1, const double lowerBound = -1) {
   }
 }
 
-//! std::move is used to do a cheap move and not do a deep copy of arma::mat training set
 void Network::Train(const arma::mat &&trainingData,
                     const arma::mat &&trainLabels,
                     int epoch,
                     int batchSize,
                     double learningRate) {
+  for (int currentEpoch = 1; currentEpoch <= epoch; currentEpoch++) {
+
+    // TODO: reattach trainingData with trainingLabel, shuffle and re-split
+    train(std::move(trainingData), std::move(trainLabels), batchSize, learningRate);
+  }
+}
+
+//! std::move is used to do a cheap move and not do a deep copy of arma::mat training set
+void Network::train(const arma::mat &&trainingData,
+                    const arma::mat &&trainLabels,
+                    int batchSize,
+                    double learningRate) {
+
   //TODO: Da verificare se il learningRate non debba essere adattato per il numero di batch
   int start = 0;
   int end = batchSize - 1;
@@ -34,11 +46,7 @@ void Network::Train(const arma::mat &&trainingData,
   arma::mat outputActivateBatch;
   arma::mat errorBatch;
 
-  for (int currentEpoch = 1; currentEpoch <= epoch; currentEpoch++) {
-
-    // TODO: reattach trainingData with trainingLabel, shuffle and re-split
-
-    for (int i = 1; i <= std::ceil(trainingData.n_rows / batchSize); i++) {
+  for (int i = 1; i <= std::ceil(trainingData.n_rows / batchSize); i++) {
 
       forward(std::move(trainingData.submat(start, 0,
                                             end, trainingData.n_cols - 1)),
@@ -58,7 +66,6 @@ void Network::Train(const arma::mat &&trainingData,
           trainingData.n_rows - 1;
 
     }
-  }
 }
 
 /**
@@ -99,6 +106,8 @@ void Network::backward(const arma::mat &&outputActivateBatch,
   }
 
 }
+
 void Network::Test(const arma::mat &&testData, const arma::mat &&testLabels) {
 
 }
+

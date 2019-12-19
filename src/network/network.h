@@ -21,7 +21,10 @@ class Network {
                 const arma::mat &&outputWeight,
                 const arma::mat &&errorBatch,
                 double learningRate);
-
+  void train(const arma::mat &&trainingData,
+             const arma::mat &&trainLabels,
+             int batchSize = 32,
+             double learningRate = 0.01);
  public:
   void Add(Layer &layer);
   void Init(const double upperBound, const double lowerBound);
