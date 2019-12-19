@@ -24,34 +24,40 @@ void Network::Init(const double upperBound = 1, const double lowerBound = -1) {
 //! std::move is used to do a cheap move and not do a deep copy of arma::mat training set
 void Network::Train(const arma::mat &&trainingData,
                     const arma::mat &&trainLabels,
+                    int epoch,
                     int batchSize,
                     double learningRate) {
-  //TODO: Da verificare se il learningRate non debba essere adatatto per il numero di batch
+  //TODO: Da verificare se il learningRate non debba essere adattato per il numero di batch
   int start = 0;
   int end = batchSize - 1;
   arma::mat outputWeightBatch;
   arma::mat outputActivateBatch;
   arma::mat errorBatch;
 
-  for (int i = 1; i <= std::ceil(trainingData.n_rows / batchSize); i++) {
+  for (int currentEpoch = 1; currentEpoch <= epoch; currentEpoch++) {
 
-    forward(std::move(trainingData.submat(start, 0,
-                                          end, trainingData.n_cols - 1)),
-            std::move(outputActivateBatch),
-            std::move(outputWeightBatch));
+    // TODO: reattach trainingData with trainingLabel, shuffle and re-split
 
-    meanSquaredError(std::move(trainLabels.submat(start, 0,
-                                                  end, trainLabels.n_cols - 1)),
-                     std::move(outputActivateBatch),
-                     std::move(errorBatch));
+    for (int i = 1; i <= std::ceil(trainingData.n_rows / batchSize); i++) {
 
-    backward(std::move(outputActivateBatch), std::move(outputWeightBatch), std::move(errorBatch), learningRate);
+      forward(std::move(trainingData.submat(start, 0,
+                                            end, trainingData.n_cols - 1)),
+              std::move(outputActivateBatch),
+              std::move(outputWeightBatch));
 
-    start = end + 1;
-    end =
-        i < std::ceil(trainingData.n_rows / batchSize) ? batchSize * (i + 1) - 1 :
-        trainingData.n_rows - 1;
+      meanSquaredError(std::move(trainLabels.submat(start, 0,
+                                                    end, trainLabels.n_cols - 1)),
+                       std::move(outputActivateBatch),
+                       std::move(errorBatch));
 
+      backward(std::move(outputActivateBatch), std::move(outputWeightBatch), std::move(errorBatch), learningRate);
+
+      start = end + 1;
+      end =
+          i < std::ceil(trainingData.n_rows / batchSize) ? batchSize * (i + 1) - 1 :
+          trainingData.n_rows - 1;
+
+    }
   }
 }
 
@@ -93,5 +99,6 @@ void Network::backward(const arma::mat &&outputActivateBatch,
   }
 
 }
-void Network::Test(const arma::mat &testData, const arma::mat &testLabels) {
+void Network::Test(const arma::mat &&testData, const arma::mat &&testLabels) {
+
 }
