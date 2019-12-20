@@ -53,8 +53,9 @@ int main() {
   net.Add(secondLayer);
   net.Add(lastLayer);
 
-  net.Init(-1, 1);
-  net.Train(std::move(trainingData), std::move(trainLabels), 1, 1);
-  net.Test(std::move(testData), std::move(testLabels));
+  net.Init(-1e-4, 1e-4);
+  net.Train(std::move(trainingData), std::move(trainLabels), 1, 1, 0.5);
+  net.Test(std::move(testData), std::move(testLabels), 1);
   return 0;
+
 }

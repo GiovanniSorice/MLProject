@@ -28,6 +28,8 @@ Layer::Layer(const int inSize, const int outSize, ActivationFunction &activation
 
 // TODO: Da testare
 void Layer::Forward(const arma::mat &&input, arma::mat &&output) {
+  // input.print("Input");
+  // weight.print("Weight");
   output = input * weight;
   output.each_row() += bias;
 
@@ -90,11 +92,11 @@ void Layer::AdjustWeight(const double learningRate) {
               << std::endl;
   }
 
-  //weight.print("weight pre");
-  weight = weight + learningRate * inputParameter.t() * gradient;
-  //weight.print("weight post");
+  weight.print("weight pre");
+  weight = weight - learningRate * outputParameter.t() * gradient;
+  weight.print("weight post");
 
-  bias = bias + learningRate * gradient;
+  bias = bias - learningRate * gradient;
 }
 /**
  * Return a raw vector contains all the summed weight multiplied by the layer gradient
