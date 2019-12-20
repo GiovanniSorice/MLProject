@@ -21,15 +21,41 @@ void Network::Init(const double upperBound = 1, const double lowerBound = -1) {
   }
 }
 
-void Network::Train(const arma::mat &&trainingData,
-                    const arma::mat &&trainLabels,
+/**
+ * Split the training set in training data and training labels and feed them in the network.
+ *
+ *
+ * @param trainingSet Deep copy of the training set
+ * @param epoch Number of total shuffling of the training set feed in the network
+ * @param batchSize Number of the example feed in the network for each forward pass
+ * @param learningRate Adjust weight parameter
+ * */
+void Network::Train(arma::mat trainingSet,
                     int epoch,
                     int batchSize,
                     double learningRate) {
+  int labelCol = 1;
   for (int currentEpoch = 1; currentEpoch <= epoch; currentEpoch++) {
 
+    // Split the data from the training set.
+    arma::mat trainLabels = arma::mat(trainingSet.memptr() + (trainingSet.n_cols - labelCol) * trainingSet.n_rows,
+                                      trainingSet.n_rows,
+                                      labelCol,
+                                      false,
+                                      false);
+
+    // Split the labels from the training set.
+    arma::mat trainingData = arma::mat(trainingSet.memptr(),
+                                       trainingSet.n_rows,
+                                       trainingSet.n_cols - labelCol,
+                                       false,
+                                       false);
+
     train(std::move(trainingData), std::move(trainLabels), batchSize, learningRate);
-    // TODO: reattach trainingData with trainingLabel, shuffle and re-split
+
+    // shuffle the training set for the new epoch
+    trainingSet = arma::shuffle(trainingSet);
+    // trainingSet.print("Training Set shuffled");
   }
 }
 
@@ -80,16 +106,18 @@ void Network::forward(arma::mat &&batch, arma::mat &&outputActivate, arma::mat &
     // outputWeight.print("Weight plus bias vector");
     currentLayer.Activate(outputWeight, std::move(activateWeight));
     currentLayer.SaveOutputParameter(activateWeight);   // save the activated vectors of the current layer for backpropagation
-    activateWeight.print("Output activated vector");
+    // activateWeight.print("Output activated vector");
   }
   outputActivate = activateWeight;
-  //  outputActivate.print("Network output");  // print the activation layer output
+  // outputActivate.print("Network output");  // print the activation layer output
 
 }
+
 void Network::meanSquaredError(const arma::mat &&trainLabelsBatch,
                                arma::mat &&outputActivateBatch,
                                arma::mat &&errorBatch) {
   errorBatch = arma::mean(arma::pow(trainLabelsBatch - outputActivateBatch, 2));
+  errorBatch.print("Network output error");
 }
 void Network::backward(const arma::mat &&outputActivateBatch,
                        const arma::mat &&outputWeight,

@@ -43,7 +43,7 @@ void Layer::OutputLayerGradient(const arma::mat &&error) {
   activationFunction.Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
   firstDerivativeActivation = arma::mean(firstDerivativeActivation);
   gradient = arma::mean(error % firstDerivativeActivation);
-  (error % firstDerivativeActivation).print("error % firstDerivativeActivation");
+  // (error % firstDerivativeActivation).print("error % firstDerivativeActivation");
 }
 void Layer::Initialize() {
   weight = arma::mat(inSize, outSize);
@@ -82,7 +82,7 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
 
   //TODO: Pura magia da testare sbagliata
   gradient = firstDerivativeActivation % summationGradientWeight.t();
-  gradient.print("gradient");
+  // gradient.print("gradient");
 }
 
 // TODO: Da testare post backprop
@@ -92,9 +92,9 @@ void Layer::AdjustWeight(const double learningRate) {
               << std::endl;
   }
 
-  weight.print("weight pre");
+  // weight.print("weight pre");
   weight = weight - learningRate * outputParameter.t() * gradient;
-  weight.print("weight post");
+  // weight.print("weight post");
 
   bias = bias - learningRate * gradient;
 }

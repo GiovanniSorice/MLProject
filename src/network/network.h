@@ -26,8 +26,7 @@ class Network {
  public:
   void Add(Layer &layer);
   void Init(const double upperBound, const double lowerBound);
-  void Train(const arma::mat &&trainingData,
-             const arma::mat &&trainLabels,
+  void Train(arma::mat trainingSet,
              int epoch,
              int batchSize = 32,
              double learningRate = 0.01);
