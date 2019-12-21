@@ -87,14 +87,10 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
 
 // TODO: Da testare post backprop
 void Layer::AdjustWeight(const double learningRate) {
-  if (gradient.n_rows != inputParameter.n_rows) {
-    std::cout << "!!!!!!!!!!!!! AdjustWeight errore nelle concordanza colonne - righe !!!!!!!!!!!!!!!!"
-              << std::endl;
-  }
 
-  // weight.print("weight pre");
-  weight = weight - learningRate * outputParameter.t() * gradient;
-  // weight.print("weight post");
+  //weight.print("weight pre");
+  weight = weight - learningRate * inputParameter.t() * gradient;
+  //weight.print("weight post");
 
   bias = bias - learningRate * gradient;
 }
@@ -102,10 +98,5 @@ void Layer::AdjustWeight(const double learningRate) {
  * Return a raw vector contains all the summed weight multiplied by the layer gradient
  */
 void Layer::GetSummationWeight(arma::mat &&gradientWeight) {
-  if (gradient.n_cols != weight.n_cols) {
-    std::cout << "!!!!!!!!!!!!! GetSummationWeight errore nelle concordanza colonne - righe !!!!!!!!!!!!!!!!"
-              << std::endl;
-  }
   gradientWeight = weight * gradient.t();
-
 }

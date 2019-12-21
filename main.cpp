@@ -13,6 +13,9 @@ int main() {
   arma::mat testSet;
 
   a.GetSplit(60, 20, 20, std::move(trainingSet), std::move(validationSet), std::move(testSet));
+  std::cout << trainingSet.n_rows << " " << trainingSet.n_cols << " " << validationSet.n_rows << " "
+            << validationSet.n_cols
+            << " " << testSet.n_rows << " " << testSet.n_cols << std::endl;
   int labelCol = 1;
 
   /*
@@ -31,6 +34,22 @@ int main() {
   */
 
   //Split the labels from the test set
+  arma::mat
+      validationLabels = arma::mat(validationSet.memptr() + (validationSet.n_cols - labelCol) * validationSet.n_rows,
+                                   validationSet.n_rows,
+                                   labelCol,
+                                   false,
+                                   false);
+
+  //Split the data from the test test
+  arma::mat validationData = arma::mat(validationSet.memptr(),
+                                       validationSet.n_rows,
+                                       validationSet.n_cols - labelCol,
+                                       false,
+                                       false);
+
+
+  //Split the labels from the test set
   arma::mat testLabels = arma::mat(testSet.memptr() + (testSet.n_cols - labelCol) * testSet.n_rows,
                                    testSet.n_rows,
                                    labelCol,
@@ -43,19 +62,22 @@ int main() {
                                  testSet.n_cols - labelCol,
                                  false,
                                  false);
+  std::cout << testData.n_rows << " " << testData.n_cols << " " << validationData.n_rows << " "
+            << validationData.n_cols << std::endl;
+
   Network net;
   TanhFunction tanhFunction;
   LogisticFunction logisticFunction;
 
-  Layer firstLayer(trainingSet.n_cols - 1, 13, tanhFunction);
-  Layer secondLayer(13, 10, tanhFunction);
-  Layer lastLayer(10, 1, logisticFunction);
+  Layer firstLayer(trainingSet.n_cols - 1, 3, tanhFunction);
+  Layer lastLayer(3, 1, logisticFunction);
   net.Add(firstLayer);
-  net.Add(secondLayer);
   net.Add(lastLayer);
 
-  net.Init(-1e2, 1e2);
-  net.Train(trainingSet, 4, 1, 0.1);
-  net.Test(std::move(testData), std::move(testLabels), 1);
+  net.Init(-1e-6, 1e-6);
+  net.Train(trainingSet, 390, 1, 0.9);
+  net.Test(std::move(validationData), std::move(validationLabels));
+
+  net.Test(std::move(testData), std::move(testLabels));
   return 0;
 }

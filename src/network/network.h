@@ -23,6 +23,8 @@ class Network {
   void meanSquaredError(const arma::mat &&trainLabelsBatch, arma::mat &&outputActivateBatch, arma::mat &&errorBatch);
   void backward(const arma::mat &&outputActivateBatch, const arma::mat &&outputWeight, const arma::mat &&errorBatch);
   void updateWeight(double learningRate);
+  void inference(arma::mat &&, arma::mat &&);
+
  public:
   void Add(Layer &layer);
   void Init(const double upperBound, const double lowerBound);
@@ -31,8 +33,7 @@ class Network {
              int batchSize = 32,
              double learningRate = 0.01);
   void Test(const arma::mat &&testData,
-            const arma::mat &&testLabels,
-            int batchSize = 32);
+            const arma::mat &&testLabels);
 
   // TODO: Salvataggio e load (xml? https://www.boost.org/doc/libs/1_71_0/libs/serialization/doc/index.html);
 

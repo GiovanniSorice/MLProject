@@ -35,6 +35,9 @@ void Network::Train(arma::mat trainingSet,
                     int batchSize,
                     double learningRate) {
   int labelCol = 1;
+  //Weighed learning rate
+  learningRate = learningRate / ceil(trainingSet.n_rows / batchSize);
+
   for (int currentEpoch = 1; currentEpoch <= epoch; currentEpoch++) {
 
     // Split the data from the training set.
@@ -86,7 +89,7 @@ void Network::train(const arma::mat &&trainingData,
 
     backward(std::move(outputActivateBatch), std::move(outputWeightBatch), std::move(errorBatch));
 
-      start = end + 1;
+    start = end + 1;
     end = i < std::ceil(trainingData.n_rows / batchSize) ? batchSize * (i + 1) - 1 : trainingData.n_rows - 1;
 
     updateWeight(learningRate);
@@ -103,9 +106,10 @@ void Network::forward(arma::mat &&batch, arma::mat &&outputActivate, arma::mat &
     // activateWeight.print("Input feed vector");
     currentLayer.SaveInputParameter(activateWeight);    // save the input vector of the layer
     currentLayer.Forward(std::move(activateWeight), std::move(outputWeight));
-    // outputWeight.print("Weight plus bias vector");
+
+    currentLayer.SaveOutputParameter(outputWeight);   // save the activated vectors of the current layer for backpropagation
+
     currentLayer.Activate(outputWeight, std::move(activateWeight));
-    currentLayer.SaveOutputParameter(activateWeight);   // save the activated vectors of the current layer for backpropagation
     // activateWeight.print("Output activated vector");
   }
   outputActivate = activateWeight;
@@ -117,7 +121,6 @@ void Network::meanSquaredError(const arma::mat &&trainLabelsBatch,
                                arma::mat &&outputActivateBatch,
                                arma::mat &&errorBatch) {
   errorBatch = arma::mean(arma::pow(trainLabelsBatch - outputActivateBatch, 2));
-  errorBatch.print("Network output error");
 }
 void Network::backward(const arma::mat &&outputActivateBatch,
                        const arma::mat &&outputWeight,
@@ -142,24 +145,31 @@ void Network::updateWeight(double learningRate) {
   }
 }
 
-void Network::Test(const arma::mat &&testData, const arma::mat &&testLabels, int batchSize) {
-  arma::mat outputWeightBatch;
+void Network::Test(const arma::mat &&testData, const arma::mat &&testLabels) {
   arma::mat outputActivateBatch;
+  arma::mat testDataCopied = testData;
 
-  int start = 0;
-  int end = batchSize - 1;
+  inference(std::move(testDataCopied),
+            std::move(outputActivateBatch));
+  //outputActivateBatch.print("outputActivateBatch");
 
-  for (int i = 1; i <= std::ceil(testData.n_rows / batchSize); i++) {
-    forward(std::move(testData.submat(start, 0,
-                                      end, testData.n_cols - 1)),
-            std::move(outputActivateBatch),
-            std::move(outputWeightBatch));
+  //testLabels.print("Corrected output");
+  //std::cout << testLabels.n_rows << " testLabelsBatch " << testLabels.n_cols << std::endl;
 
-    (arma::mean(outputActivateBatch)).print("Network predicted result");
-    arma::mat testLabelsBatch = testLabels.submat(start, 0, end, testLabels.n_cols - 1);
-    testLabelsBatch.print("Corrected output");
+  //arma::mat prova = testLabels - arma::round(outputActivateBatch);
 
-    start = end + 1;
-    end = i < std::ceil(testData.n_rows / batchSize) ? batchSize * (i + 1) - 1 : testData.n_rows - 1;
+  testLabels.print("testLabels");
+  arma::round(outputActivateBatch).print("arma::round(outputActivateBatch)");
+
+}
+
+void Network::inference(arma::mat &&inputData, arma::mat &&outputData) {
+  arma::mat activateWeight = arma::mat(inputData.memptr(), inputData.n_rows, inputData.n_cols, false, false);
+  for (Layer &currentLayer : net) {
+    currentLayer.Forward(std::move(activateWeight), std::move(outputData));
+
+    currentLayer.Activate(outputData, std::move(activateWeight));
   }
+  outputData = activateWeight;
+
 }
