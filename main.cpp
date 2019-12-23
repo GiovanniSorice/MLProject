@@ -74,10 +74,11 @@ int main() {
   net.Add(firstLayer);
   net.Add(lastLayer);
 
-  net.Init(-1e-6, 1e-6);
+  net.Init(-1e-1, 1e-1);
   net.Train(trainingSet, 390, 1, 0.9);
-  net.Test(std::move(validationData), std::move(validationLabels));
+  net.TestWithThreshold(std::move(validationData), std::move(validationLabels), 0.5);
 
-  net.Test(std::move(testData), std::move(testLabels));
+  net.TestWithThreshold(std::move(testData), std::move(testLabels), 0.5);
+
   return 0;
 }

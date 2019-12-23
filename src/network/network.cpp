@@ -81,7 +81,6 @@ void Network::train(const arma::mat &&trainingData,
                                             end, trainingData.n_cols - 1)),
               std::move(outputActivateBatch),
               std::move(outputWeightBatch));
-
       meanSquaredError(std::move(trainLabels.submat(start, 0,
                                                     end, trainLabels.n_cols - 1)),
                        std::move(outputActivateBatch),
@@ -171,5 +170,20 @@ void Network::inference(arma::mat &&inputData, arma::mat &&outputData) {
     currentLayer.Activate(outputData, std::move(activateWeight));
   }
   outputData = activateWeight;
+
+}
+void Network::TestWithThreshold(const arma::mat &&testData, const arma::mat &&testLabels, double threshold) {
+  arma::mat outputActivateBatch;
+  arma::mat testDataCopied = testData;
+
+  inference(std::move(testDataCopied),
+            std::move(outputActivateBatch));
+
+  outputActivateBatch.print("outputActivateBatch");
+
+  arma::mat thresholdMatrix = arma::ones<arma::mat>(outputActivateBatch.n_rows, outputActivateBatch.n_cols) * threshold;
+  arma::mat resultWithThreshold = arma::conv_to<arma::mat>::from(outputActivateBatch > thresholdMatrix);
+
+  (resultWithThreshold - testLabels).print("resultWithThreshold-testLabels");
 
 }

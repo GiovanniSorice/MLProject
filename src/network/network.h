@@ -34,7 +34,8 @@ class Network {
              double learningRate = 0.01);
   void Test(const arma::mat &&testData,
             const arma::mat &&testLabels);
-
+  void TestWithThreshold(const arma::mat &&testData,
+                         const arma::mat &&testLabels, double Threshold);
   // TODO: Salvataggio e load (xml? https://www.boost.org/doc/libs/1_71_0/libs/serialization/doc/index.html);
 
 };
