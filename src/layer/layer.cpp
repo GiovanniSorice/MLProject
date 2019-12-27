@@ -23,7 +23,7 @@ const arma::mat &Layer::GetOutputParameter() const {
 }
 
 Layer::Layer(const int inSize, const int outSize, ActivationFunction &activationFunction)
-    : inSize(inSize), outSize(outSize), activationFunction(activationFunction) {
+    : inSize(inSize), outSize(outSize), activationFunction(activationFunction), delta(arma::zeros(inSize, outSize)) {
 }
 
 // TODO: Da testare
@@ -80,7 +80,6 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
   activationFunction.Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
   firstDerivativeActivation = arma::mean(firstDerivativeActivation);
 
-  //TODO: Pura magia da testare sbagliata
   gradient = firstDerivativeActivation % summationGradientWeight.t();
   // gradient.print("gradient");
 }
@@ -88,10 +87,8 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
 // TODO: Da testare post backprop
 void Layer::AdjustWeight(const double learningRate) {
 
-  //weight.print("weight pre");
-  weight = weight - learningRate * inputParameter.t() * gradient;
-  //weight.print("weight post");
-
+  // TODO:   capire se utilizzare arma::sum o arma::mean? Risposta: sum-> guardare slide 22 ML-19-NN-part2-v0.11.pdf prof
+  weight = weight - learningRate * arma::sum(inputParameter).t() * gradient;
   bias = bias - learningRate * gradient;
 }
 /**
@@ -99,4 +96,9 @@ void Layer::AdjustWeight(const double learningRate) {
  */
 void Layer::GetSummationWeight(arma::mat &&gradientWeight) {
   gradientWeight = weight * gradient.t();
+}
+void Layer::AdjustWeightWM(const double learningRate, const double momentum) {
+  weight = weight - learningRate * arma::sum(inputParameter).t() * gradient + momentum * delta;
+  bias = bias - learningRate * gradient;
+  delta = arma::sum(inputParameter).t() * gradient;
 }

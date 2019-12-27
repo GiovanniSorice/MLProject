@@ -19,10 +19,15 @@ class Network {
              const arma::mat &&trainLabels,
              int batchSize = 32,
              double learningRate = 0.01);
+  void trainWM(const arma::mat &&trainingData,
+               const arma::mat &&trainLabels,
+               int batchSize = 32,
+               double learningRate = 0.01, double momentum = 0.5);
   void forward(arma::mat &&batch, arma::mat &&outputActivate, arma::mat &&outputWeight);
   void meanSquaredError(const arma::mat &&trainLabelsBatch, arma::mat &&outputActivateBatch, arma::mat &&errorBatch);
   void backward(const arma::mat &&outputActivateBatch, const arma::mat &&outputWeight, const arma::mat &&errorBatch);
   void updateWeight(double learningRate);
+  void updateWeightWM(double learningRate, double momentum);
   void inference(arma::mat &&, arma::mat &&);
 
  public:
@@ -32,6 +37,11 @@ class Network {
              int epoch,
              int batchSize = 32,
              double learningRate = 0.01);
+  void TrainWM(arma::mat trainingSet,
+               int epoch,
+               int batchSize = 32,
+               double learningRate = 0.01, double momentum = 0.5);
+
   void Test(const arma::mat &&testData,
             const arma::mat &&testLabels);
   void TestWithThreshold(const arma::mat &&testData,

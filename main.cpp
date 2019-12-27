@@ -18,20 +18,20 @@ int main() {
             << " " << testSet.n_rows << " " << testSet.n_cols << std::endl;
   int labelCol = 1;
 
-  /*
+
   // Split the data from the training set.
-  arma::mat trainLabels = arma::mat(trainingSet.memptr() + (trainingSet.n_cols - labelCol) * trainingSet.n_rows,
-                                    trainingSet.n_rows,
-                                    labelCol,
-                                    false,
-                                    false);
+  arma::mat trainingLabels = arma::mat(trainingSet.memptr() + (trainingSet.n_cols - labelCol) * trainingSet.n_rows,
+                                       trainingSet.n_rows,
+                                       labelCol,
+                                       false,
+                                       false);
   // Split the labels from the training set.
   arma::mat trainingData = arma::mat(trainingSet.memptr(),
                                      trainingSet.n_rows,
                                      trainingSet.n_cols - labelCol,
                                      false,
                                      false);
-  */
+
 
   //Split the labels from the test set
   arma::mat
@@ -74,8 +74,10 @@ int main() {
   net.Add(firstLayer);
   net.Add(lastLayer);
 
-  net.Init(-1e-1, 1e-1);
-  net.Train(trainingSet, 390, 1, 0.9);
+  net.Init(-1e-4, 1e-4);
+  net.TrainWM(trainingSet, 290, 32, 0.9);
+  net.TestWithThreshold(std::move(trainingData), std::move(trainingLabels), 0.5);
+
   net.TestWithThreshold(std::move(validationData), std::move(validationLabels), 0.5);
 
   net.TestWithThreshold(std::move(testData), std::move(testLabels), 0.5);
