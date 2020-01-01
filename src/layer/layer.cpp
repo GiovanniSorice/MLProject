@@ -85,20 +85,21 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
 }
 
 // TODO: Da testare post backprop
-void Layer::AdjustWeight(const double learningRate) {
-
+void Layer::AdjustWeight(const double learningRate, const double momentum) {
   // TODO:   capire se utilizzare arma::sum o arma::mean? Risposta: sum-> guardare slide 22 ML-19-NN-part2-v0.11.pdf prof
-  weight = weight - learningRate * arma::sum(inputParameter).t() * gradient;
+  weight.print("weight before update");
+  weight = weight - learningRate * arma::sum(inputParameter).t() * gradient + momentum * delta;
+  gradient.print("Current gradient");
+  weight.print("weight after update");
+  // bias.print("bias before update");
   bias = bias - learningRate * gradient;
+  // bias.print("bias after update");
+  delta = arma::sum(inputParameter).t() * gradient;
 }
+
 /**
  * Return a raw vector contains all the summed weight multiplied by the layer gradient
  */
 void Layer::GetSummationWeight(arma::mat &&gradientWeight) {
   gradientWeight = weight * gradient.t();
-}
-void Layer::AdjustWeightWM(const double learningRate, const double momentum) {
-  weight = weight - learningRate * arma::sum(inputParameter).t() * gradient + momentum * delta;
-  bias = bias - learningRate * gradient;
-  delta = arma::sum(inputParameter).t() * gradient;
 }
