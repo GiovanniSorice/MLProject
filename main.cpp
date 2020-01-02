@@ -81,14 +81,12 @@ int main() {
   arma::mat firstRow = trainingSet.row(0);
 
   Layer firstLayer(trainingSet.n_cols - 1, 3, reluFunction);
-  Layer secondLayer(3, 14, reluFunction);
-  Layer lastLayer(14, 1, logisticFunction);
+  Layer lastLayer(3, 1, logisticFunction);
   net.Add(firstLayer);
-  net.Add(secondLayer);
   net.Add(lastLayer);
 
-  net.Init(-1e-4, 1e-4);
-  net.Train(trainingSet, 290, 32, 0.9);
+  net.Init(-1e-1, 1e-1);
+  net.Train(trainingSet, 390, 32, 0.1);
 
 
   //net.TestWithThreshold(std::move(trainingData), std::move(trainingLabels), 0.5);
