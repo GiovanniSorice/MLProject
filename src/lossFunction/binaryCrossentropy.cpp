@@ -3,9 +3,17 @@
 //
 
 #include "binaryCrossentropy.h"
-void BinaryCrossentropy::Error(const arma::mat &&trainLabelsBatch,
-                               arma::mat &&outputActivateBatch,
-                               arma::mat &&errorBatch) {
-  errorBatch = arma::mean(
+
+void BinaryCrossentropy::Error(const arma::mat &&trainLabelsBatch, arma::mat &&outputActivateBatch) {
+  arma::mat errorBatch = arma::mean(
       -trainLabelsBatch % arma::log(outputActivateBatch) - (1 - trainLabelsBatch) % arma::log(1 - outputActivateBatch));
 }
+
+// TODO:
+void BinaryCrossentropy::ComputePartialDerivative(const arma::mat &&trainLabelsBatch,
+                                                  arma::mat &&outputActivateBatch,
+                                                  arma::mat &&errorBatch) {
+
+}
+
+

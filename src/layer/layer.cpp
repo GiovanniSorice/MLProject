@@ -28,10 +28,12 @@ Layer::Layer(const int inSize, const int outSize, ActivationFunction &activation
 
 // TODO: Da testare
 void Layer::Forward(const arma::mat &&input, arma::mat &&output) {
-  // input.print("Input");
-  // weight.print("Weight");
+  //input.print("Input");
+  //weight.print("Weight");
+  //bias.print("bias");
   output = input * weight;
   output.each_row() += bias;
+  // output.print("output");
 
 }
 void Layer::Backward(const arma::mat &&input, arma::mat &&gy, arma::mat &&g) {
@@ -40,9 +42,12 @@ void Layer::Backward(const arma::mat &&input, arma::mat &&gy, arma::mat &&g) {
 // TODO: Da testare
 void Layer::OutputLayerGradient(const arma::mat &&error) {
   arma::mat firstDerivativeActivation;
+  //outputParameter.print("outputParameter");
   activationFunction.Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
   firstDerivativeActivation = arma::mean(firstDerivativeActivation);
-  gradient = arma::mean(error % firstDerivativeActivation);
+  // error.print("error");
+  gradient = error % firstDerivativeActivation;
+  gradient.print("Output Layer gradient");
   // (error % firstDerivativeActivation).print("error % firstDerivativeActivation");
 }
 void Layer::Initialize() {
@@ -66,6 +71,7 @@ void Layer::Init(const double upperBound, const double lowerBound) {
 }
 void Layer::Activate(const arma::mat &input, arma::mat &&output) {
   activationFunction.Compute(input, std::move(output));
+  // output.print("activated output");
 }
 void Layer::SaveOutputParameter(const arma::mat &input) {
   outputParameter = input;
@@ -73,7 +79,6 @@ void Layer::SaveOutputParameter(const arma::mat &input) {
 void Layer::SaveInputParameter(const arma::mat &input) {
   inputParameter = input;
 }
-// TODO: Da testare
 void Layer::Gradient(const arma::mat &&summationGradientWeight) {
 
   arma::mat firstDerivativeActivation;
@@ -81,19 +86,15 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
   firstDerivativeActivation = arma::mean(firstDerivativeActivation);
 
   gradient = firstDerivativeActivation % summationGradientWeight.t();
-  // gradient.print("gradient");
+  gradient.print("Hidden layer gradient");
 }
 
 // TODO: Da testare post backprop
 void Layer::AdjustWeight(const double learningRate, const double momentum) {
-  // TODO:   capire se utilizzare arma::sum o arma::mean? Risposta: sum-> guardare slide 22 ML-19-NN-part2-v0.11.pdf prof
-  weight.print("weight before update");
+  // capire se utilizzare arma::sum o arma::mean? Risposta: sum-> guardare slide 22 ML-19-NN-part2-v0.11.pdf prof
   weight = weight - learningRate * arma::sum(inputParameter).t() * gradient + momentum * delta;
-  gradient.print("Current gradient");
-  weight.print("weight after update");
-  // bias.print("bias before update");
+  //inputParameter.print("inputParameter");
   bias = bias - learningRate * gradient;
-  // bias.print("bias after update");
   delta = arma::sum(inputParameter).t() * gradient;
 }
 
@@ -102,4 +103,5 @@ void Layer::AdjustWeight(const double learningRate, const double momentum) {
  */
 void Layer::GetSummationWeight(arma::mat &&gradientWeight) {
   gradientWeight = weight * gradient.t();
+
 }

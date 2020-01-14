@@ -10,6 +10,7 @@
 #include "src/lossFunction/binaryCrossentropy.h"
 
 int main() {
+
   Preprocessing a("../../data/monk/monks-formatted.csv");
   arma::mat trainingSet;
   arma::mat validationSet;
@@ -72,25 +73,24 @@ int main() {
   MeanSquaredError meanSquaredError;
   BinaryCrossentropy binaryCrossentropy;
 
-  Network net(binaryCrossentropy);
-  ReluFunction reluFunction;
-  //TanhFunction tanhFunction;
+  Network net(meanSquaredError);
+  // ReluFunction reluFunction;
+  TanhFunction tanhFunction;
   LogisticFunction logisticFunction;
 
   // take the first row of the training set for testing purpose
   arma::mat firstRow = trainingSet.row(0);
 
-  Layer firstLayer(trainingSet.n_cols - 1, 3, reluFunction);
+  Layer firstLayer(trainingSet.n_cols - 1, 3, tanhFunction);
   Layer lastLayer(3, 1, logisticFunction);
   net.Add(firstLayer);
   net.Add(lastLayer);
 
-  net.Init(-1e-1, 1e-1);
-  net.Train(trainingSet, 390, 32, 0.1);
-
+  net.Init(-1e-3, 1e-3);
+  net.Train(trainingSet, 300, 1, 0.9);
 
   //net.TestWithThreshold(std::move(trainingData), std::move(trainingLabels), 0.5);
-  // net.TestWithThreshold(std::move(validationData), std::move(validationLabels), 0.5);
+  //net.TestWithThreshold(std::move(validationData), std::move(validationLabels), 0.5);
   net.TestWithThreshold(std::move(testData), std::move(testLabels), 0.5);
 
   return 0;

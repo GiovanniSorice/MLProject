@@ -18,6 +18,8 @@ void ReluFunction::Derive(const arma::mat &&input, arma::mat &&output) {
   for (size_t i = 0; i < input.n_elem; i++) {
     output(i) = Derive(input(i));
   }
+
+  output.print("Relu Derivative");
 }
 
 /**
