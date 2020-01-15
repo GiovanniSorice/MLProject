@@ -53,10 +53,10 @@ void Layer::OutputLayerGradient(const arma::mat &&partialDerivativeOutput) {
   //outputParameter.print("outputParameter");
   activationFunction.Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
   firstDerivativeActivation = arma::mean(firstDerivativeActivation);
-  firstDerivativeActivation.print("First derivative activation");
-  partialDerivativeOutput.print("partialDerivativeOutput");
+  //firstDerivativeActivation.print("First derivative activation");
+  //partialDerivativeOutput.print("partialDerivativeOutput");
   gradient = partialDerivativeOutput % firstDerivativeActivation;
-  gradient.print("Output Layer gradient");
+  //gradient.print("Output Layer gradient");
   // (partialDerivativeOutput % firstDerivativeActivation).print("partialDerivativeOutput % firstDerivativeActivation");
 }
 void Layer::Initialize() {
@@ -73,9 +73,9 @@ int Layer::GetOutSize() const {
 
 //! Ricorda che se vuoi avere run ripetibili, devi usare arma_rng::set_seed(value) al posto di arma::arma_rng::set_seed_random()
 void Layer::Init(const double upperBound, const double lowerBound) {
-  arma::arma_rng::set_seed(9);
+  // arma::arma_rng::set_seed(9);
   weight = lowerBound + arma::randu<arma::mat>(inSize, outSize) * (upperBound - lowerBound);
-  //bias = lowerBound + arma::randu<arma::mat>(1, outSize) * (upperBound - lowerBound);
+  // bias = lowerBound + arma::randu<arma::mat>(1, outSize) * (upperBound - lowerBound);
   bias = arma::zeros<arma::mat>(1, outSize);
 
 }
@@ -96,17 +96,17 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
   firstDerivativeActivation = arma::mean(firstDerivativeActivation);
 
   gradient = firstDerivativeActivation % summationGradientWeight.t();
-  gradient.print("Hidden layer gradient");
+  // gradient.print("Hidden layer gradient");
 }
 
 // TODO: Da testare post backprop
 void Layer::AdjustWeight(const double learningRate, const double momentum) {
   // capire se utilizzare arma::sum o arma::mean? Risposta: sum-> guardare slide 22 ML-19-NN-part2-v0.11.pdf prof
-  weight = weight - learningRate * arma::sum(inputParameter).t() * gradient + momentum * delta;
+  weight = weight - learningRate * arma::mean(inputParameter).t() * gradient + momentum * delta;
   //inputParameter.print("inputParameter");
   bias = bias - learningRate * gradient;
   delta = arma::sum(inputParameter).t() * gradient;
-  weight.print("weight");
+  //weight.print("weight");
 }
 
 /**

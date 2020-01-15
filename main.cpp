@@ -10,6 +10,8 @@
 #include "src/lossFunction/binaryCrossentropy.h"
 
 int main() {
+  arma::cout.precision(10);
+  arma::cout.setf(arma::ios::fixed);
 
   Preprocessing a("../../data/monk/monks-formatted.csv");
   arma::mat trainingSet;
@@ -67,9 +69,9 @@ int main() {
                                  testSet.n_cols - labelCol,
                                  false,
                                  false);
-  std::cout << testData.n_rows << " " << testData.n_cols << " " << validationData.n_rows << " "
+  /*std::cout << testData.n_rows << " " << testData.n_cols << " " << validationData.n_rows << " "
             << validationData.n_cols << std::endl;
-
+  */
   MeanSquaredError meanSquaredError;
   BinaryCrossentropy binaryCrossentropy;
 
@@ -86,8 +88,8 @@ int main() {
   net.Add(firstLayer);
   net.Add(lastLayer);
 
-  net.Init(1, -1);
-  net.Train(trainingSet, 390, 1, 0.01);
+  net.Init(1e-1, -1e-1);
+  net.Train(trainingSet, 800, 1, 0.05);
 
   //net.TestWithThreshold(std::move(trainingData), std::move(trainingLabels), 0.5);
   //net.TestWithThreshold(std::move(validationData), std::move(validationLabels), 0.5);

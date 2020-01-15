@@ -13,7 +13,7 @@ class LoadDataset {
   void Load(std::string);
   void Write(std::string);
   void explodeMonkDataset();
-  const arma::mat &GetDataset() const;
+  [[nodiscard]] const arma::mat &GetDataset() const;
 };
 
 #endif //MLPROJECT_SRC_LOADDATASET_H_
