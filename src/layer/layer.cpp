@@ -26,7 +26,11 @@ Layer::Layer(const int inSize, const int outSize, ActivationFunction &activation
     : inSize(inSize), outSize(outSize), activationFunction(activationFunction), delta(arma::zeros(inSize, outSize)) {
 }
 
-// TODO: Da testare
+/** Given the activated vector of the previous layer compute the forward pass
+ *
+ *  @param input Previous activated vector
+ *  @param output Forwarded vector computed through weight and bias of the current layer
+ * */
 void Layer::Forward(const arma::mat &&input, arma::mat &&output) {
   //input.print("Input");
   //weight.print("Weight");
@@ -39,16 +43,21 @@ void Layer::Forward(const arma::mat &&input, arma::mat &&output) {
 void Layer::Backward(const arma::mat &&input, arma::mat &&gy, arma::mat &&g) {
 
 }
-// TODO: Da testare
-void Layer::OutputLayerGradient(const arma::mat &&error) {
+
+/** Compute the gradient of the output layer
+ *
+ *  @param partialDerivativeOutput Partial derivative of the output neuron
+ * */
+void Layer::OutputLayerGradient(const arma::mat &&partialDerivativeOutput) {
   arma::mat firstDerivativeActivation;
   //outputParameter.print("outputParameter");
   activationFunction.Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
   firstDerivativeActivation = arma::mean(firstDerivativeActivation);
-  // error.print("error");
-  gradient = error % firstDerivativeActivation;
+  firstDerivativeActivation.print("First derivative activation");
+  partialDerivativeOutput.print("partialDerivativeOutput");
+  gradient = partialDerivativeOutput % firstDerivativeActivation;
   gradient.print("Output Layer gradient");
-  // (error % firstDerivativeActivation).print("error % firstDerivativeActivation");
+  // (partialDerivativeOutput % firstDerivativeActivation).print("partialDerivativeOutput % firstDerivativeActivation");
 }
 void Layer::Initialize() {
   weight = arma::mat(inSize, outSize);
@@ -62,12 +71,13 @@ int Layer::GetOutSize() const {
 
 }
 
-// TODO: Da testare
 //! Ricorda che se vuoi avere run ripetibili, devi usare arma_rng::set_seed(value) al posto di arma::arma_rng::set_seed_random()
 void Layer::Init(const double upperBound, const double lowerBound) {
-  arma::arma_rng::set_seed_random();
+  arma::arma_rng::set_seed(9);
   weight = lowerBound + arma::randu<arma::mat>(inSize, outSize) * (upperBound - lowerBound);
-  bias = lowerBound + arma::randu<arma::mat>(1, outSize) * (upperBound - lowerBound);
+  //bias = lowerBound + arma::randu<arma::mat>(1, outSize) * (upperBound - lowerBound);
+  bias = arma::zeros<arma::mat>(1, outSize);
+
 }
 void Layer::Activate(const arma::mat &input, arma::mat &&output) {
   activationFunction.Compute(input, std::move(output));
@@ -96,6 +106,7 @@ void Layer::AdjustWeight(const double learningRate, const double momentum) {
   //inputParameter.print("inputParameter");
   bias = bias - learningRate * gradient;
   delta = arma::sum(inputParameter).t() * gradient;
+  weight.print("weight");
 }
 
 /**

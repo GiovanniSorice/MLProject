@@ -76,7 +76,7 @@ void Network::train(const arma::mat &&trainingData,
   int end = batchSize - 1;
   arma::mat outputWeightBatch;
   arma::mat outputActivateBatch;
-  arma::mat errorBatch;
+  arma::mat partialDerivativeOutput;
 
   for (int i = 1; i <= std::ceil(trainingData.n_rows / batchSize); i++) {
 
@@ -87,9 +87,9 @@ void Network::train(const arma::mat &&trainingData,
     error(std::move(trainLabels.submat(start, 0,
                                        end, trainLabels.n_cols - 1)),
           std::move(outputActivateBatch),
-          std::move(errorBatch));
+          std::move(partialDerivativeOutput));
 
-    backward(std::move(outputActivateBatch), std::move(outputWeightBatch), std::move(errorBatch));
+    backward(std::move(outputActivateBatch), std::move(outputWeightBatch), std::move(partialDerivativeOutput));
 
     start = end + 1;
     end = i < std::ceil(trainingData.n_rows / batchSize) ? batchSize * (i + 1) - 1 : trainingData.n_rows - 1;
@@ -117,24 +117,25 @@ void Network::forward(arma::mat &&batch, arma::mat &&outputActivate, arma::mat &
 }
 
 /**
- *  Make the loss function injected object compute the error made by the network for the data passed in
+ *  Make the loss function injected object compute the error made by the network for the data passed in and
+ *  the partial derivative vector of the output unit
  *
  *  @param outputActivateBatch  Output value produced by the network
  *  @param trainLabelsBatch  Correct value of the data passed in the network
- *  @param errorBatch Error of the current predicted value produced by the network
+ *  @param partialDerivativeOutput Error of the current predicted value produced by the network
  * */
 void Network::error(const arma::mat &&trainLabelsBatch,
-                               arma::mat &&outputActivateBatch,
-                               arma::mat &&errorBatch) {
+                    arma::mat &&outputActivateBatch,
+                    arma::mat &&partialDerivativeOutput) {
   // outputActivateBatch.print("output activate batch");
   lossFunction.Error(std::move(trainLabelsBatch), std::move(outputActivateBatch));
   lossFunction.ComputePartialDerivative(std::move(trainLabelsBatch),
                                         std::move(outputActivateBatch),
-                                        std::move(errorBatch));
-  errorBatch.print("errorBatch");
+                                        std::move(partialDerivativeOutput));
+  partialDerivativeOutput.print("partialDerivativeOutput");
 }
 
-/**
+/** Iterate over the network from last layer to first and compute
  *
  * */
 void Network::backward(const arma::mat &&outputActivateBatch,

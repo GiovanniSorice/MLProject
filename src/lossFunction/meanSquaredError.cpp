@@ -15,7 +15,7 @@ void MeanSquaredError::Error(const arma::mat &&trainLabelsBatch,
   trainLabelsBatch.print("TrainLabelsBatch");
   outputActivateBatch.print("OutputActivateBatch");
 
-  arma::mat currentError = arma::mean(arma::pow(outputActivateBatch - trainLabelsBatch, 2));
+  arma::mat currentError = arma::mean(arma::pow(trainLabelsBatch - outputActivateBatch, 2));
   currentError.print("Net current error");
 
 }
@@ -24,11 +24,13 @@ void MeanSquaredError::Error(const arma::mat &&trainLabelsBatch,
  *
  * @param outputActivateBatch  Output value produced by the network
  * @param trainLabelsBatch  Correct value of the data passed in the network
- * @param errorBatch Partial derivative of output layer
+ * @param partialDerivateOutput Partial derivative of output layer
  * */
 void MeanSquaredError::ComputePartialDerivative(const arma::mat &&trainLabelsBatch,
                                                 arma::mat &&outputActivateBatch,
-                                                arma::mat &&errorBatch) {
-  errorBatch = arma::mean(outputActivateBatch - trainLabelsBatch);
-  errorBatch.print("errorBatch");
+                                                arma::mat &&partialDerivateOutput) {
+  trainLabelsBatch.print("Desired output");
+  outputActivateBatch.print("Net  output");
+  partialDerivateOutput = arma::mean(trainLabelsBatch - outputActivateBatch);
+  partialDerivateOutput.print("partial derivative output");
 }

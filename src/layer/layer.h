@@ -39,12 +39,14 @@ class Layer {
    * Initialize the layer parameter.
    */
   void Initialize();
+
   /**
    *
    * @param input
    * @param output
    */
   void Activate(const arma::mat &input, arma::mat &&output);
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -52,7 +54,6 @@ class Layer {
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-
   void Forward(const arma::mat &&input, arma::mat &&output);
   /**
   * Ordinary feed backward pass of a neural network, calculating the function
@@ -70,10 +71,10 @@ class Layer {
    *
    * @param input The input parameter used for calculating the gradient.
    *
-   * @param error The calculated error.
+   * @param partialDerivativeOutput The calculated error.
    * @param gradient The calculated gradient.
    */
-  void OutputLayerGradient(const arma::mat &&error);
+  void OutputLayerGradient(const arma::mat &&partialDerivativeOutput);
   void Gradient(const arma::mat &&summationGradientWeight);
   void GetSummationWeight(arma::mat &&gradientWeight);
   void SaveOutputParameter(const arma::mat &input);
@@ -89,15 +90,6 @@ class Layer {
   [[nodiscard]] int GetInSize() const;
   [[nodiscard]] int GetOutSize() const;
   void Init(const double upperBound, const double lowerBound);
-// Costruttore:
-//  - con funzione di attivazione;
-//  - Unità in input e output;
-// Metodi:
-//  - Forward;
-//  - Backward;
-//  - Gradient;
-//  - BackProp??
-//  - Altre funzioni di apprendimento?
 };
 
 #endif //MLPROJECT_SRC_LAYER_H_
