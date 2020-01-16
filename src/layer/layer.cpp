@@ -21,9 +21,16 @@ const arma::mat &Layer::GetInputParameter() const {
 const arma::mat &Layer::GetOutputParameter() const {
   return outputParameter;
 }
+const arma::mat &Layer::GetDeltaBias() const {
+  return deltaBias;
+}
 
 Layer::Layer(const int inSize, const int outSize, ActivationFunction &activationFunction)
-    : inSize(inSize), outSize(outSize), activationFunction(activationFunction), delta(arma::zeros(inSize, outSize)) {
+    : inSize(inSize),
+      outSize(outSize),
+      activationFunction(activationFunction),
+      delta(arma::zeros(inSize, outSize)),
+      deltaBias(arma::zeros(1, outSize)) {
 }
 
 /** Given the activated vector of the previous layer compute the forward pass
@@ -74,9 +81,10 @@ int Layer::GetOutSize() const {
 //! Ricorda che se vuoi avere run ripetibili, devi usare arma_rng::set_seed(value) al posto di arma::arma_rng::set_seed_random()
 void Layer::Init(const double upperBound, const double lowerBound) {
   // arma::arma_rng::set_seed(9);
+  arma::arma_rng::set_seed_random();
   weight = lowerBound + arma::randu<arma::mat>(inSize, outSize) * (upperBound - lowerBound);
-  // bias = lowerBound + arma::randu<arma::mat>(1, outSize) * (upperBound - lowerBound);
-  bias = arma::zeros<arma::mat>(1, outSize);
+  bias = lowerBound + arma::randu<arma::mat>(1, outSize) * (upperBound - lowerBound);
+  //bias = arma::zeros<arma::mat>(1, outSize);
 
 }
 void Layer::Activate(const arma::mat &input, arma::mat &&output) {
@@ -104,8 +112,9 @@ void Layer::AdjustWeight(const double learningRate, const double momentum) {
   // capire se utilizzare arma::sum o arma::mean? Risposta: sum-> guardare slide 22 ML-19-NN-part2-v0.11.pdf prof
   weight = weight - learningRate * arma::mean(inputParameter).t() * gradient + momentum * delta;
   //inputParameter.print("inputParameter");
-  bias = bias - learningRate * gradient;
+  bias = bias - learningRate * gradient + momentum * deltaBias;
   delta = arma::sum(inputParameter).t() * gradient;
+  deltaBias = gradient;
   //weight.print("weight");
 }
 

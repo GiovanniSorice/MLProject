@@ -18,6 +18,11 @@ class Layer {
   arma::mat bias;
   //! locally-instored delta object
   arma::mat delta;
+  //! locally-instored delta bias object
+  arma::mat deltaBias;
+ public:
+  const arma::mat &GetDeltaBias() const;
+ private:
   //! gradiente del layer
   arma::mat gradient;
   //! parametri di input del layer

@@ -88,8 +88,8 @@ int main() {
   net.Add(firstLayer);
   net.Add(lastLayer);
 
-  net.Init(1e-1, -1e-1);
-  net.Train(trainingSet, 800, 1, 0.05);
+  net.Init(1e-2, -1e-2);
+  net.Train(trainingSet, 1200, trainingSet.n_rows - 1, 0.1, 0.1);
 
   //net.TestWithThreshold(std::move(trainingData), std::move(trainingLabels), 0.5);
   //net.TestWithThreshold(std::move(validationData), std::move(validationLabels), 0.5);

@@ -130,6 +130,7 @@ void Network::error(const arma::mat &&trainLabelsBatch,
                     arma::mat &&partialDerivativeOutput) {
   // outputActivateBatch.print("output activate batch");
   lossFunction.Error(std::move(trainLabelsBatch), std::move(outputActivateBatch));
+
   lossFunction.ComputePartialDerivative(std::move(trainLabelsBatch),
                                         std::move(outputActivateBatch),
                                         std::move(partialDerivativeOutput));
@@ -201,9 +202,14 @@ void Network::TestWithThreshold(const arma::mat &&testData, const arma::mat &&te
   outputActivateBatch.raw_print(arma::cout, "outputActivateBatch");
 
   arma::mat thresholdMatrix = arma::ones<arma::mat>(outputActivateBatch.n_rows, outputActivateBatch.n_cols) * threshold;
-  thresholdMatrix.raw_print("threshold matrix");
   arma::mat resultWithThreshold = arma::conv_to<arma::mat>::from(outputActivateBatch > thresholdMatrix);
   resultWithThreshold.raw_print(arma::cout, "resultWithThreshold");
   (resultWithThreshold - testLabels).print("resultWithThreshold-testLabels");
 
+  find((resultWithThreshold - testLabels) != 0).print("Not 0");
+  arma::mat conta = arma::conv_to<arma::mat>::from(find((resultWithThreshold - testLabels) == 0));
+  double elementiTotali = resultWithThreshold.n_elem;
+  double elementiGiusti = conta.n_elem;
+  std::cout << "all " << elementiTotali << " conta " << elementiGiusti << " % "
+            << (elementiGiusti / elementiTotali) * 100 << std::endl;
 }
