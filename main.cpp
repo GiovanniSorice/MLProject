@@ -4,9 +4,7 @@
 #include "src/network/network.h"
 #include "src/activationFunction/tanhFunction.h"
 #include "src/activationFunction/logisticFunction.h"
-#include "src/load/loadDataset.h"
 #include "src/lossFunction/meanSquaredError.h"
-#include "src/activationFunction/reluFunction.h"
 #include "src/lossFunction/binaryCrossentropy.h"
 
 int main() {
@@ -88,10 +86,10 @@ int main() {
   net.Add(firstLayer);
   net.Add(lastLayer);
 
-  net.Init(1e-2, -1e-2);
-  net.Train(trainingSet, 1200, trainingSet.n_rows - 1, 0.1, 0.1);
+  net.Init(1e-4, -1e-4);
+  net.Train(trainingSet, 800, 2, 0.9);
 
-  //net.TestWithThreshold(std::move(trainingData), std::move(trainingLabels), 0.5);
+  net.TestWithThreshold(std::move(trainingData), std::move(trainingLabels), 0.5);
   //net.TestWithThreshold(std::move(validationData), std::move(validationLabels), 0.5);
   net.TestWithThreshold(std::move(testData), std::move(testLabels), 0.5);
 

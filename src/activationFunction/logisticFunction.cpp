@@ -19,9 +19,11 @@ void LogisticFunction::Compute(const arma::mat &input, arma::mat &&output) {
 }
 void LogisticFunction::Derive(const arma::mat &&input, arma::mat &&output) {
   //input.print("input");
-  output = input % (1.0 - input);
-  // output.print("derived output");
+  arma::mat activatedInput;
+  Compute(std::move(input), std::move(activatedInput));
+  output = activatedInput % (1.0 - activatedInput);
+  //output.print("derived output");
 }
 double LogisticFunction::Derive(const double x) {
-  return x * (1.0 - x);
+  return Compute(x) * (1.0 - Compute(x));
 }

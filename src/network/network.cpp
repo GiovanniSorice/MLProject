@@ -39,7 +39,7 @@ void Network::Train(arma::mat trainingSet,
   int labelCol = 1;
   //Weighed learning rate
   learningRate = learningRate / ceil(trainingSet.n_rows / batchSize);
-  trainingSet = arma::shuffle(trainingSet);
+  //trainingSet = arma::shuffle(trainingSet); TODO: da scommentare
   for (int currentEpoch = 1; currentEpoch <= epoch; currentEpoch++) {
 
     // Split the data from the training set.
@@ -79,15 +79,12 @@ void Network::train(const arma::mat &&trainingData,
   arma::mat partialDerivativeOutput;
 
   for (int i = 1; i <= std::ceil(trainingData.n_rows / batchSize); i++) {
+    arma::mat inputBatch = (trainingData.submat(start, 0, end, trainingData.n_cols - 1)).t();
+    forward(std::move(inputBatch), std::move(outputActivateBatch), std::move(outputWeightBatch));
 
-      forward(std::move(trainingData.submat(start, 0,
-                                            end, trainingData.n_cols - 1)),
-              std::move(outputActivateBatch),
-              std::move(outputWeightBatch));
-    error(std::move(trainLabels.submat(start, 0,
-                                       end, trainLabels.n_cols - 1)),
-          std::move(outputActivateBatch),
-          std::move(partialDerivativeOutput));
+    arma::mat labelBatch = (trainLabels.submat(start, 0, end, trainLabels.n_cols - 1)).t();
+
+    error(std::move(labelBatch), std::move(outputActivateBatch), std::move(partialDerivativeOutput));
 
     backward(std::move(outputActivateBatch), std::move(outputWeightBatch), std::move(partialDerivativeOutput));
 
@@ -103,18 +100,14 @@ void Network::train(const arma::mat &&trainingData,
  *  TODO: outputWeight può essere tolto perchè è già salvato nel layer tramite currentLayer.SaveOutputParameter(outputWeight)
  * */
 void Network::forward(arma::mat &&batch, arma::mat &&outputActivate, arma::mat &&outputWeight) {
-  arma::mat activateWeight = arma::mat(batch.memptr(), batch.n_rows, batch.n_cols, false, false);
-  //activateWeight.raw_print("Activate weight");
+  arma::mat activateWeight = batch;
   for (Layer &currentLayer : net) {
-    // activateWeight.print("Input feed vector");
     currentLayer.SaveInputParameter(activateWeight);    // save the input activated vector of the previous layer
     currentLayer.Forward(std::move(activateWeight), std::move(outputWeight));
     currentLayer.SaveOutputParameter(outputWeight);   // save the vectors of the current layer for backpropagation
     currentLayer.Activate(outputWeight, std::move(activateWeight));
-    // activateWeight.print("Output activated vector");
   }
   outputActivate = activateWeight;
-  // outputActivate.print("Network output");  // print the activation layer output
 }
 
 /**
@@ -128,13 +121,11 @@ void Network::forward(arma::mat &&batch, arma::mat &&outputActivate, arma::mat &
 void Network::error(const arma::mat &&trainLabelsBatch,
                     arma::mat &&outputActivateBatch,
                     arma::mat &&partialDerivativeOutput) {
-  // outputActivateBatch.print("output activate batch");
   lossFunction.Error(std::move(trainLabelsBatch), std::move(outputActivateBatch));
 
   lossFunction.ComputePartialDerivative(std::move(trainLabelsBatch),
                                         std::move(outputActivateBatch),
                                         std::move(partialDerivativeOutput));
-  // partialDerivativeOutput.print("partialDerivativeOutput");
 }
 
 /** Iterate over the network from last layer to first and compute
@@ -147,13 +138,13 @@ void Network::backward(const arma::mat &&outputActivateBatch,
   currentLayer->OutputLayerGradient(std::move(errorBatch));
   arma::mat currentGradientWeight;
   currentLayer->GetSummationWeight(std::move(currentGradientWeight));
-  //currentGradientWeight.raw_print(arma::cout, "OutputLayer gradient weight");
+  currentGradientWeight.raw_print(arma::cout, "OutputLayer gradient weight");
   currentLayer++;
   // Iterate from the precedent Layer of the tail to the head
   for (; currentLayer != net.rend(); currentLayer++) {
     currentLayer->Gradient(std::move(currentGradientWeight));
     currentLayer->GetSummationWeight(std::move(currentGradientWeight));
-    //currentGradientWeight.raw_print(arma::cout, "hidden gradient weight");
+    currentGradientWeight.raw_print(arma::cout, "hidden gradient weight");
   }
 }
 
@@ -183,7 +174,7 @@ void Network::Test(const arma::mat &&testData, const arma::mat &&testLabels) {
 }
 
 void Network::inference(arma::mat &&inputData, arma::mat &&outputData) {
-  arma::mat activateWeight = arma::mat(inputData.memptr(), inputData.n_rows, inputData.n_cols, false, false);
+  arma::mat activateWeight = inputData.t();
   for (Layer &currentLayer : net) {
     currentLayer.Forward(std::move(activateWeight), std::move(outputData));
 
@@ -199,7 +190,9 @@ void Network::TestWithThreshold(const arma::mat &&testData, const arma::mat &&te
   inference(std::move(testDataCopied),
             std::move(outputActivateBatch));
 
-  outputActivateBatch.raw_print(arma::cout, "outputActivateBatch");
+  outputActivateBatch = outputActivateBatch.t();
+  outputActivateBatch.print("outputActivateBatch");
+  testLabels.print("testLabels");
 
   arma::mat thresholdMatrix = arma::ones<arma::mat>(outputActivateBatch.n_rows, outputActivateBatch.n_cols) * threshold;
   arma::mat resultWithThreshold = arma::conv_to<arma::mat>::from(outputActivateBatch > thresholdMatrix);
@@ -212,4 +205,5 @@ void Network::TestWithThreshold(const arma::mat &&testData, const arma::mat &&te
   double elementiGiusti = conta.n_elem;
   std::cout << "all " << elementiTotali << " conta " << elementiGiusti << " % "
             << (elementiGiusti / elementiTotali) * 100 << std::endl;
+
 }

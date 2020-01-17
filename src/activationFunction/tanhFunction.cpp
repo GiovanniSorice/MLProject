@@ -12,9 +12,9 @@ void TanhFunction::Compute(const arma::mat &input, arma::mat &&output) {
 }
 
 void TanhFunction::Derive(const arma::mat &&input, arma::mat &&output) {
-  output = 1 - arma::pow(input, 2);
+  output = 1 - arma::pow(arma::tanh(input), 2);
 }
 double TanhFunction::Derive(const double x) {
-  return 1 - std::pow(x, 2);
+  return 1 - std::pow(std::tanh(x), 2);
 
 }
