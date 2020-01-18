@@ -35,6 +35,7 @@ void Network::Train(arma::mat trainingSet,
                     int epoch,
                     int batchSize,
                     double learningRate,
+                    double weightDecay,
                     double momentum) {
   int labelCol = 1;
   //Weighed learning rate
@@ -56,7 +57,7 @@ void Network::Train(arma::mat trainingSet,
                                        false,
                                        false);
 
-    train(std::move(trainingData), std::move(trainLabels), batchSize, learningRate, momentum);
+    train(std::move(trainingData), std::move(trainLabels), batchSize, learningRate, weightDecay, momentum);
 
     // shuffle the training set for the new epoch
     trainingSet = arma::shuffle(trainingSet);
@@ -69,6 +70,7 @@ void Network::train(const arma::mat &&trainingData,
                     const arma::mat &&trainLabels,
                     int batchSize,
                     double learningRate,
+                    double weightDecay,
                     double momentum) {
 
   //TODO: Da verificare se il learningRate non debba essere adattato per il numero di batch
@@ -84,7 +86,7 @@ void Network::train(const arma::mat &&trainingData,
 
     arma::mat labelBatch = (trainLabels.submat(start, 0, end, trainLabels.n_cols - 1)).t();
 
-    error(std::move(labelBatch), std::move(outputActivateBatch), std::move(partialDerivativeOutput));
+    error(std::move(labelBatch), std::move(outputActivateBatch), std::move(partialDerivativeOutput), weightDecay);
 
     backward(std::move(outputActivateBatch), std::move(outputWeightBatch), std::move(partialDerivativeOutput));
 
@@ -120,8 +122,18 @@ void Network::forward(arma::mat &&batch, arma::mat &&outputActivate, arma::mat &
  * */
 void Network::error(const arma::mat &&trainLabelsBatch,
                     arma::mat &&outputActivateBatch,
-                    arma::mat &&partialDerivativeOutput) {
-  lossFunction.Error(std::move(trainLabelsBatch), std::move(outputActivateBatch));
+                    arma::mat &&partialDerivativeOutput, double weightDecay) {
+  arma::mat currentError;
+  lossFunction.Error(std::move(trainLabelsBatch), std::move(outputActivateBatch), std::move(currentError));
+
+  if (weightDecay > 0) {
+    double weightsSum = 0;
+
+    for (Layer &currentLayer : net) {
+      weightsSum += arma::accu(arma::pow(currentLayer.GetWeight(), 2));
+    }
+    currentError += (weightDecay * weightsSum);
+  }
 
   lossFunction.ComputePartialDerivative(std::move(trainLabelsBatch),
                                         std::move(outputActivateBatch),
@@ -138,19 +150,17 @@ void Network::backward(const arma::mat &&outputActivateBatch,
   currentLayer->OutputLayerGradient(std::move(errorBatch));
   arma::mat currentGradientWeight;
   currentLayer->GetSummationWeight(std::move(currentGradientWeight));
-  currentGradientWeight.raw_print(arma::cout, "OutputLayer gradient weight");
   currentLayer++;
   // Iterate from the precedent Layer of the tail to the head
   for (; currentLayer != net.rend(); currentLayer++) {
     currentLayer->Gradient(std::move(currentGradientWeight));
     currentLayer->GetSummationWeight(std::move(currentGradientWeight));
-    currentGradientWeight.raw_print(arma::cout, "hidden gradient weight");
   }
 }
 
-void Network::updateWeight(double learningRate, double momentum) {
+void Network::updateWeight(double learningRate, double weightDecay, double momentum) {
   for (Layer &currentLayer : net) {
-    currentLayer.AdjustWeight(learningRate, momentum);
+    currentLayer.AdjustWeight(learningRate, weightDecay, momentum);
   }
 }
 

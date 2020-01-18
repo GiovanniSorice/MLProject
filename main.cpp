@@ -6,6 +6,7 @@
 #include "src/activationFunction/logisticFunction.h"
 #include "src/lossFunction/meanSquaredError.h"
 #include "src/lossFunction/binaryCrossentropy.h"
+#include "src/activationFunction/reluFunction.h"
 
 int main() {
   arma::cout.precision(10);
@@ -74,20 +75,21 @@ int main() {
   BinaryCrossentropy binaryCrossentropy;
 
   Network net(meanSquaredError);
-  // ReluFunction reluFunction;
+  ReluFunction reluFunction;
   TanhFunction tanhFunction;
   LogisticFunction logisticFunction;
 
   // take the first row of the training set for testing purpose
   arma::mat firstRow = trainingSet.row(0);
 
-  Layer firstLayer(trainingSet.n_cols - 1, 3, tanhFunction);
+  Layer firstLayer(trainingSet.n_cols - 1, 3, reluFunction);
   Layer lastLayer(3, 1, logisticFunction);
   net.Add(firstLayer);
   net.Add(lastLayer);
 
   net.Init(1e-4, -1e-4);
-  net.Train(trainingSet, 800, 2, 0.9);
+  net.Train(trainingSet, 800, 1, 0.9, 0.0
+  1);
 
   net.TestWithThreshold(std::move(trainingData), std::move(trainingLabels), 0.5);
   //net.TestWithThreshold(std::move(validationData), std::move(validationLabels), 0.5);
