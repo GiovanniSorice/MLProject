@@ -11,12 +11,13 @@
  *  @param trainLabelsBatch  Correct value of the data passed in the network
  * */
 void MeanSquaredError::Error(const arma::mat &&trainLabelsBatch,
-                             arma::mat &&outputActivateBatch) {
+                             arma::mat &&outputActivateBatch,
+                             arma::mat &&currentError) {
   //trainLabelsBatch.raw_print(arma::cout, "TrainLabelsBatch");
   //outputActivateBatch.raw_print(arma::cout, "OutputActivateBatch");
-  arma::mat currentError = arma::mean(arma::pow(trainLabelsBatch - outputActivateBatch, 2), 1) / 2;
+  currentError = arma::mean(arma::pow(trainLabelsBatch - outputActivateBatch, 2), 1) / 2;
   //TODO: controllare in caso di più di un output
-  //currentError.raw_print(arma::cout, "Net current error");
+  currentError.raw_print(arma::cout, "Net current error");
 }
 
 /** Compute and store in errorBatch the partial derivative of the output layer

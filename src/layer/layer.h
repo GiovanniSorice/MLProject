@@ -84,7 +84,7 @@ class Layer {
   void GetSummationWeight(arma::mat &&gradientWeight);
   void SaveOutputParameter(const arma::mat &input);
   void SaveInputParameter(const arma::mat &input);
-  void AdjustWeight(const double learningRate, const double momentum);
+  void AdjustWeight(const double learningRate, const double weightDecay, const double momentum);
 
   [[nodiscard]] const arma::mat &GetWeight() const;
   [[nodiscard]] const arma::mat &GetBias() const;

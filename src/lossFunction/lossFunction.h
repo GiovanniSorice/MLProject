@@ -10,7 +10,8 @@
 class LossFunction {
  public:
   virtual void Error(const arma::mat &&trainLabelsBatch,
-                     arma::mat &&outputActivateBatch) = 0;
+                     arma::mat &&outputActivateBatch,
+                     arma::mat &&currentError) = 0;
   virtual void ComputePartialDerivative(const arma::mat &&trainLabelsBatch,
                                         arma::mat &&outputActivateBatch,
                                         arma::mat &&errorBatch) = 0;
