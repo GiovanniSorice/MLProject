@@ -23,14 +23,14 @@ void MeanSquaredError::Error(const arma::mat &&trainLabelsBatch,
  *
  * @param outputActivateBatch  Output value produced by the network
  * @param trainLabelsBatch  Correct value of the data passed in the network
- * @param partialDerivateOutput Partial derivative of output layer
+ * @param partialDerivativeOutput Partial derivative of output layer
  * */
 void MeanSquaredError::ComputePartialDerivative(const arma::mat &&trainLabelsBatch,
                                                 arma::mat &&outputActivateBatch,
-                                                arma::mat &&partialDerivateOutput) {
+                                                arma::mat &&partialDerivativeOutput) {
   //trainLabelsBatch.print("Desired output");
   //outputActivateBatch.print("Net  output");
-  partialDerivateOutput = arma::sum(trainLabelsBatch - outputActivateBatch, 1);
+  partialDerivativeOutput = arma::sum(trainLabelsBatch - outputActivateBatch, 1);
   //TODO: controllare in caso di più di un output
   //partialDerivateOutput.print("partial derivative output");
 }
