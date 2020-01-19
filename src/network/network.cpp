@@ -38,7 +38,7 @@ void Network::Train(arma::mat trainingSet,
                     double weightDecay,
                     double momentum) {
   int labelCol = 1;
-  //Weighed learning rate
+  //Weighted learning rate
   learningRate = learningRate / batchSize;
   //trainingSet = arma::shuffle(trainingSet); TODO: da scommentare
   for (int currentEpoch = 1; currentEpoch <= epoch; currentEpoch++) {
@@ -74,14 +74,14 @@ void Network::train(const arma::mat &&trainingData,
                     double weightDecay,
                     double momentum) {
 
-  //TODO: Da verificare se il learningRate non debba essere adattato per il numero di batch
   int start = 0;
   int end = batchSize - 1;
   arma::mat outputWeightBatch;
   arma::mat outputActivateBatch;
   arma::mat partialDerivativeOutput;
 
-  for (int i = 1; i <= std::ceil(trainingData.n_rows / batchSize); i++) {
+  int batchNumber = std::ceil(trainingData.n_rows / batchSize);
+  for (int i = 1; i <= batchNumber; i++) {
 
     arma::mat inputBatch = (trainingData.submat(start, 0, end, trainingData.n_cols - 1)).t();
     forward(std::move(inputBatch), std::move(outputActivateBatch), std::move(outputWeightBatch));
@@ -92,7 +92,7 @@ void Network::train(const arma::mat &&trainingData,
     backward(std::move(outputActivateBatch), std::move(outputWeightBatch), std::move(partialDerivativeOutput));
 
     start = end + 1;
-    end = i < std::ceil(trainingData.n_rows / batchSize) ? batchSize * (i + 1) - 1 : trainingData.n_rows - 1;
+    end = i < batchNumber ? batchSize * (i + 1) - 1 : trainingData.n_rows - 1;
 
     updateWeight(learningRate, weightDecay, momentum);
   }

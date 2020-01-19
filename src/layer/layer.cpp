@@ -79,6 +79,7 @@ int Layer::GetOutSize() const {
 }
 
 //! Ricorda che se vuoi avere run ripetibili, devi usare arma_rng::set_seed(value) al posto di arma::arma_rng::set_seed_random()
+/***/
 void Layer::Init(const double upperBound, const double lowerBound) {
   //arma::arma_rng::set_seed(9);
   arma::arma_rng::set_seed_random();
@@ -98,6 +99,7 @@ void Layer::SaveOutputParameter(const arma::mat &input) {
 void Layer::SaveInputParameter(const arma::mat &input) {
   inputParameter = input;
 }
+/***/
 void Layer::Gradient(const arma::mat &&summationGradientWeight) {
 
   arma::mat firstDerivativeActivation;
@@ -113,8 +115,8 @@ void Layer::AdjustWeight(const double learningRate, const double weightDecay, co
   weight = weight + momentum * deltaWeight - learningRate * gradient * arma::sum(inputParameter, 1).t()
       - 2 * weightDecay * weight;
   bias = bias + momentum * deltaBias - learningRate * gradient - 2 * weightDecay * bias;
-  deltaWeight = deltaWeight + learningRate * gradient * arma::sum(inputParameter, 1).t();
-  deltaBias = deltaBias + learningRate * gradient;
+  deltaWeight = momentum * deltaWeight - learningRate * gradient * arma::sum(inputParameter, 1).t();
+  deltaBias = momentum * deltaBias - learningRate * gradient;
 }
 
 /**
