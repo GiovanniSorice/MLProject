@@ -7,17 +7,25 @@
 #include "src/lossFunction/meanSquaredError.h"
 #include "src/lossFunction/binaryCrossentropy.h"
 #include "src/activationFunction/reluFunction.h"
+#include "src/load/loadDataset.h"
 
 int main() {
   arma::cout.precision(10);
   arma::cout.setf(arma::ios::fixed);
+/*
+  LoadDataset loadDS;
+  loadDS.Load("../../data/monk/monk1_testset.csv");
+  loadDS.explodeMonkDataset();
+*/
 
-  Preprocessing a("../../data/monk/monks-formatted.csv");
+  Preprocessing a("../../data/monk/monks3_train_formatted.csv");
   arma::mat trainingSet;
   arma::mat validationSet;
   arma::mat testSet;
 
-  a.GetSplit(60, 20, 20, std::move(trainingSet), std::move(validationSet), std::move(testSet));
+  a.GetSplit(100, 0, 0, std::move(trainingSet), std::move(validationSet), std::move(testSet));
+
+  testSet.load("../../data/monk/monks3_test_formatted.csv");
   /*
    std::cout << trainingSet.n_rows << " " << trainingSet.n_cols << " " << validationSet.n_rows << " "
             << validationSet.n_cols
@@ -68,28 +76,28 @@ int main() {
                                  testSet.n_cols - labelCol,
                                  false,
                                  false);
-  /*std::cout << testData.n_rows << " " << testData.n_cols << " " << validationData.n_rows << " "
+  /*
+   * std::cout << testData.n_rows << " " << testData.n_cols << " " << validationData.n_rows << " "
             << validationData.n_cols << std::endl;
   */
   MeanSquaredError meanSquaredError;
   BinaryCrossentropy binaryCrossentropy;
 
   Network net(meanSquaredError);
-  ReluFunction reluFunction;
+  //ReluFunction reluFunction;
   TanhFunction tanhFunction;
   LogisticFunction logisticFunction;
 
   // take the first row of the training set for testing purpose
   arma::mat firstRow = trainingSet.row(0);
 
-  Layer firstLayer(trainingSet.n_cols - 1, 3, reluFunction);
-  Layer lastLayer(3, 1, logisticFunction);
+  Layer firstLayer(trainingSet.n_cols - 1, 4, tanhFunction);
+  Layer lastLayer(4, 1, logisticFunction);
   net.Add(firstLayer);
   net.Add(lastLayer);
 
   net.Init(1e-4, -1e-4);
-  net.Train(trainingSet, 800, 1, 0.9, 0.0
-  1);
+  net.Train(trainingSet, 400, 1, 0.9, 0.001);
 
   net.TestWithThreshold(std::move(trainingData), std::move(trainingLabels), 0.5);
   //net.TestWithThreshold(std::move(validationData), std::move(validationLabels), 0.5);

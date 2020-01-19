@@ -19,20 +19,25 @@ void Preprocessing::GetSplit(int trainPercent,
                              arma::mat &&testSet) {
   dataset = arma::shuffle(dataset);
   //TODO: va bene qui lo shiuffle?
-  trainingSet = dataset.submat(0, 0, std::floor(dataset.n_rows * trainPercent / 100),
-                               dataset.n_cols - 1);
-
-  validationSet = dataset.submat(trainingSet.n_rows,
-                                 0,
-                                 trainingSet.n_rows
-                                     + std::floor(dataset.n_rows * validationPercent / 100),
+  if (trainPercent) {
+    trainingSet = dataset.submat(0, 0, std::floor(dataset.n_rows * trainPercent / 100),
                                  dataset.n_cols - 1);
+  }
 
-  testSet = dataset.submat(
-      trainingSet.n_rows + validationSet.n_rows,
-      0,
-      dataset.n_rows - 1,
-      dataset.n_cols - 1);
+  if (validationPercent) {
+    validationSet = dataset.submat(trainingSet.n_rows,
+                                   0,
+                                   trainingSet.n_rows
+                                       + std::floor(dataset.n_rows * validationPercent / 100),
+                                   dataset.n_cols - 1);
+  }
+  if (testPercent) {
+    testSet = dataset.submat(
+        trainingSet.n_rows + validationSet.n_rows,
+        0,
+        dataset.n_rows - 1,
+        dataset.n_cols - 1);
+  }
 }
 
 void Preprocessing::GetTrainingSet(int trainPercent,

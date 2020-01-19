@@ -39,7 +39,7 @@ void Network::Train(arma::mat trainingSet,
                     double momentum) {
   int labelCol = 1;
   //Weighed learning rate
-  learningRate = learningRate / ceil(trainingSet.n_rows / batchSize);
+  learningRate = learningRate / batchSize;
   //trainingSet = arma::shuffle(trainingSet); TODO: da scommentare
   for (int currentEpoch = 1; currentEpoch <= epoch; currentEpoch++) {
 
@@ -93,7 +93,7 @@ void Network::train(const arma::mat &&trainingData,
     start = end + 1;
     end = i < std::ceil(trainingData.n_rows / batchSize) ? batchSize * (i + 1) - 1 : trainingData.n_rows - 1;
 
-    updateWeight(learningRate, momentum);
+    updateWeight(learningRate, weightDecay, momentum);
   }
 }
 
