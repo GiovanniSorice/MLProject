@@ -13,7 +13,7 @@ class MeanSquaredError : public LossFunction {
              arma::mat &&currentError) override;
   void ComputePartialDerivative(const arma::mat &&trainLabelsBatch,
                                 arma::mat &&outputActivateBatch,
-                                arma::mat &&partialDerivateOutput) override;
+                                arma::mat &&partialDerivativeOutput) override;
   ~MeanSquaredError() override = default;
 };
 
