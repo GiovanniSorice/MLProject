@@ -40,6 +40,7 @@ void Network::Train(arma::mat trainingSet,
   int labelCol = 1;
   //Weighted learning rate
   learningRate = learningRate / batchSize;
+  weightDecay = (weightDecay * batchSize) / trainingSet.n_rows;
   //trainingSet = arma::shuffle(trainingSet); TODO: da scommentare
   for (int currentEpoch = 1; currentEpoch <= epoch; currentEpoch++) {
 
