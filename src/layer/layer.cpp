@@ -10,7 +10,7 @@ const arma::mat &Layer::GetBias() const {
   return bias;
 }
 const arma::mat &Layer::GetDelta() const {
-  return delta;
+  return deltaWeight;
 }
 const arma::mat &Layer::GetGradient() const {
   return gradient;
@@ -29,7 +29,7 @@ Layer::Layer(const int inSize, const int outSize, ActivationFunction &activation
     : inSize(inSize),
       outSize(outSize),
       activationFunction(activationFunction),
-      delta(arma::zeros(inSize, outSize)),
+      deltaWeight(arma::zeros(inSize, outSize)),
       deltaBias(arma::zeros(1, outSize)) {
 }
 
@@ -108,12 +108,13 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
   //gradient.print("Hidden layer gradient");
 }
 
-// TODO: Da testare post backprop
+/***/
 void Layer::AdjustWeight(const double learningRate, const double weightDecay, const double momentum) {
-  weight = weight + learningRate * gradient * arma::sum(inputParameter, 1).t() - 2 * weightDecay * weight;
-  bias = bias + learningRate * gradient - 2 * weightDecay * bias;
-  //delta = arma::sum(inputParameter).t() * gradient + momentum * delta;
-  //deltaBias = gradient + momentum * deltaBias;
+  weight = weight + momentum * deltaWeight - learningRate * gradient * arma::sum(inputParameter, 1).t()
+      - 2 * weightDecay * weight;
+  bias = bias + momentum * deltaBias - learningRate * gradient - 2 * weightDecay * bias;
+  deltaWeight = deltaWeight + learningRate * gradient * arma::sum(inputParameter, 1).t();
+  deltaBias = deltaBias + learningRate * gradient;
 }
 
 /**

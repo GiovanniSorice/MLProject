@@ -16,8 +16,8 @@ class Layer {
   arma::mat weight;
   //! bias del layer corrente
   arma::mat bias;
-  //! locally-instored delta object
-  arma::mat delta;
+  //! locally-instored delta weight object
+  arma::mat deltaWeight;
   //! locally-instored delta bias object
   arma::mat deltaBias;
  public:
