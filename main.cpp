@@ -8,6 +8,7 @@
 #include "src/lossFunction/binaryCrossentropy.h"
 #include "src/activationFunction/reluFunction.h"
 #include "src/load/loadDataset.h"
+#include "src/activationFunction/linearFunction.h"
 
 int main() {
   arma::cout.precision(10);
@@ -18,21 +19,21 @@ int main() {
   loadDS.explodeMonkDataset();
 */
 
-  Preprocessing a("../../data/monk/monks3_train_formatted.csv");
+  Preprocessing a("../../data/ML-CUP19-TR_formatted.csv");
   arma::mat trainingSet;
   arma::mat validationSet;
   arma::mat testSet;
 
   a.GetSplit(100, 0, 0, std::move(trainingSet), std::move(validationSet), std::move(testSet));
 
-  testSet.load("../../data/monk/monks3_test_formatted.csv");
+  testSet.load("../../data/ML-CUP19-TR_formatted.csv");
   /*
    std::cout << trainingSet.n_rows << " " << trainingSet.n_cols << " " << validationSet.n_rows << " "
             << validationSet.n_cols
             << " " << testSet.n_rows << " " << testSet.n_cols << std::endl;
 
    */
-  int labelCol = 1;
+  int labelCol = 2;
   // Split the data from the training set.
   arma::mat trainingLabels = arma::mat(trainingSet.memptr() + (trainingSet.n_cols - labelCol) * trainingSet.n_rows,
                                        trainingSet.n_rows,
@@ -86,20 +87,21 @@ int main() {
   Network net(meanSquaredError);
   //ReluFunction reluFunction;
   TanhFunction tanhFunction;
+  LinearFunction linearFunction;
   LogisticFunction logisticFunction;
 
   // take the first row of the training set for testing purpose
   arma::mat firstRow = trainingSet.row(0);
 
   Layer firstLayer(trainingSet.n_cols - 1, 4, tanhFunction);
-  Layer lastLayer(4, 1, logisticFunction);
+  Layer lastLayer(4, 2, linearFunction);
   net.Add(firstLayer);
   net.Add(lastLayer);
 
-  net.Init(1e-4, -1e-4);
-  net.Train(trainingSet, 200, 2, 0.05, 0.001, 0.2);
+  net.Init(0.7, -0.7);
+  net.Train(trainingSet, 1000, 2, 0.1, 0.01, 0.2);
 
-  net.TestWithThreshold(std::move(trainingData), std::move(trainingLabels), 0.5);
+  //net.TestWithThreshold(std::move(trainingData), std::move(trainingLabels), 0.5);
   //net.TestWithThreshold(std::move(validationData), std::move(validationLabels), 0.5);
   net.TestWithThreshold(std::move(testData), std::move(testLabels), 0.5);
 
