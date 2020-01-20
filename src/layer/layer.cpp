@@ -29,8 +29,8 @@ Layer::Layer(const int inSize, const int outSize, ActivationFunction &activation
     : inSize(inSize),
       outSize(outSize),
       activationFunction(activationFunction),
-      deltaWeight(arma::zeros(inSize, outSize)),
-      deltaBias(arma::zeros(1, outSize)) {
+      deltaWeight(arma::zeros(outSize, inSize)),
+      deltaBias(arma::zeros(outSize, 1)) {
 }
 
 /** Given the activated vector of the previous layer compute the forward pass
@@ -38,12 +38,12 @@ Layer::Layer(const int inSize, const int outSize, ActivationFunction &activation
  *  @param input Previous activated vector
  *  @param output Forwarded vector computed through weight and bias of the current layer
  * */
-void Layer::Forward(const arma::mat &&input, arma::mat &&output) {
+void Layer::Forward(const arma::mat &&input, arma::mat &&output, const double nesterovMomentum) {
   //input.print("Input");
   //weight.print("Weight");
   //bias.print("bias");
-  output = weight * input;
-  output.each_col() += bias;
+  output = (weight + nesterovMomentum * deltaWeight) * input;
+  output.each_col() += (bias + nesterovMomentum * deltaBias);
   //output.print("output");
 
 }
@@ -65,10 +65,6 @@ void Layer::OutputLayerGradient(const arma::mat &&partialDerivativeOutput) {
   gradient = partialDerivativeOutput % firstDerivativeActivation;
   //gradient.print("Output Layer gradient");
   // (partialDerivativeOutput % firstDerivativeActivation).print("partialDerivativeOutput % firstDerivativeActivation");
-}
-void Layer::Initialize() {
-  weight = arma::mat(inSize, outSize);
-  bias = arma::mat(1, outSize);
 }
 int Layer::GetInSize() const {
   return inSize;
@@ -106,7 +102,7 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
   activationFunction.Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
   firstDerivativeActivation = arma::sum(firstDerivativeActivation, 1);
 
-  gradient = firstDerivativeActivation % summationGradientWeight;
+  gradient = summationGradientWeight % firstDerivativeActivation;
   //gradient.print("Hidden layer gradient");
 }
 
@@ -122,6 +118,6 @@ void Layer::AdjustWeight(const double learningRate, const double weightDecay, co
 /**
  * Return a raw vector contains all the summed weight multiplied by the layer gradient
  */
-void Layer::GetSummationWeight(arma::mat &&gradientWeight) {
-  gradientWeight = weight.t() * gradient;
+void Layer::GetSummationWeight(arma::mat &&gradientWeight, const double nesterovMomentum) {
+  gradientWeight = (weight + nesterovMomentum * deltaWeight).t() * gradient;
 }

@@ -19,21 +19,21 @@ int main() {
   loadDS.explodeMonkDataset();
 */
 
-  Preprocessing a("../../data/ML-CUP19-TR_formatted.csv");
+  Preprocessing a("../../data/monk/monks1_train_formatted.csv");
   arma::mat trainingSet;
   arma::mat validationSet;
   arma::mat testSet;
 
   a.GetSplit(100, 0, 0, std::move(trainingSet), std::move(validationSet), std::move(testSet));
 
-  testSet.load("../../data/ML-CUP19-TR_formatted.csv");
+  testSet.load("../../data/monk/monks1_test_formatted.csv");
   /*
    std::cout << trainingSet.n_rows << " " << trainingSet.n_cols << " " << validationSet.n_rows << " "
             << validationSet.n_cols
             << " " << testSet.n_rows << " " << testSet.n_cols << std::endl;
 
    */
-  int labelCol = 2;
+  int labelCol = 1;
   // Split the data from the training set.
   arma::mat trainingLabels = arma::mat(trainingSet.memptr() + (trainingSet.n_cols - labelCol) * trainingSet.n_rows,
                                        trainingSet.n_rows,
@@ -90,16 +90,13 @@ int main() {
   LinearFunction linearFunction;
   LogisticFunction logisticFunction;
 
-  // take the first row of the training set for testing purpose
-  arma::mat firstRow = trainingSet.row(0);
-
   Layer firstLayer(trainingSet.n_cols - 1, 4, tanhFunction);
-  Layer lastLayer(4, 2, linearFunction);
+  Layer lastLayer(4, 1, logisticFunction);
   net.Add(firstLayer);
   net.Add(lastLayer);
 
-  net.Init(0.7, -0.7);
-  net.Train(trainingSet, 1000, 2, 0.1, 0.01, 0.2);
+  net.Init(1e-4, -1e-4);
+  net.Train(trainingSet, 800, 8, 0.05, 0.001, 0.5);
 
   //net.TestWithThreshold(std::move(trainingData), std::move(trainingLabels), 0.5);
   //net.TestWithThreshold(std::move(validationData), std::move(validationLabels), 0.5);

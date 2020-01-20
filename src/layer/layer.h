@@ -59,7 +59,7 @@ class Layer {
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  void Forward(const arma::mat &&input, arma::mat &&output);
+  void Forward(const arma::mat &&input, arma::mat &&output, const double nesterovMomentum = 0.0);
   /**
   * Ordinary feed backward pass of a neural network, calculating the function
   * f(x) by propagating x backwards trough f. Using the results from the feed
@@ -81,7 +81,7 @@ class Layer {
    */
   void OutputLayerGradient(const arma::mat &&partialDerivativeOutput);
   void Gradient(const arma::mat &&summationGradientWeight);
-  void GetSummationWeight(arma::mat &&gradientWeight);
+  void GetSummationWeight(arma::mat &&gradientWeight, const double nesterovMomentum = 0.0);
   void SaveOutputParameter(const arma::mat &input);
   void SaveInputParameter(const arma::mat &input);
   void AdjustWeight(const double learningRate, const double weightDecay, const double momentum);

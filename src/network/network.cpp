@@ -37,7 +37,7 @@ void Network::Train(arma::mat trainingSet,
                     double learningRate,
                     double weightDecay,
                     double momentum) {
-  int labelCol = 2;
+  int labelCol = 1;
   //Weighted learning rate
   learningRate = learningRate / batchSize;
   weightDecay = (weightDecay * batchSize) / trainingSet.n_rows;
@@ -207,7 +207,7 @@ void Network::TestWithThreshold(const arma::mat &&testData, const arma::mat &&te
   outputActivateBatch.print("outputActivateBatch");
   testLabels.print("testLabels");
   (testLabels - outputActivateBatch).print("testLabels-outputActivateBatch");
-/*
+
   arma::mat thresholdMatrix = arma::ones<arma::mat>(outputActivateBatch.n_rows, outputActivateBatch.n_cols) * threshold;
   arma::mat resultWithThreshold = arma::conv_to<arma::mat>::from(outputActivateBatch > thresholdMatrix);
   resultWithThreshold.raw_print(arma::cout, "resultWithThreshold");
@@ -219,5 +219,5 @@ void Network::TestWithThreshold(const arma::mat &&testData, const arma::mat &&te
   double elementiGiusti = conta.n_elem;
   std::cout << "all " << elementiTotali << " conta " << elementiGiusti << " % "
             << (elementiGiusti / elementiTotali) * 100 << std::endl;
-            */
+
 }
