@@ -201,7 +201,7 @@ void Network::TestWithThreshold(const arma::mat &&testData, const arma::mat &&te
   outputActivateBatch.print("outputActivateBatch");
   testLabels.print("testLabels");
   (testLabels - outputActivateBatch).print("testLabels-outputActivateBatch");
-/*
+
   arma::mat thresholdMatrix = arma::ones<arma::mat>(outputActivateBatch.n_rows, outputActivateBatch.n_cols) * threshold;
   arma::mat resultWithThreshold = arma::conv_to<arma::mat>::from(outputActivateBatch > thresholdMatrix);
   resultWithThreshold.raw_print(arma::cout, "resultWithThreshold");
@@ -213,7 +213,7 @@ void Network::TestWithThreshold(const arma::mat &&testData, const arma::mat &&te
   double elementiGiusti = conta.n_elem;
   std::cout << "all " << elementiTotali << " conta " << elementiGiusti << " % "
             << (elementiGiusti / elementiTotali) * 100 << std::endl;
-            */
+
 }
 void Network::SetLossFunction(const std::string loss_function) {
   if (loss_function == "meanSquaredError") {

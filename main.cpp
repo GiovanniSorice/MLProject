@@ -20,21 +20,21 @@ int main() {
   loadDS.explodeMonkDataset();
 */
 
-  Preprocessing a("../../data/ML-CUP19-TR_formatted.csv");
+  Preprocessing a("../../data/monk/monks1_train_formatted.csv");
   arma::mat trainingSet;
   arma::mat validationSet;
   arma::mat testSet;
 
   a.GetSplit(100, 0, 0, std::move(trainingSet), std::move(validationSet), std::move(testSet));
 
-  testSet.load("../../data/ML-CUP19-TR_formatted.csv");
+  testSet.load("../../data/monk/monks1_test_formatted.csv");
   /*
    std::cout << trainingSet.n_rows << " " << trainingSet.n_cols << " " << validationSet.n_rows << " "
             << validationSet.n_cols
             << " " << testSet.n_rows << " " << testSet.n_cols << std::endl;
 
    */
-  int labelCol = 2;
+  int labelCol = 1;
   // Split the data from the training set.
   arma::mat trainingLabels = arma::mat(trainingSet.memptr() + (trainingSet.n_cols - labelCol) * trainingSet.n_rows,
                                        trainingSet.n_rows,
