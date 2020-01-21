@@ -21,16 +21,18 @@ class Network {
  private:
   void train(const arma::mat &&trainingData,
              const arma::mat &&trainLabels,
+             long double &epochError,
              int batchSize = 32,
              double learningRate = 0.01,
              double weightDecay = 0.0,
              double momentum = 0.0);
-  void forward(arma::mat &&batch, arma::mat &&outputActivate, arma::mat &&outputWeight);
+  void forward(arma::mat &&batch, arma::mat &&outputActivate);
   void error(const arma::mat &&trainLabelsBatch,
              arma::mat &&outputActivateBatch,
              arma::mat &&partialDerivativeOutput,
+             arma::mat &&currentBatchError,
              double weightDecay = 0.0);
-  void backward(const arma::mat &&outputActivateBatch, const arma::mat &&outputWeight, const arma::mat &&errorBatch);
+  void backward(const arma::mat &&partialDerivativeOutput);
   void updateWeight(double learningRate, double weightDecay = 0.0, double momentum = 0.0);
   void inference(arma::mat &&, arma::mat &&);
 

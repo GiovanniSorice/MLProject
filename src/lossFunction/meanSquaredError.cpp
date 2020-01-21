@@ -15,7 +15,7 @@ void MeanSquaredError::Error(const arma::mat &&trainLabelsBatch,
                              arma::mat &&currentError) {
   //trainLabelsBatch.raw_print(arma::cout, "TrainLabelsBatch");
   //outputActivateBatch.raw_print(arma::cout, "OutputActivateBatch");
-  currentError = arma::mean(arma::pow(trainLabelsBatch - outputActivateBatch, 2), 1) / 2;
+  currentError = arma::sum(arma::pow(trainLabelsBatch - outputActivateBatch, 2), 1) / 2;
   //TODO: controllare in caso di più di un output
   //currentError.raw_print(arma::cout, "Net current error");
 }

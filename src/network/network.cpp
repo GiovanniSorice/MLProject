@@ -23,7 +23,8 @@ void Network::Init(const double upperBound = 1, const double lowerBound = -1) {
 }
 
 /**
- * Split the training set in training data and training labels and feed them in the network.
+ * Shuffle and then split the training set in training data and training labels. After they are
+ * passed in the network.
  *
  * @param trainingSet Deep copy of the training set
  * @param epoch Number of total shuffling of the training set feed in the network
@@ -31,8 +32,8 @@ void Network::Init(const double upperBound = 1, const double lowerBound = -1) {
  * @param learningRate Adjust weight parameter
  * */
 void Network::Train(arma::mat trainingSet,
-                    int epoch,
                     int labelCol,
+                    int epoch,
                     int batchSize,
                     double learningRate,
                     double weightDecay,
@@ -40,7 +41,7 @@ void Network::Train(arma::mat trainingSet,
   //Weighted learning rate
   learningRate = learningRate / batchSize;
   weightDecay = (weightDecay * batchSize) / trainingSet.n_rows;
-  //trainingSet = arma::shuffle(trainingSet); TODO: da scommentare
+  trainingSet = arma::shuffle(trainingSet);
   for (int currentEpoch = 1; currentEpoch <= epoch; currentEpoch++) {
 
     // Split the data from the training set.
@@ -57,18 +58,27 @@ void Network::Train(arma::mat trainingSet,
                                        false,
                                        false);
 
-    train(std::move(trainingData), std::move(trainLabels), batchSize, learningRate, weightDecay, momentum);
-
+    long double epochError = 0.0;
+    train(std::move(trainingData),
+          std::move(trainLabels),
+          epochError,
+          batchSize,
+          learningRate,
+          weightDecay,
+          momentum);
+    std::cout << "Epoch error: " << epochError << std::endl;
     // shuffle the training set for the new epoch
     trainingSet = arma::shuffle(trainingSet);
-    // trainingSet.print("Training Set shuffled");
   }
 }
 
-//! std::move is used to do a cheap move and not do a deep copy of arma::mat training set
-/***/
+/**  Retrieve the batch and its correspondents label. Then the batch is forwarded, the error is computed
+ *  and the weights are updated proportionally.
+ *
+ * */
 void Network::train(const arma::mat &&trainingData,
                     const arma::mat &&trainLabels,
+                    long double &epochError,
                     int batchSize,
                     double learningRate,
                     double weightDecay,
@@ -76,7 +86,6 @@ void Network::train(const arma::mat &&trainingData,
 
   int start = 0;
   int end = batchSize - 1;
-  arma::mat outputWeightBatch;
   arma::mat outputActivateBatch;
   arma::mat partialDerivativeOutput;
 
@@ -84,26 +93,37 @@ void Network::train(const arma::mat &&trainingData,
   for (int i = 1; i <= batchNumber; i++) {
 
     arma::mat inputBatch = (trainingData.submat(start, 0, end, trainingData.n_cols - 1)).t();
-    forward(std::move(inputBatch), std::move(outputActivateBatch), std::move(outputWeightBatch));
+    forward(std::move(inputBatch), std::move(outputActivateBatch));
 
     arma::mat labelBatch = (trainLabels.submat(start, 0, end, trainLabels.n_cols - 1)).t();
-    error(std::move(labelBatch), std::move(outputActivateBatch), std::move(partialDerivativeOutput), weightDecay);
+    arma::mat currentBatchError;
+    error(std::move(labelBatch),
+          std::move(outputActivateBatch),
+          std::move(partialDerivativeOutput),
+          std::move(currentBatchError),
+          weightDecay);
 
-    backward(std::move(outputActivateBatch), std::move(outputWeightBatch), std::move(partialDerivativeOutput));
+    epochError = epochError + *currentBatchError.memptr();
+    backward(std::move(partialDerivativeOutput));
 
     start = end + 1;
     end = i < batchNumber ? batchSize * (i + 1) - 1 : trainingData.n_rows - 1;
 
     updateWeight(learningRate, weightDecay, momentum);
   }
+  epochError = epochError / batchNumber;
 }
 
 /**
- *  Iterate over the raw in the batch and pass them to the network
+ *  Iterate the network computing the weight and the activation over all the layer.
  *
+ *  @param batch Current batch to feed in the network
+ *  @param outputActivate Output layer vector produced value after the feedward pass
+ *  @param outputWeight
  * */
-void Network::forward(arma::mat &&batch, arma::mat &&outputActivate, arma::mat &&outputWeight) {
+void Network::forward(arma::mat &&batch, arma::mat &&outputActivate) {
   arma::mat activateWeight = batch;
+  arma::mat outputWeight;
   for (Layer &currentLayer : net) {
     currentLayer.SaveInputParameter(activateWeight);    // save the input activated vector of the previous layer
     currentLayer.Forward(std::move(activateWeight), std::move(outputWeight));
@@ -123,17 +143,17 @@ void Network::forward(arma::mat &&batch, arma::mat &&outputActivate, arma::mat &
  * */
 void Network::error(const arma::mat &&trainLabelsBatch,
                     arma::mat &&outputActivateBatch,
-                    arma::mat &&partialDerivativeOutput, double weightDecay) {
-  arma::mat currentError;
-  lossFunction->Error(std::move(trainLabelsBatch), std::move(outputActivateBatch), std::move(currentError));
-
+                    arma::mat &&partialDerivativeOutput,
+                    arma::mat &&currentBatchError,
+                    double weightDecay) {
+  lossFunction->Error(std::move(trainLabelsBatch), std::move(outputActivateBatch), std::move(currentBatchError));
   if (weightDecay > 0) {
     double weightsSum = 0;
 
     for (Layer &currentLayer : net) {
       weightsSum += arma::accu(arma::pow(currentLayer.GetWeight(), 2));
     }
-    currentError += (weightDecay * weightsSum);
+    currentBatchError += (weightDecay * weightsSum);
   }
 
   lossFunction->ComputePartialDerivative(std::move(trainLabelsBatch),
@@ -141,14 +161,14 @@ void Network::error(const arma::mat &&trainLabelsBatch,
                                          std::move(partialDerivativeOutput));
 }
 
-/** Iterate over the network from last layer to first and compute
+/** Iterate over the network from last layer to first. The gradient of all the layer is computed and
+ * stored, then the error is "retropagated" throgh the layer using GetSummationWeight().
  *
+ *  @param partialDerivativeOutput Partial derivative of the output layer 
  * */
-void Network::backward(const arma::mat &&outputActivateBatch,
-                       const arma::mat &&outputWeight,
-                       const arma::mat &&errorBatch) {
+void Network::backward(const arma::mat &&partialDerivativeOutput) {
   auto currentLayer = net.rbegin();
-  currentLayer->OutputLayerGradient(std::move(errorBatch));
+  currentLayer->OutputLayerGradient(std::move(partialDerivativeOutput));
   arma::mat currentGradientWeight;
   currentLayer->GetSummationWeight(std::move(currentGradientWeight));
   currentLayer++;
@@ -158,6 +178,7 @@ void Network::backward(const arma::mat &&outputActivateBatch,
     currentLayer->GetSummationWeight(std::move(currentGradientWeight));
   }
 }
+
 /***/
 void Network::updateWeight(double learningRate, double weightDecay, double momentum) {
   for (Layer &currentLayer : net) {
