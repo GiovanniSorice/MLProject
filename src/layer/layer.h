@@ -30,7 +30,7 @@ class Layer {
   //! parametri di output del layer
   arma::mat outputParameter;
   //! ActivationFunction utilizzata nel layer
-  ActivationFunction &activationFunction;
+  ActivationFunction *activationFunction = nullptr;
  public:
   /**
    * Create the Linear layer object using the specified number of units.
@@ -38,7 +38,7 @@ class Layer {
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  Layer(const int inSize, const int outSize, ActivationFunction &activationFunction);
+  Layer(const int inSize, const int outSize, const std::string activationFunctionString);
 
   /**
    * Initialize the layer parameter.

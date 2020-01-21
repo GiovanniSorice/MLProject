@@ -3,6 +3,10 @@
 //
 
 #include "layer.h"
+#include "../activationFunction/linearFunction.h"
+#include "../activationFunction/logisticFunction.h"
+#include "../activationFunction/reluFunction.h"
+#include "../activationFunction/tanhFunction.h"
 const arma::mat &Layer::GetWeight() const {
   return weight;
 }
@@ -25,12 +29,32 @@ const arma::mat &Layer::GetDeltaBias() const {
   return deltaBias;
 }
 
-Layer::Layer(const int inSize, const int outSize, ActivationFunction &activationFunction)
+Layer::Layer(const int inSize, const int outSize, const std::string activationFunctionString)
     : inSize(inSize),
       outSize(outSize),
-      activationFunction(activationFunction),
-      deltaWeight(arma::zeros(inSize, outSize)),
-      deltaBias(arma::zeros(1, outSize)) {
+      deltaWeight(arma::zeros(outSize, inSize)),
+      deltaBias(arma::zeros(outSize, 1)) {
+
+  if (activationFunctionString == "linearFunction") {
+    activationFunction = new LinearFunction();
+  }
+
+  if (activationFunctionString == "logisticFunction") {
+    activationFunction = new LogisticFunction();
+  }
+
+  if (activationFunctionString == "reluFunction") {
+    activationFunction = new ReluFunction();
+  }
+
+  if (activationFunctionString == "tanhFunction") {
+    activationFunction = new TanhFunction();
+  }
+
+  if (activationFunction == nullptr) {
+    std::cout << activationFunctionString << " activationFunction not valid!" << std::endl;
+    throw "activationFunction not valid!";
+  }
 }
 
 /** Given the activated vector of the previous layer compute the forward pass
@@ -58,7 +82,7 @@ void Layer::Backward(const arma::mat &&input, arma::mat &&gy, arma::mat &&g) {
 void Layer::OutputLayerGradient(const arma::mat &&partialDerivativeOutput) {
   arma::mat firstDerivativeActivation;
   //outputParameter.print("outputParameter");
-  activationFunction.Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
+  activationFunction->Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
   firstDerivativeActivation = arma::sum(firstDerivativeActivation, 1);
   //firstDerivativeActivation.print("First derivative activation");
   //partialDerivativeOutput.print("partialDerivativeOutput");
@@ -89,7 +113,7 @@ void Layer::Init(const double upperBound, const double lowerBound) {
 
 }
 void Layer::Activate(const arma::mat &input, arma::mat &&output) {
-  activationFunction.Compute(input, std::move(output));
+  activationFunction->Compute(input, std::move(output));
   //input.print("input");
   //output.print("activated output");
 }
@@ -103,7 +127,7 @@ void Layer::SaveInputParameter(const arma::mat &input) {
 void Layer::Gradient(const arma::mat &&summationGradientWeight) {
 
   arma::mat firstDerivativeActivation;
-  activationFunction.Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
+  activationFunction->Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
   firstDerivativeActivation = arma::sum(firstDerivativeActivation, 1);
 
   gradient = firstDerivativeActivation % summationGradientWeight;

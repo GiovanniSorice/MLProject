@@ -4,8 +4,7 @@
 
 #include "network.h"
 #include "../preprocessing/preprocessing.h"
-
-Network::Network(LossFunction &lossFunction) : lossFunction(lossFunction) {}
+#include "../lossFunction/meanSquaredError.h"
 
 void Network::Add(Layer &layer) {
   net.push_back(layer);
@@ -33,11 +32,11 @@ void Network::Init(const double upperBound = 1, const double lowerBound = -1) {
  * */
 void Network::Train(arma::mat trainingSet,
                     int epoch,
+                    int labelCol,
                     int batchSize,
                     double learningRate,
                     double weightDecay,
                     double momentum) {
-  int labelCol = 2;
   //Weighted learning rate
   learningRate = learningRate / batchSize;
   weightDecay = (weightDecay * batchSize) / trainingSet.n_rows;
@@ -126,7 +125,7 @@ void Network::error(const arma::mat &&trainLabelsBatch,
                     arma::mat &&outputActivateBatch,
                     arma::mat &&partialDerivativeOutput, double weightDecay) {
   arma::mat currentError;
-  lossFunction.Error(std::move(trainLabelsBatch), std::move(outputActivateBatch), std::move(currentError));
+  lossFunction->Error(std::move(trainLabelsBatch), std::move(outputActivateBatch), std::move(currentError));
 
   if (weightDecay > 0) {
     double weightsSum = 0;
@@ -137,9 +136,9 @@ void Network::error(const arma::mat &&trainLabelsBatch,
     currentError += (weightDecay * weightsSum);
   }
 
-  lossFunction.ComputePartialDerivative(std::move(trainLabelsBatch),
-                                        std::move(outputActivateBatch),
-                                        std::move(partialDerivativeOutput));
+  lossFunction->ComputePartialDerivative(std::move(trainLabelsBatch),
+                                         std::move(outputActivateBatch),
+                                         std::move(partialDerivativeOutput));
 }
 
 /** Iterate over the network from last layer to first and compute
@@ -172,16 +171,11 @@ void Network::Test(const arma::mat &&testData, const arma::mat &&testLabels) {
 
   inference(std::move(testDataCopied),
             std::move(outputActivateBatch));
-  //outputActivateBatch.raw_print(arma::cout,"outputActivateBatch");
 
-  //testLabels.print("Corrected output");
-  //std::cout << testLabels.n_rows << " testLabelsBatch " << testLabels.n_cols << std::endl;
-
-  //arma::mat prova = testLabels - arma::round(outputActivateBatch);
-
+  outputActivateBatch = outputActivateBatch.t();
+  outputActivateBatch.print("outputActivateBatch");
   testLabels.print("testLabels");
-
-  arma::round(outputActivateBatch).print("arma::round(outputActivateBatch)");
+  (testLabels - outputActivateBatch).raw_print(arma::cout, "testLabels-outputActivateBatch");
 
 }
 /***/
@@ -220,4 +214,14 @@ void Network::TestWithThreshold(const arma::mat &&testData, const arma::mat &&te
   std::cout << "all " << elementiTotali << " conta " << elementiGiusti << " % "
             << (elementiGiusti / elementiTotali) * 100 << std::endl;
             */
+}
+void Network::SetLossFunction(const std::string loss_function) {
+  if (loss_function == "meanSquaredError") {
+    lossFunction = new MeanSquaredError();
+  } else {
+    lossFunction = new MeanSquaredError();
+  }
+}
+Network::~Network() {
+  delete lossFunction;
 }

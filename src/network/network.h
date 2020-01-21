@@ -15,7 +15,10 @@ class Network {
   std::vector<Layer> net;
   arma::mat batch;
   //! Loss function to be optimized in the network
-  LossFunction &lossFunction;
+  LossFunction *lossFunction;
+ public:
+  void SetLossFunction(const std::string loss_function);
+ private:
   void train(const arma::mat &&trainingData,
              const arma::mat &&trainLabels,
              int batchSize = 32,
@@ -32,10 +35,11 @@ class Network {
   void inference(arma::mat &&, arma::mat &&);
 
  public:
-  explicit Network(LossFunction &lossFunction);
+  ~Network();
   void Add(Layer &layer);
   void Init(const double upperBound, const double lowerBound);
   void Train(arma::mat trainingSet,
+             int labelCol,
              int epoch,
              int batchSize = 32,
              double learningRate = 0.01,

@@ -9,6 +9,7 @@
 #include "src/activationFunction/reluFunction.h"
 #include "src/load/loadDataset.h"
 #include "src/activationFunction/linearFunction.h"
+#include "src/gridSearch/gridSearch.h"
 
 int main() {
   arma::cout.precision(10);
@@ -77,33 +78,25 @@ int main() {
                                  testSet.n_cols - labelCol,
                                  false,
                                  false);
-  /*
-   * std::cout << testData.n_rows << " " << testData.n_cols << " " << validationData.n_rows << " "
-            << validationData.n_cols << std::endl;
-  */
-  MeanSquaredError meanSquaredError;
-  BinaryCrossentropy binaryCrossentropy;
 
-  Network net(meanSquaredError);
-  //ReluFunction reluFunction;
-  TanhFunction tanhFunction;
-  LinearFunction linearFunction;
-  LogisticFunction logisticFunction;
+  GridSearch gridSearch;
+  gridSearch.SetEpochMin(300);
+  gridSearch.SetEpochMax(500);
+  gridSearch.SetEpochStep(50);
+  gridSearch.SetLambdaMin(0.0);
+  gridSearch.SetLambdaMax(0.01);
+  gridSearch.SetLambdaStep(0.01);
+  gridSearch.SetLearningRateMin(0.001);
+  gridSearch.SetLearningRateMax(0.07);
+  gridSearch.SetLearningRateStep(0.001);
+  gridSearch.SetMomentumMin(0);
+  gridSearch.SetMomentumMax(0.5);
+  gridSearch.SetMomentumStep(0.1);
+  gridSearch.SetUnitMin(10);
+  gridSearch.SetUnitMax(100);
+  gridSearch.SetUnitStep(10);
 
-  // take the first row of the training set for testing purpose
-  arma::mat firstRow = trainingSet.row(0);
-
-  Layer firstLayer(trainingSet.n_cols - 1, 4, tanhFunction);
-  Layer lastLayer(4, 2, linearFunction);
-  net.Add(firstLayer);
-  net.Add(lastLayer);
-
-  net.Init(0.7, -0.7);
-  net.Train(trainingSet, 1000, 2, 0.1, 0.01, 0.2);
-
-  //net.TestWithThreshold(std::move(trainingData), std::move(trainingLabels), 0.5);
-  //net.TestWithThreshold(std::move(validationData), std::move(validationLabels), 0.5);
-  net.TestWithThreshold(std::move(testData), std::move(testLabels), 0.5);
+  gridSearch.run(trainingData, trainingLabels);
 
   return 0;
 }
