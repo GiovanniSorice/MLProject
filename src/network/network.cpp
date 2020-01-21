@@ -189,15 +189,21 @@ void Network::updateWeight(double learningRate, double weightDecay, double momen
 void Network::Test(const arma::mat &&testData, const arma::mat &&testLabels) {
   arma::mat outputActivateBatch;
   arma::mat testDataCopied = testData;
+  arma::mat currentBatchError;
 
   inference(std::move(testDataCopied),
             std::move(outputActivateBatch));
 
+  errorTest(std::move(testLabels), std::move(outputActivateBatch), std::move(currentBatchError));
+
+  currentBatchError.print("currentBatchError");
+  arma::mean(currentBatchError).print("arma::mean");
+  /*
   outputActivateBatch = outputActivateBatch.t();
   outputActivateBatch.print("outputActivateBatch");
   testLabels.print("testLabels");
   (testLabels - outputActivateBatch).raw_print(arma::cout, "testLabels-outputActivateBatch");
-
+*/
 }
 /***/
 void Network::inference(arma::mat &&inputData, arma::mat &&outputData) {
@@ -243,6 +249,16 @@ void Network::SetLossFunction(const std::string loss_function) {
     lossFunction = new MeanSquaredError();
   }
 }
-Network::~Network() {
-  delete lossFunction;
+
+/**
+ *  Make the loss function injected object compute the error made by the network for the data passed in
+ *
+ *  @param outputActivateBatch  Output value produced by the network
+ *  @param trainLabelsBatch  Correct value of the data passed in the network
+ *  @param partialDerivativeOutput Error of the current predicted value produced by the network
+ * */
+void Network::errorTest(const arma::mat &&trainLabelsBatch,
+                        arma::mat &&outputActivateBatch,
+                        arma::mat &&currentBatchError) {
+  lossFunction->Error(std::move(trainLabelsBatch), std::move(outputActivateBatch), std::move(currentBatchError));
 }

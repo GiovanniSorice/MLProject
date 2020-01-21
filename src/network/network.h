@@ -37,7 +37,6 @@ class Network {
   void inference(arma::mat &&, arma::mat &&);
 
  public:
-  ~Network();
   void Add(Layer &layer);
   void Init(const double upperBound, const double lowerBound);
   void Train(arma::mat trainingSet,
@@ -51,6 +50,9 @@ class Network {
             const arma::mat &&testLabels);
   void TestWithThreshold(const arma::mat &&testData,
                          const arma::mat &&testLabels, double Threshold);
+  void errorTest(const arma::mat &&trainLabelsBatch,
+                 arma::mat &&outputActivateBatch,
+                 arma::mat &&currentBatchError);
   // TODO: Salvataggio e load (xml? https://www.boost.org/doc/libs/1_71_0/libs/serialization/doc/index.html);
 
 };

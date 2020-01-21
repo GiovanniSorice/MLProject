@@ -105,7 +105,6 @@ void Layer::Init(const double upperBound, const double lowerBound) {
   arma::arma_rng::set_seed_random();
   weight = lowerBound + arma::randu<arma::mat>(outSize, inSize) * (upperBound - lowerBound);
   bias = lowerBound + arma::randu<arma::mat>(outSize, 1) * (upperBound - lowerBound);
-  //bias = arma::zeros<arma::mat>(1, outSize);
 
 }
 void Layer::Activate(const arma::mat &input, arma::mat &&output) {
