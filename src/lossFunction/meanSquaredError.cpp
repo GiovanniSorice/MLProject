@@ -31,7 +31,7 @@ void MeanSquaredError::ComputePartialDerivative(const arma::mat &&trainLabelsBat
                                                 arma::mat &&partialDerivativeOutput) {
   //trainLabelsBatch.print("Desired output");
   //outputActivateBatch.print("Net  output");
-  partialDerivativeOutput = arma::sum(outputActivateBatch - trainLabelsBatch, 1);
+  partialDerivativeOutput = outputActivateBatch - trainLabelsBatch;
   //TODO: controllare in caso di più di un output
   //partialDerivateOutput.print("partial derivative output");
 }

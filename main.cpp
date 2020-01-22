@@ -10,6 +10,7 @@
 #include "src/load/loadDataset.h"
 #include "src/activationFunction/linearFunction.h"
 #include "src/gridSearch/gridSearch.h"
+#include "src/crossValidation/crossValidation.h"
 
 int main() {
   arma::cout.precision(10);
@@ -78,7 +79,7 @@ int main() {
                                  testSet.n_cols - labelCol,
                                  false,
                                  false);
-
+/*
   GridSearch gridSearch;
   gridSearch.SetEpochMin(300);
   gridSearch.SetEpochMax(500);
@@ -97,6 +98,23 @@ int main() {
   gridSearch.SetUnitStep(10);
 
   gridSearch.run(trainingData, trainingLabels);
+*/
+
+  Network net;
+  net.SetLossFunction("meanSquaredError");
+
+  Layer firstLayer(trainingSet.n_cols - labelCol, 4, "tanhFunction");
+  Layer lastLayer(4, 1, "logisticFunction");
+  net.Add(firstLayer);
+  net.Add(lastLayer);
+
+  net.Init(1e-3, -1e-3);
+  /*
+  net.Train(trainingSet, trainingLabels.n_cols, 800, 128, 0.9, 0, 0.5);
+  net.TestWithThreshold(std::move(testData), std::move(testLabels), 0.5);
+*/
+  CrossValidation cv;
+  cv.run(trainingData, trainingLabels, 3, net, 1000, 128, 0.9, 0, 0.5);
 
   return 0;
 }

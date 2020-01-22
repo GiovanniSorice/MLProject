@@ -16,37 +16,36 @@ void CrossValidation::run(arma::mat dataset,
 ) {
   arma::mat joinedDataset = arma::join_rows(dataset, label);
   int step = ceil(dataset.n_rows / kfold);
-  int inizio = 0;
-  int fine = step;
-  bool end = false;
+  int start = 0;
+  int end = step;
   for (int i = 0; i < kfold; i++) {
-    std::cout << "inizio " << inizio << " fine " << fine;
-    arma::mat validationSet = dataset.submat(inizio, 0, fine,
-                                             dataset.n_cols - label.n_cols);
-    arma::mat validationLabelSet = dataset.submat(inizio, dataset.n_cols - label.n_cols, fine,
-                                                  dataset.n_cols);
+    std::cout << "start " << start << " fine " << end - 1;
+    arma::mat validationSet = dataset.submat(start, 0, end - 1,
+                                             dataset.n_cols - 1);
+    arma::mat validationLabelSet = label.submat(start, 0, end - 1,
+                                                label.n_cols - 1);
 
     arma::mat firstPartTrainingSet;
-    if (inizio != 0) {
-      firstPartTrainingSet = dataset.submat(0, 0, inizio - 1,
-                                            dataset.n_cols - label.n_cols);
+    if (start != 0) {
+      firstPartTrainingSet = joinedDataset.submat(0, 0, start - 1,
+                                                  joinedDataset.n_cols - 1);
     }
 
     arma::mat secondPartTrainingSet;
-    if (fine != dataset.n_rows - 1) {
-      secondPartTrainingSet = dataset.submat(fine + 1, 0, dataset.n_rows,
-                                             dataset.n_cols - label.n_cols);
+    if (end != dataset.n_rows - 1) {
+      secondPartTrainingSet = joinedDataset.submat(end + 1, 0, joinedDataset.n_rows,
+                                                   joinedDataset.n_cols - 1);
     }
 
     arma::mat trainingDataset = arma::join_cols(firstPartTrainingSet, secondPartTrainingSet);
-    trainingDataset.print("trainingDataset");
+    net.Clear();
     net.Init(1e-4, -1e-4); //todo: maggico
     net.Train(trainingDataset, label.n_cols, epoch, batchSize, learningRate, weightDecay, momentum);
 
     net.Test(std::move(validationSet), std::move(validationLabelSet));
 
-    inizio = fine + 1;
-    fine = (fine + step) < dataset.n_rows ? fine + step : dataset.n_rows - 1;
+    start = end;
+    end = (end + step) < dataset.n_rows ? end + step : dataset.n_rows - 1;
 
   }
 }

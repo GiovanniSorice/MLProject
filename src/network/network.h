@@ -13,7 +13,6 @@
 class Network {
  private:
   std::vector<Layer> net;
-  arma::mat batch;
   //! Loss function to be optimized in the network
   LossFunction *lossFunction;
  public:
@@ -54,7 +53,7 @@ class Network {
                  arma::mat &&outputActivateBatch,
                  arma::mat &&currentBatchError);
   // TODO: Salvataggio e load (xml? https://www.boost.org/doc/libs/1_71_0/libs/serialization/doc/index.html);
-
+  void Clear();
 };
 
 #endif //MLPROJECT_SRC_NETWORK_H_

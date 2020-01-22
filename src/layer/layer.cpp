@@ -83,7 +83,6 @@ void Layer::OutputLayerGradient(const arma::mat &&partialDerivativeOutput) {
   arma::mat firstDerivativeActivation;
   //outputParameter.print("outputParameter");
   activationFunction->Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
-  firstDerivativeActivation = arma::sum(firstDerivativeActivation, 1);
   //firstDerivativeActivation.print("First derivative activation");
   //partialDerivativeOutput.print("partialDerivativeOutput");
   gradient = partialDerivativeOutput % firstDerivativeActivation;
@@ -123,7 +122,6 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
 
   arma::mat firstDerivativeActivation;
   activationFunction->Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
-  firstDerivativeActivation = arma::sum(firstDerivativeActivation, 1);
 
   gradient = summationGradientWeight % firstDerivativeActivation;
   //gradient.print("Hidden layer gradient");
@@ -131,11 +129,14 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
 
 /***/
 void Layer::AdjustWeight(const double learningRate, const double weightDecay, const double momentum) {
-  weight = weight + momentum * deltaWeight - learningRate * gradient * arma::sum(inputParameter, 1).t()
+  //(gradient * inputParameter.t()).print("gradient * inputParameter.t()");
+  //weight.print("weight");
+  //TODO: capire se va sum o mean (chiedere a ricevimento)
+  weight = weight + momentum * deltaWeight - learningRate * gradient * inputParameter.t()
       - 2 * weightDecay * weight;
-  bias = bias + momentum * deltaBias - learningRate * gradient - 2 * weightDecay * bias;
-  deltaWeight = momentum * deltaWeight - learningRate * gradient * arma::sum(inputParameter, 1).t();
-  deltaBias = momentum * deltaBias - learningRate * gradient;
+  bias = bias + momentum * deltaBias - learningRate * arma::mean(gradient, 1) - 2 * weightDecay * bias;
+  deltaWeight = momentum * deltaWeight - learningRate * gradient * inputParameter.t();
+  deltaBias = momentum * deltaBias - learningRate * arma::mean(gradient, 1);
 }
 
 /**
@@ -143,4 +144,17 @@ void Layer::AdjustWeight(const double learningRate, const double weightDecay, co
  */
 void Layer::GetSummationWeight(arma::mat &&gradientWeight, const double nesterovMomentum) {
   gradientWeight = (weight + nesterovMomentum * deltaWeight).t() * gradient;
+}
+
+/**
+ * Clear the internal variable of the layer (without delete the activationFunction)
+ */
+void Layer::Clear() {
+  weight = arma::zeros(weight.n_rows, weight.n_cols);
+  bias = arma::zeros(bias.n_rows, bias.n_cols);
+  deltaWeight = arma::zeros(deltaWeight.n_rows, deltaWeight.n_cols);
+  deltaBias = arma::zeros(deltaBias.n_rows, deltaBias.n_cols);
+  gradient = arma::zeros(gradient.n_rows, gradient.n_cols);
+  inputParameter = arma::zeros(inputParameter.n_rows, inputParameter.n_cols);
+  outputParameter = arma::zeros(outputParameter.n_rows, outputParameter.n_cols);
 }

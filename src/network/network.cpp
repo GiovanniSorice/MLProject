@@ -38,6 +38,9 @@ void Network::Train(arma::mat trainingSet,
                     double learningRate,
                     double weightDecay,
                     double momentum) {
+  if (batchSize > trainingSet.n_rows) {
+    batchSize = trainingSet.n_rows;
+  }
   //Weighted learning rate
   learningRate = learningRate / batchSize;
   weightDecay = (weightDecay * batchSize) / trainingSet.n_rows;
@@ -66,7 +69,7 @@ void Network::Train(arma::mat trainingSet,
           learningRate,
           weightDecay,
           momentum);
-    std::cout << "Epoch error: " << epochError << std::endl;
+    std::cout << " " << epochError << std::endl;
     // shuffle the training set for the new epoch
     trainingSet = arma::shuffle(trainingSet);
   }
@@ -261,4 +264,15 @@ void Network::errorTest(const arma::mat &&trainLabelsBatch,
                         arma::mat &&outputActivateBatch,
                         arma::mat &&currentBatchError) {
   lossFunction->Error(std::move(trainLabelsBatch), std::move(outputActivateBatch), std::move(currentBatchError));
+}
+
+/**
+ * Clear the internal variable of the network (without delete the lossFunction)
+ */
+void Network::Clear() {
+
+  for (Layer &currentLayer : net) {
+    currentLayer.Clear();
+  }
+
 }
