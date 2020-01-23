@@ -61,15 +61,15 @@ void Network::Train(arma::mat trainingSet,
                                        false,
                                        false);
 
-    long double epochError = 0.0;
+    arma::mat epochError = arma::zeros(labelCol);
     train(std::move(trainingData),
           std::move(trainLabels),
-          epochError,
+          std::move(epochError),
           batchSize,
           learningRate,
           weightDecay,
           momentum);
-    std::cout << " " << epochError << std::endl;
+    epochError.raw_print(arma::cout, "");
     // shuffle the training set for the new epoch
     trainingSet = arma::shuffle(trainingSet);
   }
@@ -81,7 +81,7 @@ void Network::Train(arma::mat trainingSet,
  * */
 void Network::train(const arma::mat &&trainingData,
                     const arma::mat &&trainLabels,
-                    long double &epochError,
+                    arma::mat &&epochError,
                     int batchSize,
                     double learningRate,
                     double weightDecay,
@@ -106,7 +106,7 @@ void Network::train(const arma::mat &&trainingData,
           std::move(currentBatchError),
           weightDecay);
 
-    epochError = epochError + *currentBatchError.memptr();
+    epochError = epochError + currentBatchError;
     backward(std::move(partialDerivativeOutput));
 
     start = end + 1;

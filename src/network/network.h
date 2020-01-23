@@ -20,7 +20,7 @@ class Network {
  private:
   void train(const arma::mat &&trainingData,
              const arma::mat &&trainLabels,
-             long double &epochError,
+             arma::mat &&epochError,
              int batchSize = 32,
              double learningRate = 0.01,
              double weightDecay = 0.0,
