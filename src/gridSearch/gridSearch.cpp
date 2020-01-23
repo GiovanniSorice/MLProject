@@ -4,6 +4,7 @@
 
 #include "gridSearch.h"
 #include "../network/network.h"
+#include "../crossValidation/crossValidation.h"
 void GridSearch::SetUnitStep(int unit_step) {
   unitStep = unit_step;
 }
@@ -51,8 +52,8 @@ void GridSearch::SetEpochMax(int epoch_max) {
 }
 
 void GridSearch::run(arma::mat dataset, arma::mat label) {
-  arma::mat joinedDataset = arma::join_rows(dataset, label);
-
+  CrossValidation cross_validation;
+  arma::mat error;
   for (int currentNUnit = unitMin; currentNUnit < unitMax; currentNUnit += unitStep) {
     Network currNet;
     currNet.SetLossFunction("meanSquaredError");
@@ -67,14 +68,18 @@ void GridSearch::run(arma::mat dataset, arma::mat label) {
         for (int currentEpoch = epochMin; currentMomentum <= epochMax; currentMomentum += epochStep) {
           for (double currentLearningRate = learningRateMin; currentLearningRate <= learningRateMax;
                currentLearningRate += learningRateStep) {
-            currNet.Train(joinedDataset,
-                          currentEpoch,
-                          label.n_cols,
-                          1,
-                          currentLearningRate,
-                          currentLambda,
-                          currentMomentum);
-            currNet.Test(std::move(dataset), std::move(label));
+            error = arma::zeros(1, label.n_cols);
+            cross_validation.run(dataset,
+                                 label,
+                                 3,
+                                 currNet,
+                                 currentEpoch,
+                                 1,
+                                 currentLearningRate,
+                                 currentLambda,
+                                 currentMomentum,
+                                 error);
+            error.print("error");
           }
         }
       }

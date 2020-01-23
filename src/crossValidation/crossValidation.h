@@ -17,7 +17,8 @@ class CrossValidation {
            int batchSize,
            double learningRate,
            double weightDecay,
-           double momentum
+           double momentum,
+           arma::mat meanError
   );
 
 };

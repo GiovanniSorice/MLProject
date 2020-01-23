@@ -12,14 +12,14 @@ void CrossValidation::run(arma::mat dataset,
                           int batchSize,
                           double learningRate,
                           double weightDecay,
-                          double momentum
+                          double momentum,
+                          arma::mat meanError
 ) {
   arma::mat joinedDataset = arma::join_rows(dataset, label);
   int step = ceil(dataset.n_rows / kfold);
   int start = 0;
   int end = step;
 
-  arma::mat meanError = arma::zeros(1, label.n_cols);
   arma::mat currentError = arma::zeros(1, label.n_cols);
 
   for (int i = 0; i < kfold; i++) {
@@ -52,4 +52,5 @@ void CrossValidation::run(arma::mat dataset,
     end = (end + step) < dataset.n_rows ? end + step : dataset.n_rows - 1;
 
   }
+  meanError /= kfold;
 }

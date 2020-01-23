@@ -113,8 +113,6 @@ int main() {
   net.Train(trainingSet, trainingLabels.n_cols, 800, 128, 0.9, 0, 0.5);
   net.TestWithThreshold(std::move(testData), std::move(testLabels), 0.5);
 */
-  CrossValidation cv;
-  cv.run(trainingData, trainingLabels, 3, net, 1000, 128, 0.9, 0, 0.5);
 
   return 0;
 }
