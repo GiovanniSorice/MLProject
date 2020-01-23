@@ -46,7 +46,7 @@ class Network {
              double weightDecay = 0.0,
              double momentum = 0.0);
   void Test(const arma::mat &&testData,
-            const arma::mat &&testLabels);
+            const arma::mat &&testLabels, arma::mat &&currentBatchError);
   void TestWithThreshold(const arma::mat &&testData,
                          const arma::mat &&testLabels, double Threshold);
   void errorTest(const arma::mat &&trainLabelsBatch,

@@ -13,11 +13,7 @@
 void MeanSquaredError::Error(const arma::mat &&trainLabelsBatch,
                              arma::mat &&outputActivateBatch,
                              arma::mat &&currentError) {
-  //trainLabelsBatch.raw_print(arma::cout, "TrainLabelsBatch");
-  //outputActivateBatch.raw_print(arma::cout, "OutputActivateBatch");
   currentError = (arma::mean(arma::pow(trainLabelsBatch - outputActivateBatch, 2), 1)) / 2;
-  //TODO: controllare in caso di più di un output
-  //currentError.raw_print(arma::cout, "Net current error");
 }
 
 /** Compute and store in errorBatch the partial derivative of the output layer
@@ -29,9 +25,5 @@ void MeanSquaredError::Error(const arma::mat &&trainLabelsBatch,
 void MeanSquaredError::ComputePartialDerivative(const arma::mat &&trainLabelsBatch,
                                                 arma::mat &&outputActivateBatch,
                                                 arma::mat &&partialDerivativeOutput) {
-  //trainLabelsBatch.print("Desired output");
-  //outputActivateBatch.print("Net  output");
   partialDerivativeOutput = outputActivateBatch - trainLabelsBatch;
-  //TODO: controllare in caso di più di un output
-  //partialDerivateOutput.print("partial derivative output");
 }

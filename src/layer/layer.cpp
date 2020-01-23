@@ -63,12 +63,8 @@ Layer::Layer(const int inSize, const int outSize, const std::string activationFu
  *  @param output Forwarded vector computed through weight and bias of the current layer
  * */
 void Layer::Forward(const arma::mat &&input, arma::mat &&output, const double nesterovMomentum) {
-  //input.print("Input");
-  //weight.print("Weight");
-  //bias.print("bias");
   output = (weight + nesterovMomentum * deltaWeight) * input;
   output.each_col() += (bias + nesterovMomentum * deltaBias);
-  //output.print("output");
 
 }
 void Layer::Backward(const arma::mat &&input, arma::mat &&gy, arma::mat &&g) {
@@ -81,13 +77,8 @@ void Layer::Backward(const arma::mat &&input, arma::mat &&gy, arma::mat &&g) {
  * */
 void Layer::OutputLayerGradient(const arma::mat &&partialDerivativeOutput) {
   arma::mat firstDerivativeActivation;
-  //outputParameter.print("outputParameter");
   activationFunction->Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
-  //firstDerivativeActivation.print("First derivative activation");
-  //partialDerivativeOutput.print("partialDerivativeOutput");
   gradient = partialDerivativeOutput % firstDerivativeActivation;
-  //gradient.print("Output Layer gradient");
-  // (partialDerivativeOutput % firstDerivativeActivation).print("partialDerivativeOutput % firstDerivativeActivation");
 }
 int Layer::GetInSize() const {
   return inSize;
@@ -108,8 +99,6 @@ void Layer::Init(const double upperBound, const double lowerBound) {
 }
 void Layer::Activate(const arma::mat &input, arma::mat &&output) {
   activationFunction->Compute(input, std::move(output));
-  //input.print("input");
-  //output.print("activated output");
 }
 void Layer::SaveOutputParameter(const arma::mat &input) {
   outputParameter = input;
@@ -122,15 +111,11 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
 
   arma::mat firstDerivativeActivation;
   activationFunction->Derive(std::move(outputParameter), std::move(firstDerivativeActivation));
-
   gradient = summationGradientWeight % firstDerivativeActivation;
-  //gradient.print("Hidden layer gradient");
 }
 
 /***/
 void Layer::AdjustWeight(const double learningRate, const double weightDecay, const double momentum) {
-  //(gradient * inputParameter.t()).print("gradient * inputParameter.t()");
-  //weight.print("weight");
   //TODO: capire se va sum o mean (chiedere a ricevimento)
   weight = weight + momentum * deltaWeight - learningRate * gradient * inputParameter.t()
       - 2 * weightDecay * weight;

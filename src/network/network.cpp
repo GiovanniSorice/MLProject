@@ -189,18 +189,17 @@ void Network::updateWeight(double learningRate, double weightDecay, double momen
   }
 }
 
-void Network::Test(const arma::mat &&testData, const arma::mat &&testLabels) {
+void Network::Test(const arma::mat &&testData, const arma::mat &&testLabels, arma::mat &&currentBatchError) {
   arma::mat outputActivateBatch;
   arma::mat testDataCopied = testData;
-  arma::mat currentBatchError;
 
   inference(std::move(testDataCopied),
             std::move(outputActivateBatch));
 
   errorTest(std::move(testLabels), std::move(outputActivateBatch), std::move(currentBatchError));
-
   currentBatchError.print("currentBatchError");
-  arma::mean(currentBatchError).print("arma::mean");
+  currentBatchError = arma::mean(currentBatchError);
+  currentBatchError.print("arma::mean");
   /*
   outputActivateBatch = outputActivateBatch.t();
   outputActivateBatch.print("outputActivateBatch");
