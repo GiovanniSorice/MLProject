@@ -79,7 +79,7 @@ int main() {
                                  testSet.n_cols - labelCol,
                                  false,
                                  false);
-  /*
+
   double learningRateMin = 0.1;
   double learningRateMax = 1;
   double learningRateStep = 0.1;
@@ -118,37 +118,36 @@ int main() {
   gridSearch.Run(trainingData, trainingLabels, std::move(result));
 
 
-  gridSearch.run(trainingData, trainingLabels, std::move(result));
-*/
+  /*
 
 
-  Network net;
-  net.SetLossFunction("meanSquaredError");
+ Network net;
+ net.SetLossFunction("meanSquaredError");
 
-  Layer firstLayer(trainingSet.n_cols - labelCol, 100, "tanhFunction");
-  Layer lastLayer(100, 2, "linearFunction");
-  net.Add(firstLayer);
-  net.Add(lastLayer);
+ Layer firstLayer(trainingSet.n_cols - labelCol, 100, "tanhFunction");
+ Layer lastLayer(100, 2, "linearFunction");
+ net.Add(firstLayer);
+ net.Add(lastLayer);
 
-  net.Init(0.7, -0.7);
+ net.Init(0.7, -0.7);
 
-  net.Train(validationData, validationLabels, trainingSet, trainingLabels.n_cols, 800, 128, 0.01, 0, 0);
-  arma::mat mat;
-  net.Test(std::move(testData), std::move(testLabels), std::move(mat));
-  mat.print("errore finale");
-/*
-  CrossValidation cross_validation;
-  arma::mat error = arma::zeros(1, trainingLabels.n_cols);
-  cross_validation.run(trainingData,
-                       trainingLabels,
-                       3,
-                       net,
-                       800,
-                       trainingData.n_rows,
-                       0.9,
-                       0,
-                       0.5,
-                       std::move(error));
+ net.Train(validationData, validationLabels, trainingSet, trainingLabels.n_cols, 800, 128, 0.01, 0, 0);
+ arma::mat mat;
+ net.Test(std::move(testData), std::move(testLabels), std::move(mat));
+ mat.print("errore finale");
+
+ CrossValidation cross_validation;
+ arma::mat error = arma::zeros(1, trainingLabels.n_cols);
+ cross_validation.run(trainingData,
+                      trainingLabels,
+                      3,
+                      net,
+                      800,
+                      trainingData.n_rows,
+                      0.9,
+                      0,
+                      0.5,
+                      std::move(error));
 */
   return 0;
 }

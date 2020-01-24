@@ -43,7 +43,15 @@ void CrossValidation::Run(arma::mat dataset,
     arma::mat trainingDataset = arma::join_cols(firstPartTrainingSet, secondPartTrainingSet);
     net.Clear();
     net.Init(1e-4, -1e-4);
-    net.Train(trainingDataset, label.n_cols, epoch, batchSize, learningRate, weightDecay, momentum);
+    net.Train(validationSet,
+              validationLabelSet,
+              trainingDataset,
+              label.n_cols,
+              epoch,
+              batchSize,
+              learningRate,
+              weightDecay,
+              momentum);
     currentError = arma::zeros(1, 1);
 
     net.Test(std::move(validationSet), std::move(validationLabelSet), std::move(currentError));
