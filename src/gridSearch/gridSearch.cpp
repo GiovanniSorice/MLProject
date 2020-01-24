@@ -55,10 +55,16 @@ void GridSearch::SetEpochMax(int epoch_max) {
  *   Return the total number of network analyzed by the grid search
  * */
 int GridSearch::NetworkAnalyzed() {
-  return ceil((epochMax - epochMin) / epochStep * (lambdaMax - lambdaMin) / lambdaStep
-                  * (learningRateMax - learningRateMin) / learningRateStep * (momentumMax - momentumMin)
-                  / momentumStep
-                  * (unitMax - unitMin) / unitStep);
+
+  double epochN = (epochMax - epochMin) / epochStep + 1;
+  double lambdaN = (lambdaMax - lambdaMin) / lambdaStep + 1;
+  double lRN = (learningRateMax - learningRateMin) / learningRateStep + 1;
+  double momentumN = (momentumMax - momentumMin) / momentumStep + 1;
+  double unitN = (unitMax - unitMin) / unitStep + 1;
+
+  int networkAnalyzed = ceil(epochN * lambdaN * lRN * momentumN * unitN);
+
+  return networkAnalyzed;
 }
 
 /***/
@@ -67,7 +73,7 @@ void GridSearch::Run(arma::mat dataset, arma::mat label, arma::mat &&result) {
   arma::mat error;
 
   int currentRow = 0;
-  for (int currentNUnit = unitMin; currentNUnit < unitMax; currentNUnit += unitStep) {
+  for (int currentNUnit = unitMin; currentNUnit <= unitMax; currentNUnit += unitStep) {
 
     Network currNet;
     currNet.SetLossFunction("meanSquaredError");
@@ -82,10 +88,6 @@ void GridSearch::Run(arma::mat dataset, arma::mat label, arma::mat &&result) {
         for (int currentEpoch = epochMin; currentEpoch <= epochMax; currentEpoch += epochStep) {
           for (double currentLearningRate = learningRateMin; currentLearningRate <= learningRateMax;
                currentLearningRate += learningRateStep) {
-            std::cout << " currentNUnit " << currentNUnit << " currentLambda " << currentLambda << " currentMomentum "
-                      << currentMomentum
-                      << " currentEpoch " << currentEpoch << " currentLearningRate " << currentLearningRate
-                      << std::endl;
             error = arma::zeros(1, 1);
             cross_validation.Run(dataset,
                                  label,
@@ -97,6 +99,10 @@ void GridSearch::Run(arma::mat dataset, arma::mat label, arma::mat &&result) {
                                  currentLambda,
                                  currentMomentum,
                                  std::move(error));
+            std::cout << " currentNUnit " << currentNUnit << " currentLambda " << currentLambda << " currentMomentum "
+                      << currentMomentum
+                      << " currentEpoch " << currentEpoch << " currentLearningRate " << currentLearningRate
+                      << " error " << error.at(0, 0) << std::endl;
 
             result.at(currentRow, 0) = currentNUnit;
             result.at(currentRow, 1) = currentLambda;

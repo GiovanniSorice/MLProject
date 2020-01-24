@@ -5,6 +5,7 @@
 #include "network.h"
 #include "../preprocessing/preprocessing.h"
 #include "../lossFunction/meanSquaredError.h"
+#include "../lossFunction/meanEuclideanError.h"
 
 void Network::Add(Layer &layer) {
   net.push_back(layer);
@@ -66,7 +67,7 @@ void Network::Train(arma::mat validationSet, arma::mat validationLabelSet, arma:
                                        false,
                                        false);
 
-    arma::mat epochError = arma::zeros(labelCol);
+    arma::mat epochError = arma::zeros(1);
     train(std::move(trainingData),
           std::move(trainLabels),
           std::move(epochError),
@@ -80,11 +81,11 @@ void Network::Train(arma::mat validationSet, arma::mat validationLabelSet, arma:
     previousError = currentError;
     currentError = arma::zeros(1, 1);
     Test(std::move(validationSet), std::move(validationLabelSet), std::move(currentError));
-    currentError.print("currentError");
+    arma::mat errortemp = arma::join_rows(epochError, currentError);
+
+    errortemp.raw_print(arma::cout, "");
     deltaError = previousError - currentError;
-    deltaError.print("deltaError");
     if (deltaError.at(0, 0) < thresholdStopCondition && deltaError.at(0, 0) > 0) {
-      std::cout << " currentEpoch " << currentEpoch << std::endl;
       stopCondition = true;
     }
     // shuffle the training set for the new epoch
@@ -214,9 +215,9 @@ void Network::Test(const arma::mat &&testData, const arma::mat &&testLabels, arm
             std::move(outputActivateBatch));
 
   errorTest(std::move(testLabels.t()), std::move(outputActivateBatch), std::move(currentBatchError));
-  testLabels.print("testLabels");
-  outputActivateBatch.t().print("outputActivateBatch");
-  (testLabels - outputActivateBatch.t()).print("diff");
+  //testLabels.print("testLabels");
+  //outputActivateBatch.t().print("");
+  //(testLabels - outputActivateBatch.t()).print("diff");
   //currentBatchError.print("currentBatchError");
   currentBatchError = arma::mean(currentBatchError);
   //currentBatchError.print("arma::mean");
@@ -275,14 +276,12 @@ void Network::SetLossFunction(const std::string loss_function) {
 /**
  *  Make the loss function injected object compute the error made by the network for the data passed in
  *
- *  @param outputActivateBatch  Output value produced by the network
- *  @param trainLabelsBatch  Correct value of the data passed in the network
- *  @param partialDerivativeOutput Error of the current predicted value produced by the network
  * */
 void Network::errorTest(const arma::mat &&trainLabelsBatch,
                         arma::mat &&outputActivateBatch,
                         arma::mat &&currentBatchError) {
-  lossFunction->Error(std::move(trainLabelsBatch), std::move(outputActivateBatch), std::move(currentBatchError));
+  MeanEuclideanError error;
+  error.Error(std::move(trainLabelsBatch), std::move(outputActivateBatch), std::move(currentBatchError));
 }
 
 /**

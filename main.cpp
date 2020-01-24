@@ -79,22 +79,22 @@ int main() {
                                  testSet.n_cols - labelCol,
                                  false,
                                  false);
-
-  double learningRateMin = 0.1;
-  double learningRateMax = 1;
-  double learningRateStep = 0.1;
+/*
+  double learningRateMin = 0.01;
+  double learningRateMax = 0.02;
+  double learningRateStep = 0.01;
   double lambdaMin = 0;
-  double lambdaMax = 0.001;
+  double lambdaMax = 0.0002;
   double lambdaStep = 0.0002;
-  double momentumMin = 0;
-  double momentumMax = 0.5;
+  double momentumMin = 0.0;
+  double momentumMax = 0.1;
   double momentumStep = 0.1;
-  int unitMin = 3;
-  int unitMax = 10;
+  int unitMin = 100;
+  int unitMax = 101;
   int unitStep = 1;
-  int epochMin = 800;
+  int epochMin = 799;
   int epochMax = 800;
-  int epochStep = 1;
+  int epochStep = 2;
 
   GridSearch gridSearch;
   gridSearch.SetEpochMin(epochMin);
@@ -114,11 +114,12 @@ int main() {
   gridSearch.SetUnitStep(unitStep);
 
   int netAnalyzed = gridSearch.NetworkAnalyzed();
-  arma::mat result = arma::zeros(netAnalyzed, 5);   // 4 hyperparams and error
+  std::cout << "netAnalyzed" << netAnalyzed << std::endl;
+  arma::mat result = arma::zeros(netAnalyzed, 6);   // 4 hyperparams and error
   gridSearch.Run(trainingData, trainingLabels, std::move(result));
+*/
 
 
-  /*
 
 
  Network net;
@@ -131,11 +132,12 @@ int main() {
 
  net.Init(0.7, -0.7);
 
- net.Train(validationData, validationLabels, trainingSet, trainingLabels.n_cols, 800, 128, 0.01, 0, 0);
+  net.Train(validationData, validationLabels, trainingSet, trainingLabels.n_cols, 800, 8, 0.01, 0, 0);
  arma::mat mat;
- net.Test(std::move(testData), std::move(testLabels), std::move(mat));
+  net.Test(std::move(validationData), std::move(validationLabels), std::move(mat));
+  //net.Test(std::move(testData), std::move(testLabels), std::move(mat));
  mat.print("errore finale");
-
+/*
  CrossValidation cross_validation;
  arma::mat error = arma::zeros(1, trainingLabels.n_cols);
  cross_validation.run(trainingData,
