@@ -13,7 +13,7 @@
 void MeanSquaredError::Error(const arma::mat &&trainLabelsBatch,
                              arma::mat &&outputActivateBatch,
                              arma::mat &&currentError) {
-  currentError = (arma::mean(arma::pow(trainLabelsBatch - outputActivateBatch, 2), 1)) / 2;
+  currentError = (arma::mean(arma::sum(arma::pow(trainLabelsBatch - outputActivateBatch, 2)), 1)) / 2;
 }
 
 /** Compute and store in errorBatch the partial derivative of the output layer

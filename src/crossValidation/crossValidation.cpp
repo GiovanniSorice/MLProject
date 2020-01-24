@@ -53,5 +53,4 @@ void CrossValidation::Run(arma::mat dataset,
 
   }
   meanError /= kfold;
-  meanError.print("meanError");
 }

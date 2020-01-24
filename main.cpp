@@ -21,15 +21,21 @@ int main() {
   loadDS.explodeMonkDataset();
 */
 
-  Preprocessing a("../../data/monk/monks1_train_formatted.csv");
+  Preprocessing a("../../data/ML-CUP19-TR_formatted.csv");
   arma::mat trainingSet;
   arma::mat validationSet;
   arma::mat testSet;
 
-  a.GetSplit(100, 0, 0, std::move(trainingSet), std::move(validationSet), std::move(testSet));
+  a.GetSplit(60, 20, 20, std::move(trainingSet), std::move(validationSet), std::move(testSet));
 
-  testSet.load("../../data/monk/monks1_test_formatted.csv");
-  int labelCol = 1;
+  //testSet.load("../../data/ML-CUP19-TR_formatted.csv");
+  /*
+   std::cout << trainingSet.n_rows << " " << trainingSet.n_cols << " " << validationSet.n_rows << " "
+            << validationSet.n_cols
+            << " " << testSet.n_rows << " " << testSet.n_cols << std::endl;
+
+   */
+  int labelCol = 2;
   // Split the data from the training set.
   arma::mat trainingLabels = arma::mat(trainingSet.memptr() + (trainingSet.n_cols - labelCol) * trainingSet.n_rows,
                                        trainingSet.n_rows,
@@ -73,6 +79,7 @@ int main() {
                                  testSet.n_cols - labelCol,
                                  false,
                                  false);
+  /*
   double learningRateMin = 0.1;
   double learningRateMax = 1;
   double learningRateStep = 0.1;
@@ -110,20 +117,26 @@ int main() {
   arma::mat result = arma::zeros(netAnalyzed, 5);   // 4 hyperparams and error
   gridSearch.Run(trainingData, trainingLabels, std::move(result));
 
-/*
+
+  gridSearch.run(trainingData, trainingLabels, std::move(result));
+*/
+
+
   Network net;
   net.SetLossFunction("meanSquaredError");
 
-  Layer firstLayer(trainingSet.n_cols - labelCol, 4, "tanhFunction");
-  Layer lastLayer(4, 1, "logisticFunction");
+  Layer firstLayer(trainingSet.n_cols - labelCol, 100, "tanhFunction");
+  Layer lastLayer(100, 2, "linearFunction");
   net.Add(firstLayer);
   net.Add(lastLayer);
 
-  net.Init(1e-3, -1e-3);
+  net.Init(0.7, -0.7);
 
-  net.Train(trainingSet, trainingLabels.n_cols, 800, 128, 0.9, 0, 0.5);
-  net.TestWithThreshold(std::move(testData), std::move(testLabels), 0.5);
-
+  net.Train(validationData, validationLabels, trainingSet, trainingLabels.n_cols, 800, 128, 0.01, 0, 0);
+  arma::mat mat;
+  net.Test(std::move(testData), std::move(testLabels), std::move(mat));
+  mat.print("errore finale");
+/*
   CrossValidation cross_validation;
   arma::mat error = arma::zeros(1, trainingLabels.n_cols);
   cross_validation.run(trainingData,

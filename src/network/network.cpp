@@ -31,7 +31,7 @@ void Network::Init(const double upperBound = 1, const double lowerBound = -1) {
  * @param batchSize Number of the example feed in the network for each forward pass
  * @param learningRate Adjust weight parameter
  * */
-void Network::Train(arma::mat trainingSet,
+void Network::Train(arma::mat validationSet, arma::mat validationLabelSet, arma::mat trainingSet,
                     int labelCol,
                     int epoch,
                     int batchSize,
@@ -45,7 +45,12 @@ void Network::Train(arma::mat trainingSet,
   learningRate = learningRate / batchSize;
   weightDecay = (weightDecay * batchSize) / trainingSet.n_rows;
   trainingSet = arma::shuffle(trainingSet);
-  for (int currentEpoch = 1; currentEpoch <= epoch; currentEpoch++) {
+  arma::mat currentError = arma::zeros(1, 1);
+  arma::mat deltaError;
+  arma::mat previousError;
+  double thresholdStopCondition = 0.000000001;
+  bool stopCondition = false;
+  for (int currentEpoch = 1; currentEpoch <= epoch && !stopCondition; currentEpoch++) {
 
     // Split the data from the training set.
     arma::mat trainLabels = arma::mat(trainingSet.memptr() + (trainingSet.n_cols - labelCol) * trainingSet.n_rows,
@@ -70,6 +75,18 @@ void Network::Train(arma::mat trainingSet,
           weightDecay,
           momentum);
     //epochError.raw_print(arma::cout, "");
+
+    // add of the stop condition on validation set error
+    previousError = currentError;
+    currentError = arma::zeros(1, 1);
+    Test(std::move(validationSet), std::move(validationLabelSet), std::move(currentError));
+    currentError.print("currentError");
+    deltaError = previousError - currentError;
+    deltaError.print("deltaError");
+    if (deltaError.at(0, 0) < thresholdStopCondition && deltaError.at(0, 0) > 0) {
+      std::cout << " currentEpoch " << currentEpoch << std::endl;
+      stopCondition = true;
+    }
     // shuffle the training set for the new epoch
     trainingSet = arma::shuffle(trainingSet);
   }
@@ -195,11 +212,11 @@ void Network::Test(const arma::mat &&testData, const arma::mat &&testLabels, arm
 
   inference(std::move(testDataCopied),
             std::move(outputActivateBatch));
-  outputActivateBatch = outputActivateBatch.t();
 
-  errorTest(std::move(testLabels), std::move(outputActivateBatch), std::move(currentBatchError));
-  //testLabels.print("testLabels");
-  //outputActivateBatch.print("outputActivateBatch");
+  errorTest(std::move(testLabels.t()), std::move(outputActivateBatch), std::move(currentBatchError));
+  testLabels.print("testLabels");
+  outputActivateBatch.t().print("outputActivateBatch");
+  (testLabels - outputActivateBatch.t()).print("diff");
   //currentBatchError.print("currentBatchError");
   currentBatchError = arma::mean(currentBatchError);
   //currentBatchError.print("arma::mean");
