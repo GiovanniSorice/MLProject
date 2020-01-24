@@ -51,10 +51,13 @@ void GridSearch::SetEpochMax(int epoch_max) {
   epochMax = epoch_max;
 }
 
-void GridSearch::run(arma::mat dataset, arma::mat label) {
+void GridSearch::run(arma::mat dataset, arma::mat label, arma::mat &&result) {
   CrossValidation cross_validation;
   arma::mat error;
+
+  int currentRow = 0;
   for (int currentNUnit = unitMin; currentNUnit < unitMax; currentNUnit += unitStep) {
+
     Network currNet;
     currNet.SetLossFunction("meanSquaredError");
     Layer firstLayer(dataset.n_cols - label.n_cols, currentNUnit, "tanhFunction");
@@ -65,20 +68,35 @@ void GridSearch::run(arma::mat dataset, arma::mat label) {
 
     for (double currentLambda = lambdaMin; currentLambda <= lambdaMax; currentLambda += lambdaStep) {
       for (double currentMomentum = momentumMin; currentMomentum <= momentumMax; currentMomentum += momentumStep) {
-        for (int currentEpoch = epochMin; currentMomentum <= epochMax; currentMomentum += epochStep) {
+        for (int currentEpoch = epochMin; currentEpoch <= epochMax; currentEpoch += epochStep) {
           for (double currentLearningRate = learningRateMin; currentLearningRate <= learningRateMax;
                currentLearningRate += learningRateStep) {
+            std::cout << " currentNUnit " << currentNUnit << " currentLambda " << currentLambda << " currentMomentum "
+                      << currentMomentum
+                      << " currentEpoch " << currentEpoch << " currentLearningRate " << currentLearningRate
+                      << std::endl;
             error = arma::zeros(1, label.n_cols);
             cross_validation.run(dataset,
                                  label,
                                  3,
                                  currNet,
                                  currentEpoch,
-                                 1,
+                                 dataset.n_rows,
                                  currentLearningRate,
                                  currentLambda,
                                  currentMomentum,
-                                 error);
+                                 std::move(error));
+
+            result.at(currentRow, 0) = currentNUnit;
+            result.at(currentRow, 1) = currentLambda;
+            result.at(currentRow, 2) = currentMomentum;
+            result.at(currentRow, 3) = currentEpoch;
+            result.at(currentRow, 4) = currentLearningRate;
+
+            for (int i = 0; i < error.n_cols; i++) {
+              result.at(currentRow, 5 + i) = error.at(0, i);
+            }
+
             error.print("error");
           }
         }

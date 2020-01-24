@@ -13,17 +13,16 @@ void CrossValidation::run(arma::mat dataset,
                           double learningRate,
                           double weightDecay,
                           double momentum,
-                          arma::mat meanError
+                          arma::mat &&meanError
 ) {
   arma::mat joinedDataset = arma::join_rows(dataset, label);
   int step = ceil(dataset.n_rows / kfold);
   int start = 0;
   int end = step;
 
-  arma::mat currentError = arma::zeros(1, label.n_cols);
+  arma::mat currentError;
 
   for (int i = 0; i < kfold; i++) {
-    std::cout << "start " << start << " fine " << end - 1;
     arma::mat validationSet = dataset.submat(start, 0, end - 1,
                                              dataset.n_cols - 1);
     arma::mat validationLabelSet = label.submat(start, 0, end - 1,
@@ -45,6 +44,7 @@ void CrossValidation::run(arma::mat dataset,
     net.Clear();
     net.Init(1e-4, -1e-4); //todo: maggico
     net.Train(trainingDataset, label.n_cols, epoch, batchSize, learningRate, weightDecay, momentum);
+    currentError = arma::zeros(1, label.n_cols);
 
     net.Test(std::move(validationSet), std::move(validationLabelSet), std::move(currentError));
     meanError += meanError;
@@ -53,4 +53,5 @@ void CrossValidation::run(arma::mat dataset,
 
   }
   meanError /= kfold;
+  meanError.print("meanError");
 }

@@ -79,27 +79,48 @@ int main() {
                                  testSet.n_cols - labelCol,
                                  false,
                                  false);
-/*
+  double learningRateMin = 0.1;
+  double learningRateMax = 1;
+  double learningRateStep = 0.1;
+  double lambdaMin = 0;
+  double lambdaMax = 0.001;
+  double lambdaStep = 0.0002;
+  double momentumMin = 0;
+  double momentumMax = 0.5;
+  double momentumStep = 0.1;
+  int unitMin = 3;
+  int unitMax = 10;
+  int unitStep = 1;
+  int epochMin = 400;
+  int epochMax = 800;
+  int epochStep = 100;
+
   GridSearch gridSearch;
-  gridSearch.SetEpochMin(300);
-  gridSearch.SetEpochMax(500);
-  gridSearch.SetEpochStep(50);
-  gridSearch.SetLambdaMin(0.0);
-  gridSearch.SetLambdaMax(0.01);
-  gridSearch.SetLambdaStep(0.01);
-  gridSearch.SetLearningRateMin(0.001);
-  gridSearch.SetLearningRateMax(0.07);
-  gridSearch.SetLearningRateStep(0.001);
-  gridSearch.SetMomentumMin(0);
-  gridSearch.SetMomentumMax(0.5);
-  gridSearch.SetMomentumStep(0.1);
-  gridSearch.SetUnitMin(10);
-  gridSearch.SetUnitMax(100);
-  gridSearch.SetUnitStep(10);
+  gridSearch.SetEpochMin(epochMin);
+  gridSearch.SetEpochMax(epochMax);
+  gridSearch.SetEpochStep(epochStep);
+  gridSearch.SetLambdaMin(lambdaMin);
+  gridSearch.SetLambdaMax(lambdaMax);
+  gridSearch.SetLambdaStep(lambdaStep);
+  gridSearch.SetLearningRateMin(learningRateMin);
+  gridSearch.SetLearningRateMax(learningRateMax);
+  gridSearch.SetLearningRateStep(learningRateStep);
+  gridSearch.SetMomentumMin(momentumMin);
+  gridSearch.SetMomentumMax(momentumMax);
+  gridSearch.SetMomentumStep(momentumStep);
+  gridSearch.SetUnitMin(unitMin);
+  gridSearch.SetUnitMax(unitMax);
+  gridSearch.SetUnitStep(unitStep);
 
-  gridSearch.run(trainingData, trainingLabels);
-*/
+  int nRows = (epochMax - epochMin) / epochStep + (lambdaMax - lambdaMin) / lambdaStep
+      + (learningRateMax - learningRateMin) / learningRateStep + (momentumMax - momentumMin) / momentumStep
+      + (unitMax - unitMin) / unitStep;
+  arma::mat result = arma::zeros(nRows, 4 + trainingLabels.n_cols);// 4 hyperparams, errore ed errore validation
 
+
+  gridSearch.run(trainingData, trainingLabels, std::move(result));
+
+/*
   Network net;
   net.SetLossFunction("meanSquaredError");
 
@@ -109,10 +130,22 @@ int main() {
   net.Add(lastLayer);
 
   net.Init(1e-3, -1e-3);
-  /*
+
   net.Train(trainingSet, trainingLabels.n_cols, 800, 128, 0.9, 0, 0.5);
   net.TestWithThreshold(std::move(testData), std::move(testLabels), 0.5);
-*/
 
+  CrossValidation cross_validation;
+  arma::mat error = arma::zeros(1, trainingLabels.n_cols);
+  cross_validation.run(trainingData,
+                       trainingLabels,
+                       3,
+                       net,
+                       800,
+                       trainingData.n_rows,
+                       0.9,
+                       0,
+                       0.5,
+                       std::move(error));
+*/
   return 0;
 }
