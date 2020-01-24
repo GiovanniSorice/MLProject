@@ -116,7 +116,6 @@ void Layer::Gradient(const arma::mat &&summationGradientWeight) {
 
 /***/
 void Layer::AdjustWeight(const double learningRate, const double weightDecay, const double momentum) {
-  //TODO: capire se va sum o mean (chiedere a ricevimento)
   weight = weight + momentum * deltaWeight - learningRate * gradient * inputParameter.t()
       - 2 * weightDecay * weight;
   bias = bias + momentum * deltaBias - learningRate * arma::mean(gradient, 1) - 2 * weightDecay * bias;

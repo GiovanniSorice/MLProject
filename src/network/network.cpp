@@ -69,7 +69,7 @@ void Network::Train(arma::mat trainingSet,
           learningRate,
           weightDecay,
           momentum);
-    epochError.raw_print(arma::cout, "");
+    //epochError.raw_print(arma::cout, "");
     // shuffle the training set for the new epoch
     trainingSet = arma::shuffle(trainingSet);
   }
@@ -200,7 +200,7 @@ void Network::Test(const arma::mat &&testData, const arma::mat &&testLabels, arm
   errorTest(std::move(testLabels), std::move(outputActivateBatch), std::move(currentBatchError));
   //testLabels.print("testLabels");
   //outputActivateBatch.print("outputActivateBatch");
-  currentBatchError.print("currentBatchError");
+  //currentBatchError.print("currentBatchError");
   currentBatchError = arma::mean(currentBatchError);
   //currentBatchError.print("arma::mean");
   /*
@@ -272,9 +272,7 @@ void Network::errorTest(const arma::mat &&trainLabelsBatch,
  * Clear the internal variable of the network (without delete the lossFunction)
  */
 void Network::Clear() {
-
   for (Layer &currentLayer : net) {
     currentLayer.Clear();
   }
-
 }

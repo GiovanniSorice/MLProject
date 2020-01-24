@@ -25,10 +25,11 @@ class GridSearch {
   int epochMax;
 
  public:
+  int NetworkAnalyzed();
   void SetEpochStep(int epoch_step);
   void SetEpochMin(int epoch_min);
   void SetEpochMax(int epoch_max);
-  void run(arma::mat dataset,
+  void Run(arma::mat dataset,
            arma::mat label, arma::mat
            &&result);
   void SetUnitStep(int unit_step);

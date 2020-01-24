@@ -4,7 +4,7 @@
 
 #include "crossValidation.h"
 #include "../network/network.h"
-void CrossValidation::run(arma::mat dataset,
+void CrossValidation::Run(arma::mat dataset,
                           arma::mat label,
                           int kfold,
                           Network net,
@@ -22,7 +22,7 @@ void CrossValidation::run(arma::mat dataset,
 
   arma::mat currentError;
 
-  for (int i = 0; i < kfold; i++) {
+  for (int currentK = 0; currentK < kfold; currentK++) {
     arma::mat validationSet = dataset.submat(start, 0, end - 1,
                                              dataset.n_cols - 1);
     arma::mat validationLabelSet = label.submat(start, 0, end - 1,
@@ -42,12 +42,12 @@ void CrossValidation::run(arma::mat dataset,
 
     arma::mat trainingDataset = arma::join_cols(firstPartTrainingSet, secondPartTrainingSet);
     net.Clear();
-    net.Init(1e-4, -1e-4); //todo: maggico
+    net.Init(1e-4, -1e-4);
     net.Train(trainingDataset, label.n_cols, epoch, batchSize, learningRate, weightDecay, momentum);
-    currentError = arma::zeros(1, label.n_cols);
+    currentError = arma::zeros(1, 1);
 
     net.Test(std::move(validationSet), std::move(validationLabelSet), std::move(currentError));
-    meanError += meanError;
+    meanError += currentError;
     start = end;
     end = (end + step) < dataset.n_rows ? end + step : dataset.n_rows - 1;
 

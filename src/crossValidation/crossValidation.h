@@ -9,7 +9,7 @@
 
 class CrossValidation {
  public:
-  void run(arma::mat dataset,
+  void Run(arma::mat dataset,
            arma::mat label,
            int kfold,
            Network net,

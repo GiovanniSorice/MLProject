@@ -29,12 +29,6 @@ int main() {
   a.GetSplit(100, 0, 0, std::move(trainingSet), std::move(validationSet), std::move(testSet));
 
   testSet.load("../../data/monk/monks1_test_formatted.csv");
-  /*
-   std::cout << trainingSet.n_rows << " " << trainingSet.n_cols << " " << validationSet.n_rows << " "
-            << validationSet.n_cols
-            << " " << testSet.n_rows << " " << testSet.n_cols << std::endl;
-
-   */
   int labelCol = 1;
   // Split the data from the training set.
   arma::mat trainingLabels = arma::mat(trainingSet.memptr() + (trainingSet.n_cols - labelCol) * trainingSet.n_rows,
@@ -91,9 +85,9 @@ int main() {
   int unitMin = 3;
   int unitMax = 10;
   int unitStep = 1;
-  int epochMin = 400;
+  int epochMin = 800;
   int epochMax = 800;
-  int epochStep = 100;
+  int epochStep = 1;
 
   GridSearch gridSearch;
   gridSearch.SetEpochMin(epochMin);
@@ -112,13 +106,9 @@ int main() {
   gridSearch.SetUnitMax(unitMax);
   gridSearch.SetUnitStep(unitStep);
 
-  int nRows = (epochMax - epochMin) / epochStep + (lambdaMax - lambdaMin) / lambdaStep
-      + (learningRateMax - learningRateMin) / learningRateStep + (momentumMax - momentumMin) / momentumStep
-      + (unitMax - unitMin) / unitStep;
-  arma::mat result = arma::zeros(nRows, 4 + trainingLabels.n_cols);// 4 hyperparams, errore ed errore validation
-
-
-  gridSearch.run(trainingData, trainingLabels, std::move(result));
+  int netAnalyzed = gridSearch.NetworkAnalyzed();
+  arma::mat result = arma::zeros(netAnalyzed, 5);   // 4 hyperparams and error
+  gridSearch.Run(trainingData, trainingLabels, std::move(result));
 
 /*
   Network net;

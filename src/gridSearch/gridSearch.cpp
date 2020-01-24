@@ -51,7 +51,18 @@ void GridSearch::SetEpochMax(int epoch_max) {
   epochMax = epoch_max;
 }
 
-void GridSearch::run(arma::mat dataset, arma::mat label, arma::mat &&result) {
+/**
+ *   Return the total number of network analyzed by the grid search
+ * */
+int GridSearch::NetworkAnalyzed() {
+  return ceil((epochMax - epochMin) / epochStep * (lambdaMax - lambdaMin) / lambdaStep
+                  * (learningRateMax - learningRateMin) / learningRateStep * (momentumMax - momentumMin)
+                  / momentumStep
+                  * (unitMax - unitMin) / unitStep);
+}
+
+/***/
+void GridSearch::Run(arma::mat dataset, arma::mat label, arma::mat &&result) {
   CrossValidation cross_validation;
   arma::mat error;
 
@@ -75,8 +86,8 @@ void GridSearch::run(arma::mat dataset, arma::mat label, arma::mat &&result) {
                       << currentMomentum
                       << " currentEpoch " << currentEpoch << " currentLearningRate " << currentLearningRate
                       << std::endl;
-            error = arma::zeros(1, label.n_cols);
-            cross_validation.run(dataset,
+            error = arma::zeros(1, 1);
+            cross_validation.Run(dataset,
                                  label,
                                  3,
                                  currNet,
@@ -92,16 +103,14 @@ void GridSearch::run(arma::mat dataset, arma::mat label, arma::mat &&result) {
             result.at(currentRow, 2) = currentMomentum;
             result.at(currentRow, 3) = currentEpoch;
             result.at(currentRow, 4) = currentLearningRate;
+            result.at(currentRow, 5) = error.at(0, 0);
 
-            for (int i = 0; i < error.n_cols; i++) {
-              result.at(currentRow, 5 + i) = error.at(0, i);
-            }
-
-            error.print("error");
+            // increment currentRow for saving, next iteration, the values found
+            currentRow++;
           }
         }
       }
     }
   }
-
+  result.save("grid-search-values.txt", arma::arma_ascii);
 }
