@@ -122,5 +122,5 @@ void GridSearch::Run(arma::mat dataset, arma::mat label, arma::mat &&result) {
       }
     }
   }
-  result.save("grid-search-values.txt", arma::arma_ascii);
+  //result.save("grid-search-values.txt", arma::arma_ascii);
 }

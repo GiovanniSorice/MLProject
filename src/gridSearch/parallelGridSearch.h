@@ -34,7 +34,7 @@ class ParallelGridSearch {
   double lambdaInterval();
   int epochInterval();
   int unitInterval();
-  void setGridsSearch(int resultRows);
+  void setGridsSearch(int totalNetworkAnalyzed);
   void saveResult();
  public:
   void Run(arma::mat dataset, arma::mat label);

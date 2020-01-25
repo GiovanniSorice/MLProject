@@ -6,7 +6,11 @@
 #include "parallelGridSearch.h"
 #include "gridSearch.h"
 
-/**
+/**  Given the dataset and the label the computation is divided among multiple thread, all the
+ *   result are stored inside std::vector result matrix and then retrieved
+ *
+ *   @param dataset The dataset used for training
+ *   @param label Label used for training the network
  * */
 void ParallelGridSearch::Run(arma::mat dataset, arma::mat label) {
   int parallelThreads = std::thread::hardware_concurrency() / 1;
@@ -29,7 +33,7 @@ void ParallelGridSearch::Run(arma::mat dataset, arma::mat label) {
     parallelGridIterator++;
   }
 
-  // wait all the threads
+  // wait all the threads to stop
   for (std::thread &thread :gridSearchThreads) {
     if (thread.joinable()) {
       thread.join();
@@ -40,6 +44,8 @@ void ParallelGridSearch::Run(arma::mat dataset, arma::mat label) {
   saveResult();
 }
 
+/**  Threads computed results are joined and saved in a unique file
+ * */
 void ParallelGridSearch::saveResult() {
   arma::mat result;
   // join matrices for saving
@@ -49,7 +55,11 @@ void ParallelGridSearch::saveResult() {
   result.save("parallel-grid-search-values.txt", arma::arma_ascii);
 }
 
-void ParallelGridSearch::setGridsSearch(int resultRows) {
+/** Parameters of all the grid search are set
+ *
+ * @param totalNetworkAnalyzed The total number of the network computed by the grid search
+ * */
+void ParallelGridSearch::setGridsSearch(int totalNetworkAnalyzed) {
   int currentEpochInterval = epochInterval();
   int currentUnitInterval = unitInterval();
   double currentMomentumInterval = momentumInterval();
@@ -59,7 +69,7 @@ void ParallelGridSearch::setGridsSearch(int resultRows) {
 
   // fill the vector with the matrix and create grid search object
   for (int currentGridSearch = 0; currentGridSearch < totalThreadNumber; currentGridSearch++) {
-    resultMatrix.emplace_back(arma::zeros(ceil(resultRows / totalThreadNumber), 7));
+    resultMatrix.emplace_back(arma::zeros(ceil(totalNetworkAnalyzed / totalThreadNumber), 7));
 
     GridSearch gridSearch;
     gridSearch.SetEpochMin(epochMin);
@@ -109,6 +119,9 @@ int ParallelGridSearch::unitInterval() {
 void ParallelGridSearch::setNumberThread(int totalThread) {
   totalThreadNumber = totalThread;
 }
+
+/** A
+ * */
 int ParallelGridSearch::NetworkAnalyzed() {
   double epochN = (epochMax - epochMin) / epochStep + 1;
   double lambdaN = (lambdaMax - lambdaMin) / lambdaStep + 1;
