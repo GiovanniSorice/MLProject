@@ -32,13 +32,13 @@ void Network::Init(const double upperBound = 1, const double lowerBound = -1) {
  * @param batchSize Number of the example feed in the network for each forward pass
  * @param learningRate Adjust weight parameter
  * */
-void Network::Train(arma::mat validationSet, arma::mat validationLabelSet, arma::mat trainingSet,
-                    int labelCol,
-                    int epoch,
-                    int batchSize,
-                    double learningRate,
-                    double weightDecay,
-                    double momentum) {
+double Network::Train(arma::mat validationSet, arma::mat validationLabelSet, arma::mat trainingSet,
+                      int labelCol,
+                      int epoch,
+                      int batchSize,
+                      double learningRate,
+                      double weightDecay,
+                      double momentum) {
   if (batchSize > trainingSet.n_rows) {
     batchSize = trainingSet.n_rows;
   }
@@ -49,8 +49,9 @@ void Network::Train(arma::mat validationSet, arma::mat validationLabelSet, arma:
   arma::mat currentError = arma::zeros(1, 1);
   arma::mat deltaError;
   arma::mat previousError;
-  double thresholdStopCondition = 0.000000001;
+  double thresholdStopCondition = 0.00001;
   bool stopCondition = false;
+  double nDelta = 0.0;
   for (int currentEpoch = 1; currentEpoch <= epoch && !stopCondition; currentEpoch++) {
 
     // Split the data from the training set.
@@ -81,16 +82,20 @@ void Network::Train(arma::mat validationSet, arma::mat validationLabelSet, arma:
     previousError = currentError;
     currentError = arma::zeros(1, 1);
     Test(std::move(validationSet), std::move(validationLabelSet), std::move(currentError));
-    arma::mat errortemp = arma::join_rows(epochError, currentError);
+    //arma::mat errortemp = arma::join_rows(epochError, currentError);
 
-    errortemp.raw_print(arma::cout, "");
+    //errortemp.raw_print(arma::cout, "");
     deltaError = previousError - currentError;
+    if (deltaError.at(0, 0) < 0) {
+      nDelta++;
+    }
     if (deltaError.at(0, 0) < thresholdStopCondition && deltaError.at(0, 0) > 0) {
       stopCondition = true;
     }
     // shuffle the training set for the new epoch
     trainingSet = arma::shuffle(trainingSet);
   }
+  return nDelta;
 }
 
 /**  Retrieve the batch and its correspondents label. Then the batch is forwarded, the error is computed

@@ -18,7 +18,8 @@ class CrossValidation {
            double learningRate,
            double weightDecay,
            double momentum,
-           arma::mat &&meanError
+           arma::mat &&meanError,
+           double &nDelta
   );
 
 };

@@ -79,22 +79,22 @@ int main() {
                                  testSet.n_cols - labelCol,
                                  false,
                                  false);
-/*
-  double learningRateMin = 0.01;
-  double learningRateMax = 0.02;
-  double learningRateStep = 0.01;
+
+  double learningRateMin = 0.001;
+  double learningRateMax = 0.05;
+  double learningRateStep = 0.005;
   double lambdaMin = 0;
-  double lambdaMax = 0.0002;
-  double lambdaStep = 0.0002;
+  double lambdaMax = 0.0004;
+  double lambdaStep = 0.0001;
   double momentumMin = 0.0;
-  double momentumMax = 0.1;
+  double momentumMax = 0.4;
   double momentumStep = 0.1;
-  int unitMin = 100;
-  int unitMax = 101;
-  int unitStep = 1;
-  int epochMin = 799;
-  int epochMax = 800;
-  int epochStep = 2;
+  int unitMin = 50;
+  int unitMax = 250;
+  int unitStep = 50;
+  int epochMin = 1500;
+  int epochMax = 3000;
+  int epochStep = 500;
 
   GridSearch gridSearch;
   gridSearch.SetEpochMin(epochMin);
@@ -115,41 +115,50 @@ int main() {
 
   int netAnalyzed = gridSearch.NetworkAnalyzed();
   std::cout << "netAnalyzed" << netAnalyzed << std::endl;
-  arma::mat result = arma::zeros(netAnalyzed, 6);   // 4 hyperparams and error
+  arma::mat result = arma::zeros(netAnalyzed, 7);   // 4 hyperparams and error
   gridSearch.Run(trainingData, trainingLabels, std::move(result));
-*/
 
 
 
 
+/*
  Network net;
  net.SetLossFunction("meanSquaredError");
 
- Layer firstLayer(trainingSet.n_cols - labelCol, 100, "tanhFunction");
- Layer lastLayer(100, 2, "linearFunction");
+  Layer firstLayer(trainingSet.n_cols - labelCol, 200, "tanhFunction");
+  Layer lastLayer(200, 2, "linearFunction");
  net.Add(firstLayer);
  net.Add(lastLayer);
 
- net.Init(0.7, -0.7);
+  net.Init(0.7, -0.7);
 
-  net.Train(validationData, validationLabels, trainingSet, trainingLabels.n_cols, 800, 8, 0.01, 0, 0);
+  net.Train(validationData,
+            validationLabels,
+            trainingSet,
+            trainingLabels.n_cols,
+            5000,
+            trainingSet.n_rows,
+            0.007,
+            0.0001,
+            0.3);
  arma::mat mat;
   net.Test(std::move(validationData), std::move(validationLabels), std::move(mat));
   //net.Test(std::move(testData), std::move(testLabels), std::move(mat));
  mat.print("errore finale");
-/*
- CrossValidation cross_validation;
- arma::mat error = arma::zeros(1, trainingLabels.n_cols);
- cross_validation.run(trainingData,
-                      trainingLabels,
-                      3,
-                      net,
-                      800,
-                      trainingData.n_rows,
-                      0.9,
-                      0,
-                      0.5,
-                      std::move(error));
-*/
+
+
+  CrossValidation cross_validation;
+  arma::mat error = arma::zeros(1, trainingLabels.n_cols);
+  cross_validation.run(trainingData,
+                       trainingLabels,
+                       3,
+                       net,
+                       800,
+                       trainingData.n_rows,
+                       0.9,
+                       0,
+                       0.5,
+                       std::move(error));
+ */
   return 0;
 }

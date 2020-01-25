@@ -13,7 +13,8 @@ void CrossValidation::Run(arma::mat dataset,
                           double learningRate,
                           double weightDecay,
                           double momentum,
-                          arma::mat &&meanError
+                          arma::mat &&meanError,
+                          double &nDelta
 ) {
   arma::mat joinedDataset = arma::join_rows(dataset, label);
   int step = ceil(dataset.n_rows / kfold);
@@ -21,7 +22,6 @@ void CrossValidation::Run(arma::mat dataset,
   int end = step;
 
   arma::mat currentError;
-
   for (int currentK = 0; currentK < kfold; currentK++) {
     arma::mat validationSet = dataset.submat(start, 0, end - 1,
                                              dataset.n_cols - 1);
@@ -42,8 +42,8 @@ void CrossValidation::Run(arma::mat dataset,
 
     arma::mat trainingDataset = arma::join_cols(firstPartTrainingSet, secondPartTrainingSet);
     net.Clear();
-    net.Init(1e-4, -1e-4);
-    net.Train(validationSet,
+    net.Init(0.7, -0.7);
+    nDelta += net.Train(validationSet,
               validationLabelSet,
               trainingDataset,
               label.n_cols,
@@ -56,9 +56,11 @@ void CrossValidation::Run(arma::mat dataset,
 
     net.Test(std::move(validationSet), std::move(validationLabelSet), std::move(currentError));
     meanError += currentError;
+
     start = end;
     end = (end + step) < dataset.n_rows ? end + step : dataset.n_rows - 1;
 
   }
   meanError /= kfold;
+  nDelta /= kfold;
 }

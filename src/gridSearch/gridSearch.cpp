@@ -82,6 +82,7 @@ void GridSearch::Run(arma::mat dataset, arma::mat label, arma::mat &&result) {
     currNet.Add(firstLayer);
     currNet.Add(lastLayer);
     currNet.Init(0.7, -0.7);
+    double nDelta;
 
     for (double currentLambda = lambdaMin; currentLambda <= lambdaMax; currentLambda += lambdaStep) {
       for (double currentMomentum = momentumMin; currentMomentum <= momentumMax; currentMomentum += momentumStep) {
@@ -89,6 +90,7 @@ void GridSearch::Run(arma::mat dataset, arma::mat label, arma::mat &&result) {
           for (double currentLearningRate = learningRateMin; currentLearningRate <= learningRateMax;
                currentLearningRate += learningRateStep) {
             error = arma::zeros(1, 1);
+            nDelta = 0.0;
             cross_validation.Run(dataset,
                                  label,
                                  3,
@@ -98,11 +100,12 @@ void GridSearch::Run(arma::mat dataset, arma::mat label, arma::mat &&result) {
                                  currentLearningRate,
                                  currentLambda,
                                  currentMomentum,
-                                 std::move(error));
+                                 std::move(error),
+                                 nDelta);
             std::cout << " currentNUnit " << currentNUnit << " currentLambda " << currentLambda << " currentMomentum "
                       << currentMomentum
                       << " currentEpoch " << currentEpoch << " currentLearningRate " << currentLearningRate
-                      << " error " << error.at(0, 0) << std::endl;
+                      << " error " << error.at(0, 0) << " nDelta " << nDelta << std::endl;
 
             result.at(currentRow, 0) = currentNUnit;
             result.at(currentRow, 1) = currentLambda;
@@ -110,6 +113,7 @@ void GridSearch::Run(arma::mat dataset, arma::mat label, arma::mat &&result) {
             result.at(currentRow, 3) = currentEpoch;
             result.at(currentRow, 4) = currentLearningRate;
             result.at(currentRow, 5) = error.at(0, 0);
+            result.at(currentRow, 6) = nDelta;
 
             // increment currentRow for saving, next iteration, the values found
             currentRow++;
