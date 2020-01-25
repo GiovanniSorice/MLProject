@@ -27,7 +27,7 @@ int main() {
   arma::mat validationSet;
   arma::mat testSet;
 
-  a.GetSplit(60, 20, 20, std::move(trainingSet), std::move(validationSet), std::move(testSet));
+  a.GetSplit(80, 20, 0, std::move(trainingSet), std::move(validationSet), std::move(testSet));
 
   //testSet.load("../../data/ML-CUP19-TR_formatted.csv");
   /*
@@ -90,12 +90,12 @@ int main() {
   double momentumMin = 0.0;
   double momentumMax = 0.4;
   double momentumStep = 0.1;
-  int unitMin = 5;
-  int unitMax = 20;
-  int unitStep = 5;
-  int epochMin = 5;
-  int epochMax = 20;
-  int epochStep = 5;
+  int unitMin = 50;
+  int unitMax = 100;
+  int unitStep = 50;
+  int epochMin = 3000;
+  int epochMax = 3000;
+  int epochStep = 500;
 
   ParallelGridSearch gridSearch;
   gridSearch.SetEpochMin(epochMin);
@@ -126,13 +126,13 @@ int main() {
   Network net;
  net.SetLossFunction("meanSquaredError");
 
-  Layer firstLayer(trainingSet.n_cols - labelCol, 200, "tanhFunction");
-  Layer lastLayer(200, 2, "linearFunction");
+  Layer firstLayer(trainingSet.n_cols - labelCol, 100, "tanhFunction");
+  Layer lastLayer(100, 2, "linearFunction");
  net.Add(firstLayer);
  net.Add(lastLayer);
 
   net.Init(0.7, -0.7);
-
+/*
   net.Train(validationData,
             validationLabels,
             trainingSet,
@@ -146,20 +146,23 @@ int main() {
   net.Test(std::move(validationData), std::move(validationLabels), std::move(mat));
   //net.Test(std::move(testData), std::move(testLabels), std::move(mat));
  mat.print("errore finale");
-
-
+*/
+/*
   CrossValidation cross_validation;
   arma::mat error = arma::zeros(1, trainingLabels.n_cols);
-  cross_validation.run(trainingData,
+  double nDelta = 0;
+  cross_validation.Run(trainingData,
                        trainingLabels,
                        3,
                        net,
-                       800,
+                       500,
                        trainingData.n_rows,
-                       0.9,
+                       0.001,
                        0,
-                       0.5,
-                       std::move(error));
- */
+                       0,
+                       std::move(error),
+                       nDelta);
+
+*/
   return 0;
 }

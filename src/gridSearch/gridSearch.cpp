@@ -77,7 +77,7 @@ void GridSearch::Run(arma::mat dataset, arma::mat label, arma::mat &&result) {
 
     Network currNet;
     currNet.SetLossFunction("meanSquaredError");
-    Layer firstLayer(dataset.n_cols - label.n_cols, currentNUnit, "tanhFunction");
+    Layer firstLayer(dataset.n_cols, currentNUnit, "tanhFunction");
     Layer lastLayer(currentNUnit, label.n_cols, "linearFunction");
     currNet.Add(firstLayer);
     currNet.Add(lastLayer);
