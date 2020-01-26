@@ -48,7 +48,7 @@ class Network {
   void Test(const arma::mat &&testData,
             const arma::mat &&testLabels, arma::mat &&currentBatchError);
   void TestWithThreshold(const arma::mat &&testData,
-                         const arma::mat &&testLabels, double Threshold);
+                         const arma::mat &&testLabels, arma::mat &&currentBatchError, double Threshold);
   void errorTest(const arma::mat &&trainLabelsBatch,
                  arma::mat &&outputActivateBatch,
                  arma::mat &&currentBatchError);

@@ -13,8 +13,8 @@
  *   @param label Label used for training the network
  * */
 void ParallelGridSearch::Run(arma::mat dataset, arma::mat label) {
-  int parallelThreads = std::thread::hardware_concurrency() / 1;
-
+  //int parallelThreads = std::thread::hardware_concurrency() / 2;
+  int parallelThreads = 8;
   // save number of threads wanted
   setNumberThread(parallelThreads);
 

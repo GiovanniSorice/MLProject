@@ -42,7 +42,7 @@ void CrossValidation::Run(arma::mat dataset,
 
     arma::mat trainingDataset = arma::join_cols(firstPartTrainingSet, secondPartTrainingSet);
     net.Clear();
-    net.Init(0.7, -0.7);
+    net.Init(1e-4, -1e-4);
     nDelta += net.Train(validationSet,
               validationLabelSet,
               trainingDataset,
@@ -54,7 +54,7 @@ void CrossValidation::Run(arma::mat dataset,
               momentum);
     currentError = arma::zeros(1, 1);
 
-    net.Test(std::move(validationSet), std::move(validationLabelSet), std::move(currentError));
+    net.TestWithThreshold(std::move(validationSet), std::move(validationLabelSet), std::move(currentError), 0.5);
     meanError += currentError;
 
     start = end;

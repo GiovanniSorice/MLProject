@@ -47,9 +47,11 @@ double Network::Train(arma::mat validationSet, arma::mat validationLabelSet, arm
   weightDecay = (weightDecay * batchSize) / trainingSet.n_rows;
   trainingSet = arma::shuffle(trainingSet);
   arma::mat currentError = arma::zeros(1, 1);
+  arma::mat currentErrorTrain = arma::zeros(1, 1);
+  arma::mat currentLoss = arma::zeros(1, 1);
   arma::mat deltaError;
   arma::mat previousError;
-  double thresholdStopCondition = 0.00001;
+  double thresholdStopCondition = 0.000000000001;
   bool stopCondition = false;
   double nDelta = 0.0;
   for (int currentEpoch = 1; currentEpoch <= epoch && !stopCondition; currentEpoch++) {
@@ -81,10 +83,18 @@ double Network::Train(arma::mat validationSet, arma::mat validationLabelSet, arm
     // add of the stop condition on validation set error
     previousError = currentError;
     currentError = arma::zeros(1, 1);
-    Test(std::move(validationSet), std::move(validationLabelSet), std::move(currentError));
-    //arma::mat errortemp = arma::join_rows(epochError, currentError);
+    currentErrorTrain = arma::zeros(1, 1);
+    currentLoss = arma::zeros(1, 1);
 
-    //errortemp.raw_print(arma::cout, "");
+    Test(std::move(validationSet), std::move(validationLabelSet), std::move(currentLoss));
+    TestWithThreshold(std::move(validationSet), std::move(validationLabelSet), std::move(currentError), 0.5);
+    TestWithThreshold(std::move(trainingData), std::move(trainLabels), std::move(currentErrorTrain), 0.5);
+
+    //currentError.print("currentError");
+    arma::mat errortemp =
+        arma::join_rows(arma::join_rows(arma::join_rows(epochError, currentLoss), currentError), currentErrorTrain);
+
+    errortemp.raw_print(arma::cout, "");
     deltaError = previousError - currentError;
     if (deltaError.at(0, 0) < 0) {
       nDelta++;
@@ -245,7 +255,10 @@ void Network::inference(arma::mat &&inputData, arma::mat &&outputData) {
 
 }
 /***/
-void Network::TestWithThreshold(const arma::mat &&testData, const arma::mat &&testLabels, double threshold) {
+void Network::TestWithThreshold(const arma::mat &&testData,
+                                const arma::mat &&testLabels,
+                                arma::mat &&currentBatchError,
+                                double threshold) {
   arma::mat outputActivateBatch;
   arma::mat testDataCopied = testData;
 
@@ -253,22 +266,23 @@ void Network::TestWithThreshold(const arma::mat &&testData, const arma::mat &&te
             std::move(outputActivateBatch));
 
   outputActivateBatch = outputActivateBatch.t();
-  outputActivateBatch.print("outputActivateBatch");
-  testLabels.print("testLabels");
-  (testLabels - outputActivateBatch).print("testLabels-outputActivateBatch");
+  //outputActivateBatch.print("outputActivateBatch");
+  //testLabels.print("testLabels");
+  //(testLabels - outputActivateBatch).print("testLabels-outputActivateBatch");
 
   arma::mat thresholdMatrix = arma::ones<arma::mat>(outputActivateBatch.n_rows, outputActivateBatch.n_cols) * threshold;
   arma::mat resultWithThreshold = arma::conv_to<arma::mat>::from(outputActivateBatch > thresholdMatrix);
-  resultWithThreshold.raw_print(arma::cout, "resultWithThreshold");
-  (resultWithThreshold - testLabels).print("resultWithThreshold-testLabels");
+  //resultWithThreshold.raw_print(arma::cout, "resultWithThreshold");
+  //(resultWithThreshold - testLabels).print("resultWithThreshold-testLabels");
 
-  find((resultWithThreshold - testLabels) != 0).print("Not 0");
+  //find((resultWithThreshold - testLabels) != 0).print("Not 0");
   arma::mat conta = arma::conv_to<arma::mat>::from(find((resultWithThreshold - testLabels) == 0));
   double elementiTotali = resultWithThreshold.n_elem;
   double elementiGiusti = conta.n_elem;
-  std::cout << "all " << elementiTotali << " conta " << elementiGiusti << " % "
-            << (elementiGiusti / elementiTotali) * 100 << std::endl;
-
+  //std::cout << "all " << elementiTotali << " conta " << elementiGiusti << " % "
+  //         << (elementiGiusti / elementiTotali) * 100 << std::endl;
+  currentBatchError.at(0, 0) = (elementiGiusti / elementiTotali) * 100;
+  //currentBatchError.print("currentBatchError");
 }
 void Network::SetLossFunction(const std::string loss_function) {
   if (loss_function == "meanSquaredError") {
@@ -285,7 +299,7 @@ void Network::SetLossFunction(const std::string loss_function) {
 void Network::errorTest(const arma::mat &&trainLabelsBatch,
                         arma::mat &&outputActivateBatch,
                         arma::mat &&currentBatchError) {
-  MeanEuclideanError error;
+  MeanSquaredError error;
   error.Error(std::move(trainLabelsBatch), std::move(outputActivateBatch), std::move(currentBatchError));
 }
 

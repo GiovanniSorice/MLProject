@@ -71,17 +71,34 @@ int GridSearch::NetworkAnalyzed() {
 void GridSearch::Run(arma::mat dataset, arma::mat label, arma::mat &&result) {
   CrossValidation cross_validation;
   arma::mat error;
-  //std::cout << "Inizio gridsearch" << &result << std::endl;
+  arma::mat trainingDataset = arma::join_rows(dataset, label);
+  arma::mat currentError;
+  arma::mat testSet;
+  testSet.load("../../data/monk/monks1_test_formatted.csv");
+
+  //Split the labels from the test set
+  arma::mat testLabels = arma::mat(testSet.memptr() + (testSet.n_cols - 1) * testSet.n_rows,
+                                   testSet.n_rows,
+                                   1,
+                                   false,
+                                   false);
+  //Split the data from the test test
+  arma::mat testData = arma::mat(testSet.memptr(),
+                                 testSet.n_rows,
+                                 testSet.n_cols - 1,
+                                 false,
+                                 false);
+
   int currentRow = 0;
   for (int currentNUnit = unitMin; currentNUnit <= unitMax; currentNUnit += unitStep) {
 
     Network currNet;
     currNet.SetLossFunction("meanSquaredError");
     Layer firstLayer(dataset.n_cols, currentNUnit, "tanhFunction");
-    Layer lastLayer(currentNUnit, label.n_cols, "linearFunction");
+    Layer lastLayer(currentNUnit, label.n_cols, "logisticFunction");
     currNet.Add(firstLayer);
     currNet.Add(lastLayer);
-    currNet.Init(0.7, -0.7);
+    currNet.Init(1e-4, -1e-4);
     double nDelta;
 
     for (double currentLambda = lambdaMin; currentLambda <= lambdaMax; currentLambda += lambdaStep) {
@@ -91,7 +108,23 @@ void GridSearch::Run(arma::mat dataset, arma::mat label, arma::mat &&result) {
                currentLearningRate += learningRateStep) {
             error = arma::zeros(1, 1);
             nDelta = 0.0;
-            cross_validation.Run(dataset,
+
+            currNet.Clear();
+            currNet.Init(1e-4, -1e-4);
+            nDelta += currNet.Train(testData,
+                                    testLabels,
+                                    trainingDataset,
+                                    label.n_cols,
+                                    currentEpoch,
+                                    trainingDataset.n_rows,
+                                    currentLearningRate,
+                                    currentLambda,
+                                    currentMomentum);
+
+            currentError = arma::zeros(1, 1);
+            currNet.TestWithThreshold(std::move(testData), std::move(testLabels), std::move(currentError), 0.5);
+
+            /*cross_validation.Run(dataset,
                                  label,
                                  3,
                                  currNet,
@@ -102,11 +135,12 @@ void GridSearch::Run(arma::mat dataset, arma::mat label, arma::mat &&result) {
                                  currentMomentum,
                                  std::move(error),
                                  nDelta);
+                                 */
             std::cout << " currentNUnit " << currentNUnit << " currentLambda " << currentLambda << " currentMomentum "
                       << currentMomentum
                       << " currentEpoch " << currentEpoch << " currentLearningRate " << currentLearningRate
-                      << " error " << error.at(0, 0) << " nDelta " << nDelta << std::endl;
-
+                      << " error " << currentError.at(0, 0) << " nDelta " << nDelta << std::endl;
+/*
             result.at(currentRow, 0) = currentNUnit;
             result.at(currentRow, 1) = currentLambda;
             result.at(currentRow, 2) = currentMomentum;
@@ -114,7 +148,7 @@ void GridSearch::Run(arma::mat dataset, arma::mat label, arma::mat &&result) {
             result.at(currentRow, 4) = currentLearningRate;
             result.at(currentRow, 5) = error.at(0, 0);
             result.at(currentRow, 6) = nDelta;
-
+*/
             // increment currentRow for saving, next iteration, the values found
             currentRow++;
           }
