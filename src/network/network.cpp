@@ -89,7 +89,7 @@ double Network::Train(arma::mat validationSet, arma::mat validationLabelSet, arm
     if (deltaError.at(0, 0) < 0) {
       nDelta++;
     }
-    if (deltaError.at(0, 0) < thresholdStopCondition && deltaError.at(0, 0) > 0) {
+    if (currentError.has_nan() || (deltaError.at(0, 0) < thresholdStopCondition && deltaError.at(0, 0) > 0)) {
       stopCondition = true;
     }
     // shuffle the training set for the new epoch

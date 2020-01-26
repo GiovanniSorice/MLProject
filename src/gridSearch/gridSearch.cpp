@@ -71,7 +71,7 @@ int GridSearch::NetworkAnalyzed() {
 void GridSearch::Run(arma::mat dataset, arma::mat label, arma::mat &&result) {
   CrossValidation cross_validation;
   arma::mat error;
-
+  //std::cout << "Inizio gridsearch" << &result << std::endl;
   int currentRow = 0;
   for (int currentNUnit = unitMin; currentNUnit <= unitMax; currentNUnit += unitStep) {
 

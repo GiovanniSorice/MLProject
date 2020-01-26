@@ -80,24 +80,24 @@ int main() {
                                  testSet.n_cols - labelCol,
                                  false,
                                  false);
-
-  double learningRateMin = 0.001;
-  double learningRateMax = 0.004;
-  double learningRateStep = 0.001;
+/*
+  double learningRateMin = 0.1;
+  double learningRateMax = 0.9;
+  double learningRateStep = 0.1;
   double lambdaMin = 0;
-  double lambdaMax = 0.0004;
-  double lambdaStep = 0.0001;
-  double momentumMin = 0.0;
-  double momentumMax = 0.4;
-  double momentumStep = 0.1;
+  double lambdaMax = 0.001;
+  double lambdaStep = 0.001;
+  double momentumMin = 0.8;
+  double momentumMax = 0.8;
+  double momentumStep = 0.2;
   int unitMin = 50;
-  int unitMax = 100;
+  int unitMax = 150;
   int unitStep = 50;
-  int epochMin = 3000;
-  int epochMax = 3000;
+  int epochMin = 15000;
+  int epochMax = 15000;
   int epochStep = 500;
 
-  ParallelGridSearch gridSearch;
+  GridSearch gridSearch;
   gridSearch.SetEpochMin(epochMin);
   gridSearch.SetEpochMax(epochMax);
   gridSearch.SetEpochStep(epochStep);
@@ -114,15 +114,15 @@ int main() {
   gridSearch.SetUnitMax(unitMax);
   gridSearch.SetUnitStep(unitStep);
 
-  //int netAnalyzed = gridSearch.NetworkAnalyzed();
-  //std::cout << "netAnalyzed" << netAnalyzed << std::endl;
+  int netAnalyzed = gridSearch.NetworkAnalyzed();
+  std::cout << "netAnalyzed" << netAnalyzed << std::endl;
   //arma::mat result = arma::zeros(netAnalyzed, 7);   // 4 hyperparams and error
   gridSearch.Run(trainingData, trainingLabels);
+*/
 
 
 
 
-/*
   Network net;
  net.SetLossFunction("meanSquaredError");
 
@@ -147,7 +147,7 @@ int main() {
   //net.Test(std::move(testData), std::move(testLabels), std::move(mat));
  mat.print("errore finale");
 */
-/*
+
   CrossValidation cross_validation;
   arma::mat error = arma::zeros(1, trainingLabels.n_cols);
   double nDelta = 0;
@@ -155,14 +155,17 @@ int main() {
                        trainingLabels,
                        3,
                        net,
-                       500,
+                       15000,
                        trainingData.n_rows,
-                       0.001,
+                       0.000975,
                        0,
-                       0,
+                       0.8,
                        std::move(error),
                        nDelta);
 
-*/
+  arma::mat mat;
+  net.Test(std::move(validationData), std::move(validationLabels), std::move(mat));
+  mat.print("error");
+
   return 0;
 }
