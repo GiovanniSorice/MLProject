@@ -30,7 +30,7 @@ Francesco Corti}
 
 
 \documentclass[a4paper, oneside, openany]{article}
-
+\usepackage{titling}
 \usepackage{graphbox}
 % permette di modificare i margini
 \usepackage[top=3.1cm, bottom=3.1cm, left=2.2cm, right=2.2cm]{geometry}
@@ -44,7 +44,7 @@ Francesco Corti}
   %\lfoot{ %piè di pagina
    %{\Titolo} \ - \textit{{\Gruppo}}
   %}
-  \rfoot{Pagina \thepage{} di \pageref{LastPage}} %es: pag: 4 di 10
+  \rfoot{Page \thepage{} of \pageref{LastPage}} %es: pag: 4 di 10
 
   %linea orizzontale alle posizioni top e bottom della pagina
   \renewcommand{\headrulewidth}{0.2	pt}  
@@ -60,7 +60,7 @@ Francesco Corti}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[italian]{babel} %il documento è in italiano
+\usepackage[english]{babel} %il documento è in italiano
 %\usepackage{textcomp} %The pack­age sup­ports the Text Com­pan­ion fonts, which pro­vide many text sym­bols
 %(such as baht, bul­let, copy­right, mu­si­cal­note, onequar­ter, sec­tion, and yen), in the TS1 en­cod­ing.
 
@@ -206,7 +206,11 @@ backgroundcolor=\color{lbcolor},
 		\begin{HUGE}
 		
 			\textbf{\Titolo{}} \\
-		\end{HUGE}
+		\end{HU}
+		\vspace{10pt}
+		\begin{huge}
+		 A neural network simulator
+		\end{huge}
 		
 		\vspace{13pt}  
 		
@@ -240,12 +244,13 @@ backgroundcolor=\color{lbcolor},
 		\end{large}	  
 		
 	\end{center}
+	\vspace{9cm}
+	 \begin{abstract}The aim of the following document is to illustrate the work done for the Machine Learning course project. We created a library to build neural network in C++ exploit Armadillo numerical library. We built models with one and more hidden layer, we implemented cross-validation using k-fold technique and grid search for hyperparameter tuning. The implementation was designed to be modular and extensible.
+	 \end{abstract}
 \end{titlepage}
 
 \restoregeometry
 
-
-\input{sez/abstract.tex}
 \input{sez/introduction.tex}
 \input{sez/method.tex}
 \input{sez/experiments.tex}
