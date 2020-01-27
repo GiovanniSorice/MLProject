@@ -29,7 +29,7 @@ void ParallelGridSearch::Run(arma::mat dataset, arma::mat label) {
                                                &(*parallelGridIterator),
                                                dataset,
                                                label,
-                                               std::ref(matrix)));
+                                               std::move(matrix)));
     parallelGridIterator++;
   }
 

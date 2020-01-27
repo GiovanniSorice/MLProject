@@ -27,7 +27,7 @@ int main() {
   arma::mat validationSet;
   arma::mat testSet;
 
-  a.GetSplit(80, 20, 0, std::move(trainingSet), std::move(validationSet), std::move(testSet));
+  a.GetSplit(60, 20, 20, std::move(trainingSet), std::move(validationSet), std::move(testSet));
 
   //testSet.load("../../data/ML-CUP19-TR_formatted.csv");
   /*
@@ -132,21 +132,21 @@ int main() {
  net.Add(lastLayer);
 
   net.Init(0.7, -0.7);
-/*
+
   net.Train(validationData,
             validationLabels,
             trainingSet,
             trainingLabels.n_cols,
-            3000,
+            15000,
             trainingSet.n_rows,
-            0.001,
-            0.0,
-            0.0);
+            0.0045,
+            0.0001,
+            0.8);
  arma::mat mat;
-  net.Test(std::move(validationData), std::move(validationLabels), std::move(mat));
+  net.Test(std::move(testData), std::move(testLabels), std::move(mat));
   //net.Test(std::move(testData), std::move(testLabels), std::move(mat));
  mat.print("errore finale");
-*/
+/*
 
   CrossValidation cross_validation;
   arma::mat error = arma::zeros(1, trainingLabels.n_cols);
@@ -157,8 +157,8 @@ int main() {
                        net,
                        15000,
                        trainingData.n_rows,
-                       0.000975,
-                       0,
+                       0.005,
+                       0.0001,
                        0.8,
                        std::move(error),
                        nDelta);
@@ -166,6 +166,6 @@ int main() {
   arma::mat mat;
   net.Test(std::move(validationData), std::move(validationLabels), std::move(mat));
   mat.print("error");
-
+*/
   return 0;
 }
