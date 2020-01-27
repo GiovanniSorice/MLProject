@@ -1,9 +1,4 @@
 \section{Introduction}
-Our goal is to create a Neural Network model simulator and apply it to: MONK's problem data set and the CUP dataset
-
-
-
-• Describe/define  your aim and the essential  background: 
-	◦ Define your aims: To explore/improve what? What are you going to show? 
-	◦ Describe (just define) the used models, the used algorithms  etc. 
-	◦ Describe your assumptions (if any significant).
+Our goal is to create a Neural Network model simulator and apply it to MONK's classification problems and the ML cup regression problem. 
+We developed a library with the aim of build, training and test feedforward neural networks using back-propagation and multiple version of gradient descent: stochastic/online, mini-batch and batch with Nesterov Momentum and weight decay as regularization and using various activation function and loss function. 
+Our assumption was to find the best model for each problem, this has been reached by looking for a smooth  and compact loss function. This aim has been pursued using grid search technique with k-fold cross validation. We paid attention not to commit overfitting using regularization technique such as weight decay. 
