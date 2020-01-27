@@ -1,15 +1,23 @@
 \section{Method}
 
-\subsection{"Code"}
-The Neural Network simulator was implemented in C++17 
-
+\subsection{Code}
+The Neural Network simulator was implemented in C++17 using Armadillo library for linear algebra operation (aggiungere paper armadillo). Moreover, we decided to use Conan package manager, for automate the installation and distribution of the library. We focus on modularity and extensibility, for this reason we put some effort on made parametric class.
+\\
+The library is structured as follow:
+the class \texttt{Network} has a list of layer, added by user, a loss function and expose all the methods for train and test the network. Every \texttt{Layer} object, that is composed by an armadillo matrix for the weights and a bias array, have a specific activation function. We can build  multilayer feedforward neural networks with different activation function. The train was developed following the back-propagation algorithm, with a forward and back operation using gradient descend for the adjustment of weights. The user can specify the momentum and weight decay regularization parameters otherwise the train is done without using them. 
+\\
+We have defined a \texttt{Cross-validation} class that perform k-fold cross validation and compute the average error on validation. That we used for chose the best model in the ML CUP.
+\\
+In addition, we developed a \texttt{Grid Search} class in which the user can specify: minimum, maximum and step for all the parameters. The parameters are the following: epoch, number of unit, learning rate, weight decay and Nesterov momentum coefficient. We also decided to implement a parallel version of the grid search to speed up computation. 
+\\
+scrivere le classi di loss e activ fun
 
 \texttt{Briefly (short part) describe what you developed and how: 
-• The code (for type A implementation) or the used simulator(s) (for type B). 
-◦ The used tools/libraries (if any)
-◦ Software overview and the software design choices (if interesting)
-◦ Implementation choices: a  summary of the choices (e.g. architecture/s, training algorithm/s, type of activation function/s, batch/on-line/mb, regularization schema, stop condition)
-◦ The novelties (if any) but not the standard approaches (do not describe the algorithms/models we already described in the lectures). Use references for the source of information. }
+ The code (for type A implementation) or the used simulator(s) (for type B). 
+ The used tools/libraries (if any)
+ Software overview and the software design choices (if interesting)
+ Implementation choices: a  summary of the choices (e.g. architecture/s, training algorithm/s, type of activation function/s, batch/on-line/mb, regularization schema, stop condition)
+ The novelties (if any) but not the standard approaches (do not describe the algorithms/models we already described in the lectures). Use references for the source of information. }
 
 \subsubsection{Preprocessing}
 \texttt{• Preprocessing procedure (if any) [details may be postponed to Section 3]}
@@ -17,7 +25,7 @@ The Neural Network simulator was implemented in C++17
 \subsubsection{Validation}
 \texttt{• Validation schema (model selection and evaluation schema) for the Experimental part: report data splitting  TR/VL/TS ( data for each set and/or the K values of the k-fold CV) [details may be postponed to Section 3]}
 
-\subsubsection{Preiliminary trials}
+\subsubsection{Preliminary trials}
 \texttt{• Type of preliminary trials pursued (often summarized by text) [details may be postponed to Section 3]
 Each figure/table should be referenced as in the following, see Fig. 1. 
 Do not use figure/table without a number. Do not write “see the next figure” (which one?).
@@ -25,4 +33,4 @@ Tables and plots have always a caption. All of the Figures and Tables should be 
 
 \subsection{Preprocessing}
 \subsection{Validation scheme}
-\subsection{Preliminar trials}
+\subsection{Preliminary trials}
