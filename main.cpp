@@ -17,14 +17,14 @@ int main() {
   arma::cout.precision(10);
   arma::cout.setf(arma::ios::fixed);
 
-  Preprocessing a("../../data/monk/monks1_train_formatted.csv");
+  Preprocessing a("../../data/monk/monks3_train_formatted.csv");
   arma::mat trainingSet;
   arma::mat validationSet;
   arma::mat testSet;
 
   a.GetSplit(100, 0, 0, std::move(trainingSet), std::move(validationSet), std::move(testSet));
 
-  testSet.load("../../data/monk/monks1_test_formatted.csv");
+  testSet.load("../../data/monk/monks3_test_formatted.csv");
   /*
    std::cout << trainingSet.n_rows << " " << trainingSet.n_cols << " " << validationSet.n_rows << " "
             << validationSet.n_cols
@@ -121,8 +121,8 @@ int main() {
 
   Network net;
   net.SetLossFunction("meanSquaredError");
-  Layer firstLayer(trainingSet.n_cols - labelCol, 3, "tanhFunction");
-  Layer lastLayer(3, 1, "logisticFunction");
+  Layer firstLayer(trainingSet.n_cols - labelCol, 5, "tanhFunction");
+  Layer lastLayer(5, 1, "logisticFunction");
   net.Add(firstLayer);
   net.Add(lastLayer);
 
@@ -133,10 +133,11 @@ int main() {
             trainingSet,
             trainingLabels.n_cols,
             800,
-            trainingSet.n_rows,
-            0.9,
-            0,
-            0.7);
+            256,
+            0.4,
+            0.001,
+            0.2);
+
   arma::mat mat = arma::zeros(1, 1);
   net.TestWithThreshold(std::move(testData), std::move(testLabels), std::move(mat), 0.5);
   //net.Test(std::move(testData), std::move(testLabels), std::move(mat));
