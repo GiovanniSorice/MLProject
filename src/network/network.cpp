@@ -82,7 +82,7 @@ double Network::Train(arma::mat validationSet, arma::mat validationLabelSet, arm
     previousError = currentError;
     currentError = arma::zeros(1, 1);
     Test(std::move(validationSet), std::move(validationLabelSet), std::move(currentError));
-    //arma::mat errortemp = arma::join_rows(epochError, currentError);
+    arma::mat errortemp = arma::join_rows(epochError, currentError);
 
     //errortemp.raw_print(arma::cout, "");
     deltaError = previousError - currentError;

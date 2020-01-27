@@ -24,12 +24,12 @@ void ParallelGridSearch::Run(arma::mat dataset, arma::mat label) {
   auto parallelGridIterator = gridSearches.begin();
 
   // start all the grid search in parallel
-  for (arma::mat matrix : resultMatrix) {
+  for (arma::mat &matrix : resultMatrix) {
     gridSearchThreads.emplace_back(std::thread(&GridSearch::Run,
                                                &(*parallelGridIterator),
                                                dataset,
                                                label,
-                                               std::move(matrix)));
+                                               std::ref(matrix)));
     parallelGridIterator++;
   }
 
@@ -39,7 +39,6 @@ void ParallelGridSearch::Run(arma::mat dataset, arma::mat label) {
       thread.join();
     }
   }
-
   // save result of the grid searches
   saveResult();
 }
@@ -49,8 +48,9 @@ void ParallelGridSearch::Run(arma::mat dataset, arma::mat label) {
 void ParallelGridSearch::saveResult() {
   arma::mat result;
   // join matrices for saving
-  for (auto &matrix: resultMatrix) {
-    result = arma::join_rows(result, matrix);
+  for (arma::mat &matrix: resultMatrix) {
+    matrix.print("current result matrix");
+    result = arma::join_vert(result, matrix);
   }
   result.save("parallel-grid-search-values.txt", arma::arma_ascii);
 }
@@ -69,7 +69,8 @@ void ParallelGridSearch::setGridsSearch(int totalNetworkAnalyzed) {
 
   // fill the vector with the matrix and create grid search object
   for (int currentGridSearch = 0; currentGridSearch < totalThreadNumber; currentGridSearch++) {
-    resultMatrix.emplace_back(arma::zeros(ceil(totalNetworkAnalyzed / totalThreadNumber), 7));
+    arma::mat currentResultMatrix = arma::zeros(ceil(totalNetworkAnalyzed / totalThreadNumber), 8);
+    resultMatrix.emplace_back(currentResultMatrix);
 
     GridSearch gridSearch;
     gridSearch.SetEpochMin(epochMin);
