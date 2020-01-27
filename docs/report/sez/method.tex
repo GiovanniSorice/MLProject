@@ -1,26 +1,23 @@
 \section{Method}
 
 \subsection{Code}
-The Neural Network simulator was implemented in C++17 using Armadillo library for linear algebra operation (aggiungere paper armadillo). Moreover, we decided to use Conan package manager, for automate the installation and distribution of the library. We focus on modularity and extensibility, for this reason we put some effort on made parametric class.
+The Neural Network simulator was implemented in C++17 using Armadillo library for linear algebra operation \textbf{(aggiungere paper armadillo)}. Moreover, we decided to use Conan package manager, for automate the installation and distribution of the library. We focus on modularity and extensibility, for this reason we put some effort on made parametric class.
 \\
 The library is structured as follow:
-the class \texttt{Network} has a list of layer, added by user, a loss function and expose all the methods for train and test the network. Every \texttt{Layer} object, that is composed by an armadillo matrix for the weights and a bias array, have a specific activation function. We can build  multilayer feedforward neural networks with different activation function. The train was developed following the back-propagation algorithm, with a forward and back operation using gradient descend for the adjustment of weights. The user can specify the momentum and weight decay regularization parameters otherwise the train is done without using them. 
+the class \texttt{Network} has a list of layer, added by user, a loss function and expose all the methods for train and test the network. Every \texttt{Layer} object, that is composed by an armadillo matrix for the weights and a bias array, have a specific activation function. We can build  multilayer feedforward neural networks with different activation function. The train was developed following the back-propagation algorithm, with a forward and back operation using gradient descent for weights adjustment. The user can specify the momentum and weight decay regularization parameters otherwise the train is done without using them. Also the stop condition, the difference between the current validation loss and the previous validation loss, can be pass at the method train. The train was implemented for support stochastic, mini-batch and batch gradient descent.
 \\
-We have defined a \texttt{Cross-validation} class that perform k-fold cross validation and compute the average error on validation. That we used for chose the best model in the ML CUP.
+We have defined a \texttt{Cross-validation} class that perform k-fold cross validation and compute the average error on validation. That we have used for chose the best model in the ML CUP.
 \\
-In addition, we developed a \texttt{Grid Search} class in which the user can specify: minimum, maximum and step for all the parameters. The parameters are the following: epoch, number of unit, learning rate, weight decay and Nesterov momentum coefficient. We also decided to implement a parallel version of the grid search to speed up computation. 
+In addition, we developed a \texttt{Grid Search} class in which the user can specify: minimum, maximum and step for all parameters. The parameters are the following: epoch, number of unit, learning rate, weight decay and Nesterov momentum coefficient. We also decided to implement a parallel version of the grid search to speed up computation. 
 \\
-scrivere le classi di loss e activ fun
-
-\texttt{Briefly (short part) describe what you developed and how: 
- The code (for type A implementation) or the used simulator(s) (for type B). 
- The used tools/libraries (if any)
- Software overview and the software design choices (if interesting)
- Implementation choices: a  summary of the choices (e.g. architecture/s, training algorithm/s, type of activation function/s, batch/on-line/mb, regularization schema, stop condition)
- The novelties (if any) but not the standard approaches (do not describe the algorithms/models we already described in the lectures). Use references for the source of information. }
+The class \texttt{Activation Function} has been designed for abstract all the possible activation. Currently the implemented function are: \texttt{sigmoid}, \texttt{tanh}, \texttt{reLU}, \texttt{linear}.
+With the aim of extensibility the \texttt{Cost Function} class has been designed for abstract all the cost function.
+Currently the implemented function are: \texttt{mean squared error}, \texttt{mean euclidean error} and \texttt{binary cross entropy}.
+\\
+We also decide to make the memory move less expensive by using the \texttt{move} operator present in C++17 for speed up matrix computation.
 
 \subsubsection{Preprocessing}
-\texttt{• Preprocessing procedure (if any) [details may be postponed to Section 3]}
+The preprocessing was divided between two classes, \texttt{Preprocessing} and \texttt{LoadDataset}, the first read, shuffle and split the dataset, the second do the one-to-k decode. All the operation done in the classes take care of the usage of the memory, particularly attention has been made (\textbf{paid???????????}) to avoid coping of data. The MONK dataset, has been decoded through the \texttt{LoadDataset} class.
 
 \subsubsection{Validation}
 \texttt{• Validation schema (model selection and evaluation schema) for the Experimental part: report data splitting  TR/VL/TS ( data for each set and/or the K values of the k-fold CV) [details may be postponed to Section 3]}
@@ -30,7 +27,3 @@ scrivere le classi di loss e activ fun
 Each figure/table should be referenced as in the following, see Fig. 1. 
 Do not use figure/table without a number. Do not write “see the next figure” (which one?).
 Tables and plots have always a caption. All of the Figures and Tables should be cited in order, including those in the Appendix. (which should be cited as, for example, Fig. A.1, and Table A.1).}
-
-\subsection{Preprocessing}
-\subsection{Validation scheme}
-\subsection{Preliminary trials}
