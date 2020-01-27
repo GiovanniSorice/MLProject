@@ -8,42 +8,65 @@
 MONK 1        &    3 & 0.9 & 0 & 0.7  &   6.2e-4/1e-3 &   100\%/100\%  \\ \hline
 MONK 2        &    4 & 0.8 & 0 & 0.7  &   5.2e-3/6.9e-3 &   100\%/100\% \\ \hline               
 MONK 3        &    5 & 0.4 &1e-3 &0.2&     4.1e-2/2.5e-2&    93.44\%/97.22\%  \\ \hline
-MONK 3 (no reg)&   5 & 0.8 &   0 &  0.7 &   1.8e-2/2.6e-2 & 95.90\%/\%93.51		\\ \hline              
+MONK 3 (no reg)&   5 & 0.8 &   0 &  0.7 &   1.8e-2/2.6e-2 & 95.90\%/93.51\%		\\ \hline              
 \end{tabular}
 \end{table}
 \subsubsection{Monk 1}
-\begin{figure}[H]
-\includegraphics[scale=0.2]{img/Monk1_accuracy.png}
-\caption{Accuracy Monk 1}
-\end{figure}
 
-\begin{figure}[H]
-\includegraphics[scale=0.2]{img/Monk1_loss.png}
-\caption{MSE curve Monk 1}
+\begin{figure}[htp]
+    \centering
+    \begin{minipage}[t]{0.5\linewidth}
+        \includegraphics[width=\linewidth]{img/Monk1_loss.png}
+        %\subcaption{MSE}
+    \end{minipage}%
+    \begin{minipage}[t]{0.5\linewidth}
+        \includegraphics[width=\linewidth]{img/Monk1_accuracy.png}
+        %\subcaption{Accuracy}
+    \end{minipage}
+    \caption{MSE and accuracy MONK’s 1.}
 \end{figure}
-
 
 \subsubsection{Monk 2}
-\begin{figure}[H]
-\includegraphics[scale=0.2]{img/Monk2_accuracy.png}
-\caption{Accuracy Monk 2}
-\end{figure}
-
-\begin{figure}[H]
-\includegraphics[scale=0.2]{img/Monk2_loss.png}
-\caption{MSE curve Monk 2}
+\begin{figure}[htp]
+    \centering
+    \begin{minipage}[t]{0.5\linewidth}
+        \includegraphics[width=\linewidth]{img/Monk2_loss.png}
+        %\subcaption{MSE}
+    \end{minipage}%
+    \begin{minipage}[t]{0.5\linewidth}
+        \includegraphics[width=\linewidth]{img/Monk2_accuracy.png}
+        %\subcaption{Accuracy}
+    \end{minipage}
+    \caption{MSE and accuracy MONK’s 2.}
 \end{figure}
 
 \subsubsection{Monk 3}
-
 \begin{figure}[H]
-\includegraphics[scale=0.2]{img/Monk3_accuracy_Reg.png}
-\caption{}
+    \centering
+    \begin{minipage}[t]{0.5\linewidth}
+        \includegraphics[width=\linewidth]{img/Monk3_loss_noReg.png}
+        %\subcaption{MSE}
+    \end{minipage}%
+    \begin{minipage}[t]{0.5\linewidth}
+        \includegraphics[width=\linewidth]{img/Monk3_accuracy_noReg.png}
+        %\subcaption{Accuracy}
+    \end{minipage}
+    \caption{MSE and accuracy MONK’s 3 not regularized.}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics[scale=0.2]{img/Monk3_loss_Reg.png}
-\caption{}
+    \centering
+    \begin{minipage}[t]{0.5\linewidth}
+        \includegraphics[width=\linewidth]{img/Monk3_loss_Reg.png}
+        %\subcaption{MSE}
+    \end{minipage}%
+    \begin{minipage}[t]{0.5\linewidth}
+        \includegraphics[width=\linewidth]{img/Monk3_accuracy_Reg.png}
+        %\subcaption{Accuracy}
+    \end{minipage}
+    \caption{MSE and accuracy MONK’s 3 regularized.}
 \end{figure}
+
+
 
 \subsection{Cup results}
