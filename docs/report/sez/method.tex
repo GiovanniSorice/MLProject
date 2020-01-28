@@ -17,13 +17,19 @@ Currently the implemented function are: \texttt{mean squared error}, \texttt{mea
 We also decide to make the memory move less expensive by using the \texttt{move} operator present in C++17 for speed up matrix computation.
 
 \subsubsection{Preprocessing}
-The preprocessing was divided between two classes, \texttt{Preprocessing} and \texttt{LoadDataset}, the first read, shuffle and split the dataset, the second do the one-to-k decode. All the operation done in the classes take care of the usage of the memory, particularly attention has been made (\textbf{paid???????????}) to avoid coping of data. The MONK dataset, has been decoded through the \texttt{LoadDataset} class.
+The preprocessing was divided between two classes, \texttt{Preprocessing} and \texttt{LoadDataset}, the first read, shuffle and split the dataset, the second do the one-to-k decode. All the operation done in the classes take care of the usage of the memory, particularly attention has been made (\textbf{paid???????????}) to avoid copying of data. The MONK dataset, has been decoded through the \texttt{LoadDataset} class.
 
 \subsubsection{Validation}
-\texttt{• Validation schema (model selection and evaluation schema) for the Experimental part: report data splitting  TR/VL/TS ( data for each set and/or the K values of the k-fold CV) [details may be postponed to Section 3]}
+For MONK's problems the train dataset has been splitted into a new 80\% training set and a 20\% validation set. The error on the validation set was used as a proxy for the generalization error for determined when overfitting has began. The test set was supplied to us already splitted from the training set, we used it for evaluate the prediction error on new unseen data. 
+\\
+For ML CUP problem the dataset has been splitted into a new 60\% training set, 20\% validation set and a 20\% test set. We have decided to use k-fold cross validation, with k equals to 3, to find the best model among the grid search results. 
+We have shuffled both the dataset before the splitting step and, only for the training set, before each epoch of the training phase for avoid the stop over in a local minimum. 
+
 
 \subsubsection{Preliminary trials}
-\texttt{• Type of preliminary trials pursued (often summarized by text) [details may be postponed to Section 3]
-Each figure/table should be referenced as in the following, see Fig. 1. 
-Do not use figure/table without a number. Do not write “see the next figure” (which one?).
-Tables and plots have always a caption. All of the Figures and Tables should be cited in order, including those in the Appendix. (which should be cited as, for example, Fig. A.1, and Table A.1).}
+
+For MONK's problems we tried at the beginning without the one-hot-encoding and we didn't reach a good accuracy. After the one-hot-encoding was done, we reached high accuracy in all three problems. For the third set, we had to pay attention to regularization for reach a good result.
+\\
+For ML CUP the entire learning process was harder. Firstly we had some experiment to figure out the size of the grid search. Next, we had study \textbf{study??????} the result obtained and we had done smaller range grid search on the previous best results. Once found the best models, we had retrained them on all the training set to see if the predictions on unseen data were as expected on the test set. 
+\\
+Initially the model selection and assessment has been done on models with one hidden layer and an output layer. Next, we decided to try with different models having three or four hidden layers whose result will be shown later.
