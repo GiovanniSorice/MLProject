@@ -134,9 +134,9 @@ int main() {
             trainingLabels.n_cols,
             800,
             256,
-            0.4,
-            0.001,
-            0.2);
+            0.6,
+            0.0,
+            0.7);
 
   arma::mat mat = arma::zeros(1, 1);
   net.TestWithThreshold(std::move(testData), std::move(testLabels), std::move(mat), 0.5);
