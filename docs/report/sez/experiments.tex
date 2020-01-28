@@ -1,7 +1,11 @@
 \section{Experiments}
-\texttt{What you have found: The results should be  the larger part of the report.}
 
-\subsection{Monk's results}
+
+\subsection{MONK's results}
+
+The neural network used for the problems have 17 input units, number of hidden units as written in the table \ref{tab:dati} and 1 output units. We used \texttt{tanh} as hidden layer activation function and \texttt{sigmoid} as output layer activation function. We chose \texttt{Mean squared error} as loss function. An input is classified as 1 if the output of the neural network is greater than 0.5 or 0 otherwise.\\
+We used stochastic, mini-batch and batch gradient descent but in the end we decided to use the batch gradient descent because loss function plots were smoother than the others.
+We also used the weight decay regularization as lambda parameter and Nesterov momentum as momentum parameter.
 \begin{table}[H]
 \begin{tabular}{|c|c|c|c|c|c|c|}
 \hline
@@ -11,8 +15,10 @@ MONK 2        &    4 & 0.8 & 0 & 0.7  &   1e-3/1.3e-3 &   100\%/100\% \\ \hline
 MONK 3        &    5 & 0.4 &1e-3 &0.2&     4.1e-2/2.5e-2&    93.44\%/97.22\%  \\ \hline
 MONK 3 (no reg)&   5 & 0.8 &   0 &  0.7 &   1.8e-2/2.6e-2 & 95.90\%/93.51\%		\\ \hline              
 \end{tabular}
+\caption{MONK's problems parameter and results.}
+\label{tab:dati}
 \end{table}
-\subsubsection{Monk 1}
+\subsubsection{MONK 1}
 
 \begin{figure}[H]
     \centering
@@ -27,7 +33,7 @@ MONK 3 (no reg)&   5 & 0.8 &   0 &  0.7 &   1.8e-2/2.6e-2 & 95.90\%/93.51\%		\\ 
     \caption{MSE and accuracy for MONK’s 1.}
 \end{figure}
 
-\subsubsection{Monk 2}
+\subsubsection{MONK 2}
 \begin{figure}[H]
     \centering
     \begin{minipage}[t]{0.5\linewidth}
@@ -41,18 +47,21 @@ MONK 3 (no reg)&   5 & 0.8 &   0 &  0.7 &   1.8e-2/2.6e-2 & 95.90\%/93.51\%		\\ 
     \caption{MSE and accuracy for MONK’s 2.}
 \end{figure}
 
-\subsubsection{Monk 3}
+\subsubsection{MONK 3}
+We figured out during training phase that learning curves of MONK's 3 without regularization shown overfits in the output(see fig. \ref{fig:m3nr}). After that we tried with regularization and we obtained better results because the training didn't show overfitting in the validation error.
 \begin{figure}[H]
     \centering
     \begin{minipage}[t]{0.5\linewidth}
         \includegraphics[width=\linewidth]{img/Monk3_loss_noReg.png}
         %\subcaption{MSE}
+
     \end{minipage}%
     \begin{minipage}[t]{0.5\linewidth}
         \includegraphics[width=\linewidth]{img/Monk3_accuracy_noReg.png}
         %\subcaption{Accuracy}
     \end{minipage}
     \caption{MSE and accuracy for MONK’s 3 not regularized.}
+    \label{fig:m3nr}
 \end{figure}
 
 \begin{figure}[H]
