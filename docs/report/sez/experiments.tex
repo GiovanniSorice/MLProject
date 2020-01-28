@@ -98,11 +98,51 @@ At the beginning, we have done grids search with large interval and high step am
 	\item Unit $\in$ \{25, 200\} with step $\in$ \{25, 50\};
 	\item Learning rate $\in$ \{0.0001, 0.01\} with step $\in$ \{0.0001, 0.001\};
 	\item Lambda $\in$ \{0, 0.004\} with step $\in$ \{0.0001,  0.0005\};
-	\item Momentum $\in$ \{0, 0.8\} with step $\in$ \{0.05,  0.1\};
+	\item Momentum $\in$ \{0, 0.8\} with step $\in$ \{0.05,  0.1\}.
 \end{itemize}
 
 
 \subsubsection{Grid search result}
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|}
+		\hline
+		\textbf{Layer}& \textbf{Units}& \textbf{Learning rate} & \multicolumn{1}{l|}{\textbf{Lambda}} & \textbf{Momentum} & \textbf{Error}\\ \hline
+			1 & 100 & 0.00325 & 0.0000 & 0.1  & 1.3899 \\
+			1 & 100 & 0.00520 & 0.0001 & 0.7  & 1.3420 \\
+			1 & 100 & 0.00087 & 0.0000 & 0.8  & 1.2750 \\
+			1 & 100 & 0.00097 & 0.0000 & 0.8  & 1.2759 \\
+			1 & 100 & 0.00500 & 0.0000 & 0.5  & 1.2845 \\
+			1 & 100 & 0.00500 & 0.0000 & 0.6  & 1.2892 \\
+			1 & 100 & 0.00500 & 0.0000 & 0.7  & 1.2654 \\
+			1 & 100 & 0.00500 & 0.0001 & 0.6  & 1.3882 \\
+			1 & 100 & 0.00500 & 0.0001 & 0.8  & 1.2588 \\
+			2 & 150 & 0.00875 & 0.0002 & 0.8  & 1.1332 \\
+			5 & 375 & 0.00450 & 0.0001 & 0.7  & 1.1341 \\
+		  \hline
+	\end{tabular}
+		\caption{Best networks configuration with MEE.}
+\end{table}
+
+The two models with more than one hidden layers have the following structure:
+\begin{itemize}
+	\item Two hidden layer: 100-50-2;
+	\item Five hidden layer: 100-100-75-50-50-2.
+\end{itemize}
+
+\vspace{0.5cm}
+\begin{figure}[H]
+	\centering
+	\begin{minipage}[t]{0.5\linewidth}
+		\includegraphics[width=\linewidth]{img/Cup_loss_Reg_Zoom_2l.png}
+		\subcaption{MEE two hidden layer model}
+	\end{minipage}%
+	\begin{minipage}[t]{0.5\linewidth}
+		\includegraphics[width=\linewidth]{img/Cup_loss_Reg_Zoom_5l.png}
+		\subcaption{MEE five hidden layer model}
+	\end{minipage}
+\end{figure}
 \texttt{Grid search: TABLES of results TR/VL/(TS)i with  MEE [*]. At least the most performant cases. Tables/Plots can be used also to show some relevant trends for specific hyper-parameters changes (if you think it is significant) }
 \subsubsection{Computing time}
 \texttt{Provide an estimation of the (training) computing time (and of your HW resources)}
