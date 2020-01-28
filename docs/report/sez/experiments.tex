@@ -3,7 +3,7 @@
 
 \subsection{MONK's results}
 
-The neural network used for the problems have 17 input units, number of hidden units as written in the table \ref{tab:dati} and 1 output units. We used \texttt{tanh} as hidden layer activation function and \texttt{sigmoid} as output layer activation function. We chose \texttt{Mean squared error} as loss function. An input is classified as 1 if the output of the neural network is greater than 0.5 or 0 otherwise.\\
+The neural network used for the problems have 17 input units, the number of hidden units as written in the table \ref{tab:dati} and 1 output units. We used \texttt{tanh} as hidden layer activation function and \texttt{sigmoid} as output layer activation function. We chose \texttt{Mean squared error} as loss function. An input is classified as 1 if the output of the neural network is greater than 0.5 or 0 otherwise.\\
 We used stochastic, mini-batch and batch gradient descent but in the end we decided to use the batch gradient descent because loss function plots were smoother than the others.
 We also used the weight decay regularization as lambda parameter and Nesterov momentum as momentum parameter.
 \begin{table}[H]
@@ -12,8 +12,8 @@ We also used the weight decay regularization as lambda parameter and Nesterov mo
 \textbf{Task} &	\textbf{\#Units} &\textbf{ eta} & \textbf{lambda} &\textbf{momentum} & {\textbf{MSE(TR/TS)}} &\textbf{Accuracy(TR/TS)} \\ \hline
 MONK 1        &    3 & 0.9 & 0 & 0.7  &   6.3e-4/1e-3 &   100\%/100\%  \\ \hline
 MONK 2        &    4 & 0.8 & 0 & 0.7  &   1e-3/1.3e-3 &   100\%/100\% \\ \hline               
-MONK 3        &    5 & 0.4 &1e-3 &0.2&     4.1e-2/2.5e-2&    93.44\%/97.22\%  \\ \hline
-MONK 3 (no reg)&   5 & 0.8 &   0 &  0.7 &   1.8e-2/2.6e-2 & 95.90\%/93.51\%		\\ \hline              
+MONK 3        &    5 & 0.4 &5e-3 &0.2&     7.8e-2/5.5e-2&    93.44\%/97.22\%  \\ \hline
+MONK 3 (no reg)&   5 & 0.6 &   0 &  0.7 &   1.7e-2/2.7e-2 & 95.90\%/93.51\%		\\ \hline              
 \end{tabular}
 \caption{MONK's problems parameter and results.}
 \label{tab:dati}
@@ -48,7 +48,7 @@ MONK 3 (no reg)&   5 & 0.8 &   0 &  0.7 &   1.8e-2/2.6e-2 & 95.90\%/93.51\%		\\ 
 \end{figure}
 
 \subsubsection{MONK 3}
-We figured out during training phase that learning curves of MONK's 3 without regularization shown overfits in the output(see fig. \ref{fig:m3nr}). After that we tried with regularization and we obtained better results because the training didn't show overfitting in the validation error.
+We figured out during training phase that learning curves of MONK's 3 without regularization shown overfits in the output (see fig. \ref{fig:m3nr}). After that we tried with regularization and we obtained better results, the training didn't show overfitting in the validation error.
 \begin{figure}[H]
     \centering
     \begin{minipage}[t]{0.5\linewidth}
@@ -81,13 +81,27 @@ We figured out during training phase that learning curves of MONK's 3 without re
 
 \subsection{Cup results}
 
-
 \subsubsection{Validation schema}
-\texttt{Details of the Validation schema (model selection and evaluation schema): Splitting  TR/VL/(internal)TS (data for each set and/or the K values of the k-fold CV)  [*]}
+
+At the beginning, we splitted the dataset in training set and test set with 80\% for training and 20\% for test. For the selection of the best model, we decided to use k-fold cross validation with k equals 3. In the end we chose the best models among all the models trained during the grid search step. We used stochastic, mini-batch and batch gradient descent and we figured out that the batch type had smoother learning curves.
+
 \subsubsection{Screening phase}
-\texttt{Type of preliminary trials pursued (often summarized by text)}
+
+Firstly we tried networks with single hidden layer and we noticed that they had good results. For this reason we tuned the hyper-parameters for this type of network through grids search.
+Then we chose MEE as the loss function for validation and test set, we trained the network with MSE but we plot the results with MEE to be comparable with the learning curves of test and validation set.
+Next, we focused on find some variant of the network with more hidden layer, we did hyper-parameters tuning through grids search.
+
 \subsubsection{Explored hyper-parameters}
-\texttt{Schema and  range of explored hyper-parameters (values used for the grid search, possibly a table) [*]}
+At the beginning, we have done grids search with large interval and high step among them. When we found the right interval we started grids search for each combination of the values:
+
+\begin{itemize}
+	\item Unit $\in$ \{25, 200\} with step $\in$ \{25, 50\};
+	\item Learning rate $\in$ \{0.0001, 0.01\} with step $\in$ \{0.0001, 0.001\};
+	\item Lambda $\in$ \{0, 0.004\} with step $\in$ \{0.0001,  0.0005\};
+	\item Momentum $\in$ \{0, 0.8\} with step $\in$ \{0.05,  0.1\};
+\end{itemize}
+
+
 \subsubsection{Grid search result}
 \texttt{Grid search: TABLES of results TR/VL/(TS)i with  MEE [*]. At least the most performant cases. Tables/Plots can be used also to show some relevant trends for specific hyper-parameters changes (if you think it is significant) }
 \subsubsection{Computing time}
