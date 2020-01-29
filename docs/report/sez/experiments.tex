@@ -145,10 +145,19 @@ The two models with more than one hidden layers have the following structure:
 \end{figure}
 \texttt{Grid search: TABLES of results TR/VL/(TS)i with  MEE [*]. At least the most performant cases. Tables/Plots can be used also to show some relevant trends for specific hyper-parameters changes (if you think it is significant) }
 \subsubsection{Computing time}
-\texttt{Provide an estimation of the (training) computing time (and of your HW resources)}
+We have developed a parallel grid search that allow us to take advantage of all core of our CPUs automatically. All the computation where launched on the following machine:
+\begin{itemize}
+	\item Intel i7-8500Y, 1.5GHz;
+	\item Intel i7-4720HQ, 2.6GHz.
+	
+\end{itemize}
+
+Since the project was developed in C++ the computational time and memory had to be controlled and with the goal of efficiency.
+The time it takes to train on the MONK dataset with 800 epoch is 1.5 second, for the ML CUP dataset with 8000 epoch and 75 units is 1.10 minutes.
 \subsubsection{Comparisons}
-\texttt{Repeat and compare if you are comparing different models/algorithms/approaches (or different variants of the approach that you think are significant). }
+We have tried different neural networks with different number of layer and distinct type of gradient descent (stochastic, mini-batch and batch). We figured out that the number of layers does not significantly affect network generalization performance, moreover with batch gradient descent we got the best learning curve.
 \subsubsection{Chosen model}
+
 \texttt{Define how you selected the FINAL model used on the blind test set [*]. Which is it among the candidates and why? Also write the  hyper-param. of the final model [*].}
 \subsubsection{Report}
 \texttt{Report for the FINAL model used on the blind test set the TABLE with MEE for TR (training), VL (validation) and TS (internal TS)i  in the original scale [*][*]. Note again  that you must have an internal  test evaluation (see the note IV above)}
