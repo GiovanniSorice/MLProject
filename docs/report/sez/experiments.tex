@@ -121,6 +121,7 @@ At the beginning, we have done grids search with large interval and high step am
 			5 & 375 & 0.00450 & 0.0001 & 0.7  & 1.1341 \\
 		  \hline
 	\end{tabular}
+	\label{net:best-result}
 		\caption{Best networks configuration with MEE.}
 \end{table}
 
@@ -142,6 +143,7 @@ The two models with more than one hidden layers have the following structure:
 		\subcaption{MEE five hidden layer model}
 	\end{minipage}
 \end{figure}
+
 \texttt{Grid search: TABLES of results TR/VL/(TS)i with  MEE [*]. At least the most performant cases. Tables/Plots can be used also to show some relevant trends for specific hyper-parameters changes (if you think it is significant) }
 \subsubsection{Computing time}
 We have developed a parallel grid search that allow us to take advantage of all core of our CPUs automatically. All the computation where launched on the following machine:
@@ -156,7 +158,7 @@ The time it takes to train on the MONK dataset with 800 epoch is 1.5 second, for
 \subsubsection{Comparisons}
 We have tried different neural networks with different number of layer and distinct type of gradient descent (stochastic, mini-batch and batch). We figured out that the number of layers does not significantly affect network generalization performance, moreover with batch gradient descent we got the best learning curve.
 \subsubsection{Chosen model}
-The final model was selected 
+The final model was chosen from the best models found after the grid search (table \ref{net:best-result})
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{|c|c|c|c|c|c|}
