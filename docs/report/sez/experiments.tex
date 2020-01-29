@@ -106,19 +106,17 @@ At the beginning, we have done grids search with large interval and high step am
 
 \begin{table}[h!]
 	\centering
-	\begin{tabular}{|c|c|c|c|c|c|}
+	\begin{tabular}{|c|c|c|c|c|c|c|c|}
 		\hline
-		\textbf{Layer}& \textbf{Units}& \textbf{Learning rate} & \multicolumn{1}{l|}{\textbf{Lambda}} & \textbf{Momentum} & \textbf{Error}\\ \hline
-			1 & 75 & 0.00450 & 0.00001 & 0.6  & 1.2150  \\
-			1 & 100 & 0.00520 & 0.0001 & 0.7  & 1.3420 \\
-			1 & 100 & 0.00087 & 0.0000 & 0.8  & 1.2750 \\
-			1 & 100 & 0.00097 & 0.0000 & 0.8  & 1.2759 \\
-			1 & 100 & 0.00500 & 0.0000 & 0.5  & 1.2845 \\
-			1 & 100 & 0.00500 & 0.0000 & 0.7  & 1.2654 \\
-			1 & 100 & 0.00500 & 0.0001 & 0.6  & 1.3882 \\
-			1 & 100 & 0.00500 & 0.0001 & 0.8  & 1.2588 \\
-			2 & 150 & 0.00875 & 0.0002 & 0.8  & 1.1332 \\
-			5 & 375 & 0.00450 & 0.0001 & 0.7  & 1.1341 \\
+		\textbf{Layer}& \textbf{Units}& \textbf{Learning rate} & \multicolumn{1}{l|}{\textbf{Lambda}} & \textbf{Momentum} & \textbf{Error TR}& \textbf{Error VS}& \textbf{Error TS}\\ \hline
+			1 & 75 & 0.00450 & 0.00001 & 0.6  & 0.8024 & 1.1202 & 1.2151  \\
+			1 & 100 & 0.00087 & 0.0000 & 0.8  & 0.9332 & 1.2750 &  1.2662\\
+			1 & 100 & 0.00097 & 0.0000 & 0.8  & 0.9231 & 1.2759 &  1.2786\\
+			1 & 100 & 0.00500 & 0.0000 & 0.5  & 0.9159 & 1.2845 & 1.2784 \\
+			1 & 100 & 0.00500 & 0.0000 & 0.7  & 0.8452 & 1.2654 & 1.2569 \\
+			1 & 100 & 0.00500 & 0.00001 & 0.6  & 0.7731& 1.2412 & 1.2375 \\
+			2 & 150 & 0.00875 & 0.0002 & 0.8  & 0.7467 & 1.1332 &  1.1372 \\
+			5 & 375 & 0.00450 & 0.0001 & 0.7  & 0.4023 & 1.1341 &  1.1341 \\
 		  \hline
 	\end{tabular}
 	\label{net:best-result}
@@ -173,18 +171,6 @@ The final model was chosen from the best models found after the grid search (tab
 \texttt{Define how you selected the FINAL model used on the blind test set [*]. Which is it among the candidates and why? Also write the  hyper-param. of the final model [*].}
 \texttt{Report for the FINAL model used on the blind test set the TABLE with MEE for TR (training), VL (validation) and TS (internal TS)i  in the original scale [*][*]. Note again  that you must have an internal  test evaluation (see the note IV above)}
 \texttt{Plot the learning curve TR/(VL)i/TS for the FINAL model [*] (the final model is unique) }
-\begin{figure}[H]
-    \centering
-    \begin{minipage}[t]{0.5\linewidth}
-        \includegraphics[width=\linewidth]{img/Cup_loss_noReg_noZoom.png}
-        %\subcaption{MSE}
-    \end{minipage}%
-    \begin{minipage}[t]{0.5\linewidth}
-        \includegraphics[width=\linewidth]{img/Cup_loss_noReg_zoom.png}
-        %\subcaption{Accuracy}
-    \end{minipage}
-    \caption{MEE and zoomed MEE for ML cup not regularized.}
-\end{figure}
 
 \begin{figure}[H]
     \centering
