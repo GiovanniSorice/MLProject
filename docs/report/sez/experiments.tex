@@ -3,9 +3,9 @@
 
 \subsection{MONK's results}
 
-The neural network used for the problems have 17 input units, the number of hidden units as written in the table \ref{tab:dati} and 1 output units. We used \texttt{tanh} as hidden layer activation function and \texttt{sigmoid} as output layer activation function. We chose \texttt{Mean squared error} as loss function. An input is classified as 1 if the output of the neural network is greater than 0.5 or 0 otherwise.\\
-We used stochastic, mini-batch and batch gradient descent but in the end we decided to use the batch gradient descent because loss function plots were smoother than the others.
-We also used the weight decay regularization as lambda parameter and Nesterov momentum as momentum parameter. The table \ref{tab:dati} reports the average of the value found for TR and TS after five different trainings of the networks.    
+The neural network used for the problems has 17 input units, the number of hidden units as written in table \ref{tab:dati} and 1 output units. We used \texttt{tanh} as a hidden layer activation function and \texttt{sigmoid} as an output layer activation function. We chose \texttt{Mean squared error} as the loss function. An input is classified as 1 if the output of the neural network is greater than 0.5 or 0 otherwise.\\
+We used stochastic, mini-batch and batch gradient descent but in the end, we decided to use the batch gradient descent because loss function plots were smoother than the others.
+We also used the weight decay regularization as the lambda parameter and Nesterov momentum as momentum parameter. Table \ref{tab:dati} reports the average of the value found for TR and TS after five different training of the networks. For the training phase, we initialized the weight with a uniform distribution in the [1e-3,-1e-3] interval.    
 \begin{center}
 \small\addtolength{\tabcolsep}{-5pt}
 \begin{table}[H]
@@ -51,7 +51,7 @@ MONK 3 (no reg)&   5 & 0.6 &   0 &  0.7 &   1.7e-2/2.7e-2 & 95.90\%/93.51\%		\\ 
 \end{figure}
 
 \subsubsection{MONK 3}
-We figured out during training phase that learning curves of MONK's 3 without regularization shown overfits in the output (see fig. \ref{fig:m3nr}). After that we tried with regularization and we obtained better results, the training didn't show overfitting in the validation error.
+We figured out during training phase that learning curves of MONK's 3 without regularization shown overfits in the output (see fig. \ref{fig:m3nr}). After that, we tried with regularization and we obtained better results, the training didn't show overfitting in the validation error.
 \begin{figure}[H]
     \centering
     \begin{minipage}[t]{0.5\linewidth}
@@ -86,16 +86,16 @@ We figured out during training phase that learning curves of MONK's 3 without re
 
 \subsubsection{Validation schema}
 
-At the beginning, we splitted the dataset in training set and test set with 80\% for training and 20\% for test. For the selection of the best model, we decided to use k-fold cross validation with k equals three. In the end we chose the best models among all the models trained during the grid search step. We used stochastic, mini-batch and batch gradient descent and we figured out that the batch type had smoother learning curves.
+In the beginning, we split the dataset between a training set and a test set with 80\% (1412 records) for training and 20\% (353 records) for the test. For the selection of the best model, we decided to use k-fold cross validation with k equals three. In the end, we chose the best models among all the models trained during the grid search step. We used stochastic, mini-batch and batch gradient descent and we figured out that the batch type had smoother learning curves.
 
 \subsubsection{Screening phase}
 
-Firstly we tried networks with single hidden layer and we noticed that they had good results. For this reason we tuned the hyper-parameters for this type of network through grids search.
+Firstly we tried networks with a single hidden layer and we noticed that they had good results. For this reason, we tuned the hyper-parameters for this type of network through grid searches.
 Then we chose MEE as the loss function for validation and test set, we trained the network with MSE but we plot the results with MEE to be comparable with the learning curves of test and validation set.
-Next, we focused on find some variant of the network with more hidden layer, we did hyper-parameters tuning through grids search.
+Next, we focused on find some variant of the network with more hidden layer, we did hyper-parameters tuning through grid search.
 
 \subsubsection{Explored hyper-parameters}
-At the beginning, we have done grids search with large interval and high step among them. When we found the right interval we started grids search for each combination of the values:
+In the beginning, we have done grid search with large intervals and high steps among them. When we found the right interval we started grid search for each combination of the values:
 
 \begin{itemize}
 	\item Unit $\in$ \{25, 200\} with step $\in$ \{25, 50\};
@@ -104,10 +104,11 @@ At the beginning, we have done grids search with large interval and high step am
 	\item Momentum $\in$ \{0, 0.8\} with step $\in$ \{0.05,  0.1\}.
 \end{itemize}
 \vspace{0.3cm}
-We used \texttt{tanh} activation function for all hidden layer and \texttt{linear} activation function in the output layer. \texttt{Tanh} was chosen because it had the best result among other results we obtained in previous grid search. \texttt{Linear} was chosen because is often used as output layer activation function for regression problem.
+We used the \texttt{tanh} activation function for all hidden layer and \texttt{linear} activation function in the output layer. \texttt{Tanh} was chosen because it had the best result among other results we obtained in the previous grid search. \texttt{Linear} was chosen because is often used as an output layer activation function for regression problem.
+For the training phase, we initialized the weight with a uniform distribution in the [0.7,-0.7] interval.
 
 \subsubsection{Grid search result}
-The table \ref{tab:best_nets} reports the average of the value found for TR, VS and TS during the k-fold cross validation with k equals three.   
+Table \ref{tab:best_nets} reports the average of the value found for TR, VS and TS during the k-fold cross validation with k equals three.   
 \begin{center}
 \small\addtolength{\tabcolsep}{-3pt}
 \begin{table}[h!]
@@ -125,7 +126,7 @@ The table \ref{tab:best_nets} reports the average of the value found for TR, VS 
 			5 & 375 & 0.00450 & 0.0001 & 0.7  & 0.6323 & 1.1341 &  1.1341 \\
 		  \hline
 	\end{tabular}
-		\caption{Best networks configuration with MEE.}
+		\caption{Best network configurations with MEE.}
 		\label{tab:best_nets}
 \end{table}
 \end{center}
@@ -140,18 +141,18 @@ The two models with more than one hidden layers have the following structure:
 	\centering
 	\begin{minipage}[t]{0.5\linewidth}
 		\includegraphics[width=\linewidth]{img/Cup_loss_Reg_Zoom_2l.png}
-		\caption{MEE two hidden layer model}
+		\caption{MEE two hidden layer.}
 		\label{img::twolayer}
 	\end{minipage}%
 	\begin{minipage}[t]{0.5\linewidth}
 		\includegraphics[width=\linewidth]{img/Cup_loss_Reg_Zoom_5l.png}
-		\caption{MEE five hidden layer model}
+		\caption{MEE five hidden layer.}
 		\label{img::fivelayer}
 	\end{minipage}
 \end{figure}
 
 \subsubsection{Computing time}
-We have developed a parallel grid search that allow us to take advantage of all core of our CPUs automatically. All the computation where launched on the following machine:
+We have developed a parallel grid search that allows us to take advantage of all core of our CPUs automatically. All the computation were launched on the following machine:
 \begin{itemize}
 	\item Intel i7-8500Y, 1.5GHz;
 	\item Intel i7-4720HQ, 2.6GHz.
@@ -159,16 +160,18 @@ We have developed a parallel grid search that allow us to take advantage of all 
 \end{itemize}
 
 The project was developed in C++ and the computational time and memory had to be strictly controlled.
-The time it takes to train on the MONK dataset with 800 epoch is 1.5 second, for the ML CUP dataset with 8000 epoch and 75 units is 1.10 minutes.
+The time it takes to train on the MONK dataset with 800 epoch is 1.5 seconds, for the ML CUP dataset with 8000 epoch and 75 units is 1.10 minutes.
 
 \subsubsection{Comparisons}
-We have tried different neural networks with different number of layer and distinct type of gradient descent (stochastic, mini-batch and batch). We figured out that the number of layers does not significantly affect network generalization performance, moreover with batch gradient descent we got the best learning curve.
+We have tried different neural networks with different numbers of layers and distinct types of gradient descent (stochastic, mini-batch and batch). We figured out that the number of layers does not significantly affect network generalization performance, moreover with batch gradient descent we got the best learning curve.
 
 \subsubsection{Chosen model}
-The final model was chosen from the best models found after the grid search (table \ref{tab:best_nets}), it has the following hyperparameters (table \ref{tab:best_net}) and MEE error for training set, validation set and test set.
+The final model was chosen from the best models found after the grid search (table \ref{tab:best_nets}), it has the following hyperparameters (table \ref{tab:best_net}) and MEE error for the training set, validation set and test set.
 We achieved an average MEE of 1.2093 on our test set, taken as an average of seven
-different trainings of the networks (to avoid the bias due to the random weight
+different training of the networks (to avoid the bias due to the random weight
 initialization).
+
+\vspace{0.5cm}
 \begin{center} 
 \small\addtolength{\tabcolsep}{-3pt}
 \begin{table}[h!]
@@ -184,9 +187,8 @@ initialization).
 \end{table}
 \end{center}
 
-We chose it because it was the model that performed better in the validation set. Also its learning curve was smooth and stable.
-The learning curve, also with an enlargement, is shown in the figure \ref{img:best}.
-
+We chose it because it was the model that performed better in the validation set. Also, its learning curve was smooth and stable.
+The learning curve, also with an enlargement, is shown in figure \ref{img:best}.
 
 \begin{figure}[H]
     \centering

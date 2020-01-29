@@ -1,35 +1,35 @@
 \section{Method}
 
 \subsection{Code}
-The Neural Network simulator was implemented in C++17 using Armadillo library for linear algebra operation \textbf{(aggiungere paper armadillo)}. Moreover, we decided to use Conan package manager, for automate the installation and distribution of the library. We focus on modularity and extensibility, for this reason we put some effort on made parametric class.
+The Neural Network simulator was implemented in C++17 using Armadillo library for linear algebra operation. Moreover, we decided to use Conan package manager, for automating the installation and distribution of the library. We focus on modularity and extensibility, for this reason, we put some effort into made parametric class.
 \\
 The library is structured as follow:
-the class \texttt{Network} has a list of layer, added by user, a loss function and expose all the methods for train and test the network. Every \texttt{Layer} object, that is composed by an armadillo matrix for the weights and a bias array, have a specific activation function. We can build  multilayer feedforward neural networks with different activation function. The train was developed following the back-propagation algorithm, with a forward and back operation using gradient descent for weights adjustment. The user can specify the momentum and weight decay regularization parameters otherwise the train is done without using them. Also the stop condition, the difference between the current validation loss and the previous validation loss, can be pass at the method train. The train was implemented for support stochastic, mini-batch and batch gradient descent.
+the class \texttt{Network} has a list of layer, added by the user, a loss function and expose all the methods for train and test the network. Every \texttt{Layer} object, that is composed of an armadillo matrix for the weights and a bias array, have a specific activation function. We can build  multilayer feedforward neural networks with a different activation function. The train was developed following the back-propagation algorithm, with a forward and back operation using gradient descent for weights adjustment. The user can specify the momentum and weight decay regularization parameters otherwise the train is done without using them. Also, the stop condition, the difference between the current validation loss and the previous validation loss, can be pass at the method train. The train was implemented for support stochastic, mini-batch and batch gradient descent.
 \\
-We have defined a \texttt{Cross-validation} class that perform k-fold cross validation and compute the average error on validation. That we have used for chose the best model in the ML CUP.
+We have defined a \texttt{Cross-validation} class that performs k-fold cross validation and compute the average error on validation. That we have used to choose the best model in the ML CUP.
 \\
-In addition, we developed a \texttt{Grid Search} class in which the user can specify: minimum, maximum and step for all parameters. The parameters are the following: epoch, number of unit, learning rate, weight decay and Nesterov momentum coefficient. We also decided to implement a parallel version of the grid search to speed up computation. 
+In addition, we developed a \texttt{Grid Search} class in which the user can specify: minimum, maximum and step for all parameters. The parameters are the following: epoch, number of units, learning rate, weight decay and Nesterov momentum coefficient. We also decided to implement a parallel version of the grid search to speed up computation. 
 \\
-The class \texttt{Activation Function} has been designed for abstract all the possible activation. Currently the implemented function are: \texttt{sigmoid}, \texttt{tanh}, \texttt{reLU}, \texttt{linear}.
+The class \texttt{Activation Function} has been designed for abstract all the possible activation. Currently, the implemented functions are \texttt{sigmoid}, \texttt{tanh}, \texttt{reLU}, \texttt{linear}.
 With the aim of extensibility the \texttt{Cost Function} class has been designed for abstract all the cost function.
-Currently the implemented function are: \texttt{mean squared error}, \texttt{mean euclidean error} and \texttt{binary cross entropy}.
+Currently, the implemented function are: \texttt{mean squared error}, \texttt{mean euclidean error} and \texttt{binary cross entropy}.
 \\
-We also decide to make the memory move less expensive by using the \texttt{move} operator present in C++17 for speed up matrix computation.
+We also decide to make the memory move less expensive by using the \texttt{move} operator present in C++17 for speeding up matrix computation.
 
 \subsubsection{Preprocessing}
-The preprocessing was divided between two classes, \texttt{Preprocessing} and \texttt{LoadDataset}, the first read, shuffle and split the dataset, the second do the one-to-k decode. All the operation done in the classes take care of the usage of the memory, particularly attention has been made (\textbf{paid???????????}) to avoid copying of data. The MONK dataset, has been decoded through the \texttt{LoadDataset} class.
+The preprocessing was divided between two classes, \texttt{Preprocessing} and \texttt{LoadDataset}, the first read, shuffle and split the dataset, the second does the one-to-k decode. All the operation done in the classes take care of the usage of the memory, particular attention has been made (\textbf{paid???????????}) to avoid copying of data. The MONK dataset has been decoded through the \texttt{LoadDataset} class.
 
 \subsubsection{Validation}
-For MONK's problems the train dataset has been splitted into a new 80\% training set and a 20\% validation set. The error on the validation set was used as a proxy for the generalization error for determined when overfitting has began. The test set was supplied to us already splitted from the training set, we used it for evaluate the prediction error on new unseen data. 
+For MONK's problems, the training dataset has been split into a new 80\% training set and a 20\% validation set. The error on the validation set was used as a proxy for the generalization error for determined when overfitting has begun. The test set was supplied to us already split from the training set, we used it to evaluate the prediction error on new unseen data. 
 \\
-For ML CUP problem the dataset has been splitted into a new 60\% training set, 20\% validation set and a 20\% test set. We have decided to use k-fold cross validation, with k equals to 3, to find the best model among the grid search results. 
-We have shuffled both the dataset before the splitting step and, only for the training set, before each epoch of the training phase for avoid the stop over in a local minimum. 
+For ML CUP problem the dataset has been split into a new 60\% training set, 20\% validation set and a 20\% test set. We have decided to use k-fold cross validation, with k equals to 3, to find the best model among the grid search results. 
+We have shuffled both the dataset before the splitting step and, only for the training set, before each epoch of the training phase to avoid the stopover at a local minimum. 
 
 
 \subsubsection{Preliminary trials}
 
-For MONK's problems we tried at the beginning without the one-hot-encoding and we didn't reach a good accuracy. After the one-hot-encoding was done, we reached high accuracy in all three problems. For the third set, we had to pay attention to regularization for reach a good result.
+For MONK's problems, we tried at the beginning without the one-hot-encoding and we didn't reach a good accuracy. After the one-hot-encoding was done, we reached a high accuracy in all three problems. For the third set, we had to pay attention to regularization to reach a good result.
 \\
-For ML CUP the entire learning process was harder. Firstly we had some experiment to figure out the size of the grid search. Next, we had study \textbf{study??????} the result obtained and we had done smaller range grid search on the previous best results. Once found the best models, we had retrained them on all the training set to see if the predictions on unseen data were as expected on the test set. 
+For ML CUP the entire learning process was harder. Firstly we had some experiments to figure out the size of the grid search. Next, we had studied the result obtained and we had done a smaller range grid search on the previous best results. Once found the best models, we had retrained them on all the training set to see if the predictions on unseen data were as expected on the test set. 
 \\
-Initially the model selection and assessment has been done on models with one hidden layer and an output layer. Next, we decided to try with different models having three or four hidden layers whose result will be shown later.
+Initially, the model selection and assessment have been done on models with one hidden layer and an output layer. Next, we decided to try with different models having three or four hidden layers whose result will be shown later.
