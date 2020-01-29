@@ -109,12 +109,11 @@ At the beginning, we have done grids search with large interval and high step am
 	\begin{tabular}{|c|c|c|c|c|c|}
 		\hline
 		\textbf{Layer}& \textbf{Units}& \textbf{Learning rate} & \multicolumn{1}{l|}{\textbf{Lambda}} & \textbf{Momentum} & \textbf{Error}\\ \hline
-			1 & 100 & 0.00325 & 0.0000 & 0.1  & 1.3899 \\
+			1 & 75 & 0.00450 & 0.00001 & 0.6  & 1.2150  \\
 			1 & 100 & 0.00520 & 0.0001 & 0.7  & 1.3420 \\
 			1 & 100 & 0.00087 & 0.0000 & 0.8  & 1.2750 \\
 			1 & 100 & 0.00097 & 0.0000 & 0.8  & 1.2759 \\
 			1 & 100 & 0.00500 & 0.0000 & 0.5  & 1.2845 \\
-			1 & 100 & 0.00500 & 0.0000 & 0.6  & 1.2892 \\
 			1 & 100 & 0.00500 & 0.0000 & 0.7  & 1.2654 \\
 			1 & 100 & 0.00500 & 0.0001 & 0.6  & 1.3882 \\
 			1 & 100 & 0.00500 & 0.0001 & 0.8  & 1.2588 \\
@@ -152,16 +151,25 @@ We have developed a parallel grid search that allow us to take advantage of all 
 	
 \end{itemize}
 
-Since the project was developed in C++ the computational time and memory had to be controlled and with the goal of efficiency.
+The project was developed in C++ and the computational time and memory had to be strictly controlled.
 The time it takes to train on the MONK dataset with 800 epoch is 1.5 second, for the ML CUP dataset with 8000 epoch and 75 units is 1.10 minutes.
 \subsubsection{Comparisons}
 We have tried different neural networks with different number of layer and distinct type of gradient descent (stochastic, mini-batch and batch). We figured out that the number of layers does not significantly affect network generalization performance, moreover with batch gradient descent we got the best learning curve.
 \subsubsection{Chosen model}
+The final model was selected 
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|}
+		\hline
+		\textbf{Layer}& \textbf{Units}& \textbf{Learning rate} & \multicolumn{1}{l|}{\textbf{Lambda}} & \textbf{Momentum} & \textbf{Error}\\ \hline
+			1 & 100 & 0.0045 & 0.00001 & 0.6  & 1.215 \\
+		  \hline
+	\end{tabular}
+		\caption{Best model with MEE.}
+\end{table}
 
 \texttt{Define how you selected the FINAL model used on the blind test set [*]. Which is it among the candidates and why? Also write the  hyper-param. of the final model [*].}
-\subsubsection{Report}
 \texttt{Report for the FINAL model used on the blind test set the TABLE with MEE for TR (training), VL (validation) and TS (internal TS)i  in the original scale [*][*]. Note again  that you must have an internal  test evaluation (see the note IV above)}
-\subsubsection{Plots}
 \texttt{Plot the learning curve TR/(VL)i/TS for the FINAL model [*] (the final model is unique) }
 \begin{figure}[H]
     \centering
