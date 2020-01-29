@@ -1,12 +1,21 @@
 #Neuradillo
 
-1. Install python 3 e dare: pip3 install conan, dopo dare un: source ~/.profile  
-2. Installare armadillo dala repo di Darcamo:  https://github.com/darcamo/conan-armadillo 
-3. 
-4. Eseguire il progetto senza CLion: 
-    1. Dare: conan install . -s build_type=Release --install-folder=cmake-build-release
-    2. Dare cmake . // da capire se si può mettere in una folder, forse: cmake -Bcmake-build-release -H.
-    3. Spostarsi nella cartella generata dando: cd cd cmake-build-release/
-    4. Dall'interno della tabella dare: cmake --build . --config Release 
-    5. Spostarsi nella cartella bin/ dando: cd bin
-    6. Eseguire il sorgente con: ./MLProject 
+1. Assicurarsi di avere installato python 3 nella propria macchina
+   1. Dopo aver installato python3 correttamente installare il package manager Conan (https://conan.io/) dando da shell il seguente comando: pip3 install conan
+   2. L'installazione di conan tramite pip potrebbe non essere rilevata dal sistema, dare il comando da shell: source ~/.profile
+   3. Eseguire:  pip install conan --upgrade per aggiornare Conan 
+
+2. Clonare la seguente repo dando il seguente comando da shell: git clone  https://github.com/darcamo/conan-armadillo 
+   1. Spostarsi all'interno della repo, fare particolare attenzione a mettersi nella cartella contenente il Conafile.py
+   2. Dare il comando: conan create . armadillo/stable
+   3. Se tutto avviene correttamente il programma stampa un "Hello world" di test; 
+
+
+3. Eseguire il progetto da shell dopo l'installazione di Conan: 
+    1. Aprire una shell nella cartella del progetto e spostarsi all'interno della cartella MLProject/ ; 
+    2. All'interno della cartella dare il seguente comando da shell: conan install . -s build_type=Release --install-folder=build
+    3. Nella stessa cartella dare il seguente comando da shell:  cmake -Bbuild -H. 
+    4. Spostarsi nella cartella generata dando: cd build/
+    5. Dare da shell: cmake --build . --config Release 
+    6. Spostarsi nella cartella bin/ ; 
+    7. Eseguire il sorgente ottenuto dando: ./MLProject 
