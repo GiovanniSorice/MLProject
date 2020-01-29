@@ -93,6 +93,22 @@ In the beginning, we split the dataset between a training set and a test set wit
 Firstly we tried networks with a single hidden layer and we noticed that they had good results. For this reason, we tuned the hyper-parameters for this type of network through grid searches.
 Then we chose MEE as the loss function for validation and test set, we trained the network with MSE but we plot the results with MEE to be comparable with the learning curves of test and validation set.
 Next, we focused on find some variant of the network with more hidden layer, we did hyper-parameters tuning through grid search.
+The screening phase was very important for us because choosing the right search setting of the hyperparameter would have saved us a lot of time. We obtained an idea of the ideal early stopping condition and we figure out what were the parameters to be discarded a priori (e.g. high learning rate fig.\ref{img:hlr} or small mini-batch fig. \ref{img:smb}).
+
+\begin{figure}[H]
+	\centering
+	\begin{minipage}[t]{0.5\linewidth}
+		\includegraphics[width=\linewidth]{img/Cup_loss_divergente.png}
+		\caption{MEE neural network divergent.}
+		\label{img:hlr}
+	\end{minipage}%
+	\begin{minipage}[t]{0.5\linewidth}
+		\includegraphics[width=\linewidth]{img/Cup_loss_noSmooth.png}
+		\caption{MEE small mini-batch (32).}
+		\label{img:smb}
+	\end{minipage}
+		\caption{MEE plot of discarded a priori networks.}
+\end{figure}
 
 \subsubsection{Explored hyper-parameters}
 In the beginning, we have done grid search with large intervals and high steps among them. When we found the right interval we started grid search for each combination of the values:
@@ -166,10 +182,10 @@ The time it takes to train on the MONK dataset with 800 epoch is 1.5 seconds, fo
 We have tried different neural networks with different numbers of layers and distinct types of gradient descent (stochastic, mini-batch and batch). We figured out that the number of layers does not significantly affect network generalization performance, moreover with batch gradient descent we got the best learning curve.
 
 \subsubsection{Chosen model}
-The final model was chosen from the best models found after the grid search (table \ref{tab:best_nets}), it has the following hyperparameters (table \ref{tab:best_net}) and MEE error for the training set, validation set and test set.
+The final model was chosen from the best models found after the grid search (table \ref{tab:best_nets}), it has the following hyperparameters (table \ref{tab:best_net}) and MEE error for the training set, validation set and internal test set.
 We achieved an average MEE of 1.2093 on our test set, taken as an average of seven
 different training of the networks (to avoid the bias due to the random weight
-initialization).
+initialization). For the ML CUP result, we trained the network on all 80\% of the training set.
 
 \vspace{0.5cm}
 \begin{center} 
