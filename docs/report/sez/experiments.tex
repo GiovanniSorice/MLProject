@@ -3,9 +3,9 @@
 
 \subsection{MONK's results}
 
-The neural network used for the problems has 17 input units, the number of hidden units are written in table \ref{tab:dati}  and the output layer has always one unit. We used \texttt{tanh} as a hidden layer activation function and \texttt{sigmoid} as an output layer activation function. We chose \texttt{Mean squared error} as the loss function. An input is classified as 1 if the output of the neural network is greater than 0.5 or 0 otherwise.\\
+The neural networks used for the problems have 17 input units, the number of hidden units are written in table \ref{tab:dati}  and the output layer has always one unit. We used \texttt{tanh} as a hidden layer activation function and \texttt{sigmoid} as an output layer activation function. We chose \texttt{Mean squared error} as the loss function. An input is classified as 1 if the output of the neural network is greater than 0.5 or 0 otherwise.\\
 We used stochastic, mini-batch and batch gradient descent but in the end we decided to use the batch gradient descent because loss function plots were smoother than the others.
-We also used the weight decay regularization as the lambda parameter and Nesterov momentum as momentum parameter. Table \ref{tab:dati} reports the average of the values found for TR and TS after five different trainings of the networks. For the training phase we initialized the weight with a uniform distribution in the interval [-1e-3, 1e-3].    
+We also used the weight decay regularization as the lambda parameter and Nesterov momentum as the momentum parameter. Table \ref{tab:dati} reports the average of the values found for TR and TS after five different trainings of the networks. For the training phase we initialized the weight with a uniform distribution in the interval [-1e-3, 1e-3].    
 \begin{center}
 \small\addtolength{\tabcolsep}{-5pt}
 \begin{table}[H]
@@ -51,7 +51,7 @@ MONK 3 (no reg)&   5 & 0.6 &   0 &  0.7 &   1.7e-2/2.7e-2 & 95.90\%/93.51\%		\\ 
 \end{figure}
 
 \subsubsection{MONK 3}
-We figured out during the training phase that the learning curves of MONK's 3 without regularization showed overfitting in the output (see fig. \ref{fig:m3nr}). In response to that, we fixed it by adding regularization. We obtained better results since the training didn't show overfitting in the validation error.
+We figured out during the training phase that the learning curves of MONK's 3 without regularization showed overfitting in the output (see fig. \ref{fig:m3nr}). In response to that, we fixed it by adding regularization. We obtained better results since the training didn't show overfitting in the validation error (see fig. \ref{fig:m3r}).
 \begin{figure}[H]
     \centering
     \begin{minipage}[t]{0.5\linewidth}
@@ -78,6 +78,7 @@ We figured out during the training phase that the learning curves of MONK's 3 wi
         %\subcaption{Accuracy}
     \end{minipage}
     \caption{MSE and accuracy for MONK’s 3 regularized.}
+    \label{fig:m3r}
 \end{figure}
 
 
@@ -91,7 +92,7 @@ Initially, we split the dataset in training set and test set with 80\% (1412 rec
 Firstly we tried with single hidden layer networks and we could already observe good results. For this reason, we tuned the hyper-parameters for this type of network through grid searches.
 Then we chose MEE as the loss function for validation and test set. We trained the network with MSE but we plotted the results with MEE to make them comparable with the learning curves of test and validation set.
 Later, we focused on finding some variants of the network with more hidden layers. We tuned the hyper-parameters through grid search.
-The screening phase turned out to be fundamental since choosing the right search setting of the hyper-parameters saved us a lot of time. We understood  which hyper-parameters needed to be discarded a priori (e.g. high learning rate fig.\ref{img:hlr} or small mini-batch fig. \ref{img:smb}).
+The screening phase turned out to be fundamental since choosing the right search setting of the hyper-parameters saved us a lot of time. We understood  which hyper-parameters needed to be discarded a priori (e.g. high learning rate fig. \ref{img:hlr} or small mini-batch fig. \ref{img:smb}).
 
 \begin{figure}[H]
 	\centering
@@ -166,7 +167,7 @@ The two models with more than one hidden layer have the following structure:
 \end{figure}
 
 \subsubsection{Computing time}
-We have developed a parallel grid search that allows us to take advantage of all our CPU cores automatically. All the computations were launched on the following machine:
+We have developed a parallel grid search that allows us to take advantage of all our CPU cores automatically. All the computations were launched on the following machines:
 \begin{itemize}
 	\item Intel i7-8500Y, 1.5GHz;
 	\item Intel i7-4720HQ, 2.6GHz.
@@ -174,7 +175,7 @@ We have developed a parallel grid search that allows us to take advantage of all
 \end{itemize}
 
 The project was developed in C++ and the computational time and memory had to be strictly managed.
-The time it takes to train on the MONK dataset with 800 epochs is 1.5 seconds, for the ML CUP dataset with 8000 epochs and 75 units is 1.10 minutes.
+The time it takes to train on the MONK dataset with 800 epochs and 5 units is 1.5 seconds, for the ML CUP dataset with 8000 epochs and 75 units is 1.10 minutes.
 
 \subsubsection{Comparisons}
 We tried multiple neural networks with different number of layers and distinct types of gradient descent (stochastic, mini-batch and batch). We came to the conclusion that the number of layers does not significantly affect network generalization performance. Moreover with batch gradient descent we obtained the best learning curve.
