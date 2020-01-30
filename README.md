@@ -1,6 +1,10 @@
-#Neuradillo
 
-1. Installazione del package manager Conan: 
+
+<img src="https://github.com/GiovanniSorice/MLProject/blob/master/logo/neuradillo.jpg" width="100" height="100">
+
+
+#Neuradillo
+1. Installazione del pac    kage manager Conan: 
    1. Assicurarsi di avere installato python 3: 
    2. Dopo aver installato python3 correttamente installare il package manager Conan (https://conan.io/) dando da shell il seguente comando: pip3 install conan
    3. L'installazione di conan tramite pip potrebbe non essere rilevata dal sistema, dare il comando da shell: source ~/.profile
