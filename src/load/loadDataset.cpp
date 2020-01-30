@@ -25,4 +25,3 @@ void LoadDataset::explodeMonkDataset() {
   }
   monkDatasetTranslate.save("monks-formatted.csv", arma::csv_ascii);
 }
-

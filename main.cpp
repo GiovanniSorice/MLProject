@@ -14,29 +14,16 @@
 #include "src/gridSearch/parallelGridSearch.h"
 
 int main() {
-  arma::cout.precision(10);
-  arma::cout.setf(arma::ios::fixed);
-/*
-  LoadDataset loadDS;
-  loadDS.Load("../../data/monk/monk1_testset.csv");
-  loadDS.explodeMonkDataset();
-*/
-
-  Preprocessing a("../../data/ML-CUP19-TR_formatted.csv");
+  //! Data preprocessing.
+  Preprocessing cupPreprocessing("../../data/ML-CUP19-TR_formatted.csv");
   arma::mat trainingSet;
   arma::mat validationSet;
   arma::mat testSet;
 
-  a.GetSplit(60, 20, 20, std::move(trainingSet), std::move(validationSet), std::move(testSet));
-
-  //testSet.load("../../data/ML-CUP19-TR_formatted.csv");
-  /*
-   std::cout << trainingSet.n_rows << " " << trainingSet.n_cols << " " << validationSet.n_rows << " "
-            << validationSet.n_cols
-            << " " << testSet.n_rows << " " << testSet.n_cols << std::endl;
-
-   */
+  cupPreprocessing.GetSplit(60, 20, 20, std::move(trainingSet), std::move(validationSet), std::move(testSet));
   int labelCol = 2;
+
+
   // Split the data from the training set.
   arma::mat trainingLabels = arma::mat(trainingSet.memptr() + (trainingSet.n_cols - labelCol) * trainingSet.n_rows,
                                        trainingSet.n_rows,
@@ -80,81 +67,69 @@ int main() {
                                  testSet.n_cols - labelCol,
                                  false,
                                  false);
-/*
-  double learningRateMin = 0.1;
-  double learningRateMax = 0.9;
-  double learningRateStep = 0.1;
+
+  //! Grid search implementation (the parallel one can be also used
+  //! changing GridSearch class with ParallelGridSearch class)
+  /*
+  double learningRateMin = 0.0001;
+  double learningRateMax = 0.001;
+  double learningRateStep = 0.00005;
   double lambdaMin = 0;
   double lambdaMax = 0.001;
   double lambdaStep = 0.001;
   double momentumMin = 0.8;
   double momentumMax = 0.8;
   double momentumStep = 0.2;
-  int unitMin = 50;
+  int unitMin = 100;
   int unitMax = 150;
   int unitStep = 50;
-  int epochMin = 15000;
-  int epochMax = 15000;
-  int epochStep = 500;
+  int epochMin = 8000;
+  int epochMax = 8000;
+  int epochStep = 1;
 
   GridSearch gridSearch;
-  gridSearch.SetEpochMin(epochMin);
-  gridSearch.SetEpochMax(epochMax);
-  gridSearch.SetEpochStep(epochStep);
-  gridSearch.SetLambdaMin(lambdaMin);
-  gridSearch.SetLambdaMax(lambdaMax);
-  gridSearch.SetLambdaStep(lambdaStep);
-  gridSearch.SetLearningRateMin(learningRateMin);
-  gridSearch.SetLearningRateMax(learningRateMax);
-  gridSearch.SetLearningRateStep(learningRateStep);
-  gridSearch.SetMomentumMin(momentumMin);
-  gridSearch.SetMomentumMax(momentumMax);
-  gridSearch.SetMomentumStep(momentumStep);
-  gridSearch.SetUnitMin(unitMin);
-  gridSearch.SetUnitMax(unitMax);
-  gridSearch.SetUnitStep(unitStep);
-
-  int netAnalyzed = gridSearch.NetworkAnalyzed();
-  std::cout << "netAnalyzed" << netAnalyzed << std::endl;
-  //arma::mat result = arma::zeros(netAnalyzed, 7);   // 4 hyperparams and error
-  gridSearch.Run(trainingData, trainingLabels);
-*/
+  gridSearch.SetLambda(lambdaMin, lambdaMax, lambdaStep);
+  gridSearch.SetLearningRate(learningRateMin, learningRateMax, learningRateStep);
+  gridSearch.SetMomentum(momentumMin, momentumMax, momentumStep);
+  gridSearch.SetUnit(unitMin, unitMax, unitStep);
+  gridSearch.SetEpoch(epochMin, epochMax, epochStep);
+  arma::mat result = arma::zeros(gridSearch.NetworkAnalyzed(), 8);
+  gridSearch.Run(trainingData, trainingLabels, std::move(result));
+  */
 
 
 
+  //! ML CUP network, training and testing
+  Network cupNetwork;
+  cupNetwork.SetLossFunction("meanSquaredError");
+  Layer firstLayer(trainingSet.n_cols - labelCol, 75, "tanhFunction");
+  Layer lastLayer(75, 2, "linearFunction");
+  cupNetwork.Add(firstLayer);
+  cupNetwork.Add(lastLayer);
+  cupNetwork.Init(0.7, -0.7);
+  cupNetwork.Train(validationData,
+                   validationLabels,
+                   trainingSet,
+                   trainingLabels.n_cols,
+                   15000,
+                   trainingSet.n_rows,
+                   0.005,
+                   0.00001,
+                   0.6);
 
-  Network net;
- net.SetLossFunction("meanSquaredError");
+  arma::mat MEE;
+  cupNetwork.Test(std::move(validationData), std::move(validationLabels), std::move(MEE));
+  MEE.print("errore finale");
 
-  Layer firstLayer(trainingSet.n_cols - labelCol, 100, "tanhFunction");
-  Layer lastLayer(100, 2, "linearFunction");
- net.Add(firstLayer);
- net.Add(lastLayer);
-
-  net.Init(0.7, -0.7);
-
-  net.Train(validationData,
-            validationLabels,
-            trainingSet,
-            trainingLabels.n_cols,
-            15000,
-            trainingSet.n_rows,
-            0.0045,
-            0.0001,
-            0.8);
- arma::mat mat;
-  net.Test(std::move(testData), std::move(testLabels), std::move(mat));
-  //net.Test(std::move(testData), std::move(testLabels), std::move(mat));
- mat.print("errore finale");
-/*
-
+  //! Cross validation implementation
+  /*
   CrossValidation cross_validation;
   arma::mat error = arma::zeros(1, trainingLabels.n_cols);
   double nDelta = 0;
   cross_validation.Run(trainingData,
                        trainingLabels,
                        3,
-                       net,
+                       cupNetwork,
                        15000,
                        trainingData.n_rows,
                        0.005,
@@ -162,10 +137,8 @@ int main() {
                        0.8,
                        std::move(error),
                        nDelta);
+  */
 
-  arma::mat mat;
-  net.Test(std::move(validationData), std::move(validationLabels), std::move(mat));
-  mat.print("error");
-*/
+
   return 0;
 }

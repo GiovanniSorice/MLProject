@@ -73,21 +73,13 @@ void ParallelGridSearch::setGridsSearch(int totalNetworkAnalyzed) {
     resultMatrix.emplace_back(currentResultMatrix);
 
     GridSearch gridSearch;
-    gridSearch.SetEpochMin(epochMin);
-    gridSearch.SetEpochMax(epochMax);
-    gridSearch.SetEpochStep(epochStep);
-    gridSearch.SetLambdaMin(lambdaMin);
-    gridSearch.SetLambdaMax(lambdaMax);
-    gridSearch.SetLambdaStep(lambdaStep);
-    gridSearch.SetLearningRateMin(learningRateMin + currentLearningRateInterval * currentGridSearch);
-    gridSearch.SetLearningRateMax(learningRateMin + currentLearningRateInterval * (currentGridSearch + 1));
-    gridSearch.SetLearningRateStep(learningRateStep);
-    gridSearch.SetMomentumMin(momentumMin);
-    gridSearch.SetMomentumMax(momentumMax);
-    gridSearch.SetMomentumStep(momentumStep);
-    gridSearch.SetUnitMin(unitMin);
-    gridSearch.SetUnitMax(unitMax);
-    gridSearch.SetUnitStep(unitStep);
+    gridSearch.SetEpoch(epochMin, epochMax, epochStep);
+    gridSearch.SetLambda(lambdaMin, lambdaMax, lambdaStep);
+    gridSearch.SetLearningRate(learningRateMin + currentLearningRateInterval * currentGridSearch,
+                               learningRateMin + currentLearningRateInterval * (currentGridSearch + 1),
+                               learningRateStep);
+    gridSearch.SetMomentum(momentumMin, momentumMax, momentumStep);
+    gridSearch.SetUnit(unitMin, unitMax, unitStep);
     gridSearches.push_back(gridSearch);
   }
 }

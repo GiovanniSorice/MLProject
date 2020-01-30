@@ -26,24 +26,14 @@ class GridSearch {
 
  public:
   int NetworkAnalyzed();
-  void SetEpochStep(int epoch_step);
-  void SetEpochMin(int epoch_min);
-  void SetEpochMax(int epoch_max);
   void Run(arma::mat dataset,
-           arma::mat label, arma::mat
-           &&result);
-  void SetUnitStep(int unit_step);
-  void SetLearningRateStep(double learning_rate_step);
-  void SetLambdaStep(double lambda_step);
-  void SetMomentumStep(double momentum_step);
-  void SetLearningRateMin(double learning_rate_min);
-  void SetLearningRateMax(double learning_rate_max);
-  void SetLambdaMin(double lambda_min);
-  void SetLambdaMax(double lambda_max);
-  void SetMomentumMin(double momentum_min);
-  void SetMomentumMax(double momentum_max);
-  void SetUnitMin(int unit_min);
-  void SetUnitMax(int unit_max);
+           arma::mat label, arma::mat &&result);
+  void SetLearningRate(double learning_rate_min, double learning_rate_max, double learning_rate_step);
+  void SetLambda(double lambda_min, double lambda_max, double lambda_step);
+  void SetMomentum(double momentum_min, double momentum_max, double momentum_step);
+  void SetUnit(int unit_min, int unit_max, int unit_step);
+  void SetEpoch(int epoch_min, int epoch_max, int epoch_step);
+
 };
 
 #endif //MLPROJECT_SRC_GRIDSEARCH_GRIDSEARCH_H_
