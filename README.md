@@ -1,6 +1,6 @@
 
 
-<img src="https://github.com/GiovanniSorice/MLProject/blob/master/logo/neuradillo.jpg" width="100" height="100">
+<img src="https://github.com/GiovanniSorice/MLProject/blob/master/logo/neuradillo.jpg" height="150" width="300">
 
 
 #Neuradillo
