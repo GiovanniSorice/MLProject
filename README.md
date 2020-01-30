@@ -1,15 +1,22 @@
 
 
-<img src="https://github.com/GiovanniSorice/MLProject/blob/master/logo/neuradillo.jpg" height="195" width="295">
+<img src="https://github.com/GiovanniSorice/MLProject/blob/master/logo/neuradillo.jpg" height="200" width="300">
 
 
 # Neuradillo
-Neuradillo is a small C++ exploiting [Armadillo](http://arma.sourceforge.net/) numerical library to create and train feedforward neural network. We developed this library as a project for the Machine Learning course. More info 
+Neuradillo is a small C++ exploiting [Armadillo](http://arma.sourceforge.net/) numerical library to create and train feedforward neural network. We developed this library as a project for the Machine Learning course. More info about the project in [Report](https://github.com/GiovanniSorice/MLProject/blob/master/docs/report/relazione.pdf). 
 
-## Setup 
+## Getting started
 
 ### Prerequisites 
-For exe
+The project use [Cmake 3.16](https://cmake.org/) as building system, this can be downloaded [here](https://cmake.org/download/). 
+
+The package manager used is [Conan](https://conan.io/). You can install it through Pip with the following commands:
+` pip install conan`
+`source ~/.profile`  
+
+
+
 1. Installazione del pac    kage manager Conan: 
    1. Assicurarsi di avere installato python 3: 
    2. Dopo aver installato python3 correttamente installare il package manager Conan (https://conan.io/) dando da shell il seguente comando: pip3 install conan
@@ -32,8 +39,8 @@ For exe
     6. Dare da shell: cmake --build . --config Release 
     7. Spostarsi nella cartella bin/ ; 
     8. Eseguire il sorgente ottenuto dando: ./MLProject
-### Run t 
+### Run 
 
 ## Authors
 * **Giovanni Sorice**  :computer: - [Giovanni Sorice](https://github.com/GiovanniSorice)
-* **Francesco Corti** :nerd_face: :floppy_disk: :computer: - [FraCorti](https://github.com/FraCorti)
+* **Francesco Corti** :nerd_face: :computer: - [FraCorti](https://github.com/FraCorti)
