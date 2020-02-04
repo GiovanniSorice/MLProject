@@ -4,7 +4,7 @@
 
 
 # Neuradillo
-Neuradillo is a small C++ exploiting [Armadillo](http://arma.sourceforge.net/) numerical library to create and train feedforward neural network. We developed this library as a project for the Machine Learning course. More info about the project in [Report](https://github.com/GiovanniSorice/MLProject/blob/master/docs/report/relazione.pdf). 
+Neuradillo is a small C++ exploiting [Armadillo](http://arma.sourceforge.net/) numerical library to create and train feedforward neural network. We developed this library as a project for the Machine Learning course. More information about the project can be found in the Report [Report](https://github.com/GiovanniSorice/MLProject/blob/master/docs/report/relazione.pdf). 
 
 ## Getting started
 
@@ -13,8 +13,8 @@ The project use [Cmake 3.16](https://cmake.org/) as building system, this can be
 
 The package manager used is [Conan](https://conan.io/). You can install it through Pip with the following commands:
 ` pip install conan`
+Now running the following command to solve this [issue](https://docs.conan.io/en/latest/installation.html#install-with-pip-recommended): 
 `source ~/.profile`  
-
 
 
 1. Installazione del pac    kage manager Conan: 
