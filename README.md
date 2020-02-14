@@ -4,13 +4,13 @@
 
 
 # Neuradillo
-Neuradillo is a small C++ exploiting [Armadillo](http://arma.sourceforge.net/) numerical library to create and train feedforward neural network. We developed this library as a project for the Machine Learning course. More information about the project can be found in the [Report](https://github.com/GiovanniSorice/MLProject/blob/master/docs/report/relazione.pdf). 
+Neuradillo is a small C++ exploiting [Armadillo](http://arma.sourceforge.net/) numerical library to create and train feedforward neural network. We developed this library as a project for the Machine Learning [course](https://esami.unipi.it/esami2/programma.php?c=42276&aa=2019&docente=MICHELI&insegnamento=&sd=0). More information about the project and the algorithms we implemented can be found in the [report](https://github.com/GiovanniSorice/MLProject/blob/master/docs/report/relazione.pdf). 
 
 ## Getting started
 
 ### Prerequisites 
 The project use [Cmake 3.16](https://cmake.org/) as building system and it can be downloaded [here](https://cmake.org/download/). 
-The package manager used is [Conan](https://conan.io/). You can install it through Pip with the following commands:
+The package manager used is [Conan](https://conan.io/). You can install it with the following commands:
 ` pip install conan` 
 
 Running the following command to solve this [issue](https://docs.conan.io/en/latest/installation.html#install-with-pip-recommended): 
@@ -19,25 +19,32 @@ Running the following command to solve this [issue](https://docs.conan.io/en/lat
 ### Armadillo installation 
 1. Clone the following repo: https://github.com/darcamo/conan-armadillo;
 2. Inside the cloned repo run: `conan create . armadillo/stable`
-3. If Armadillo is installed correctly an example program is execute and you can start use it through Conan.
+3. If Armadillo is installed correctly an example program is execute and you can start use it [through Conan](https://docs.conan.io/en/latest/using_packages/conanfile_txt.html#requires).
 
 ## Running the project
-2. Eseguire il progetto: 
-    1. Aprire una shell nella cartella del progetto e spostarsi all'interno della cartella MLProject/ ; 
-    2. All'interno della cartella dare il seguente comando da shell: conan install . -s build_type=Release --install-folder=build
-    3. Se il comando è avvenuto correttamente una cartella "build" viene creata con all'interno i file di cofigurazione di Cmake.
-    4. Nella stessa cartella dare il seguente comando da shell:  cmake -Bbuild -H. 
-    5. Spostarsi nella cartella generata dando: cd build/
-    6. Dare da shell: cmake --build . --config Release 
-    7. Spostarsi nella cartella bin/ ; 
-    8. Eseguire il sorgente ottenuto dando: ./MLProject
+If Cmake and Armadillo were installed correctly you have to create a directory where cmake store the configuration files needed to run the project:
+`mkdir build && cd build `
 
-## Example 
-Show CUP neural network setup and train.
+Then inside the build folder type: 
+
+`conan install ..`
+
+`cmake ..` 
+
+`cmake --build .` 
+
+If all the process is done correctly a */bin* folder is created with a binary file inside. This file can be executed with:
+
+`./MLProject`
+
+## Results
+Here we show a learning curve plot we obtained during the training phase. 
+ 
+<img src="/docs/report/img/Cup_loss_Reg_Zoom.png" height="70%" width="70%">
 
 ## Future works
-- boost serialization: https://www.boost.org/doc/libs/1_72_0/libs/serialization/doc/index.html 
-- matplotlibcpp: https://github.com/lava/matplotlib-cpp 
+- Serialization of NN: https://www.boost.org/doc/libs/1_72_0/libs/serialization 
+- Plot with matplotlibcpp: https://github.com/lava/matplotlib-cpp 
 
 ## Authors
 * **Giovanni Sorice**  :computer: - [Giovanni Sorice](https://github.com/GiovanniSorice)
