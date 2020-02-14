@@ -31,7 +31,7 @@ Inside the build folder to generate the files that are needed by Conan type:
 Then the for the CMake files give: 
  `cmake ..` 
 
-In the end to build the project with: 
+In the end to build the project type: 
  `cmake --build .` 
 
 If all the process is done correctly a */bin* folder is created with a binary file inside. This file can be executed with:
